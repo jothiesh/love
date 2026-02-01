@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖 Build Our Love</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#2d1b4e,#1a1a2e);min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+        h1{font-family:'Press Start 2P',cursive;color:#ff6b9d;font-size:1rem;margin-bottom:10px;text-shadow:2px 2px #ff3366}
+        .subtitle{color:#fff;opacity:0.8;margin-bottom:20px;font-size:0.95rem}
+        .game-container{background:#111;border-radius:15px;padding:20px;box-shadow:0 0 30px rgba(255,107,157,0.3)}
+        .grid{display:grid;grid-template-columns:repeat(9,30px);gap:3px;margin-bottom:15px}
+        .cell{width:30px;height:30px;background:#222;border-radius:4px;cursor:pointer;transition:all 0.2s}
+        .cell:hover{background:#333}
+        .cell.filled{background:#ff6b9d;box-shadow:0 0 10px #ff6b9d}
+        .cell.hint{background:rgba(255,107,157,0.3)}
+        .progress{margin-top:15px;text-align:center}
+        .progress-bar{width:100%;height:20px;background:#222;border-radius:10px;overflow:hidden;margin:10px 0}
+        .progress-fill{height:100%;background:linear-gradient(90deg,#ff6b9d,#ff3366);width:0%;transition:width 0.3s}
+        .progress-text{color:#fff;font-family:'Press Start 2P',cursive;font-size:0.6rem}
+        .message{display:none;text-align:center;color:#fff;margin-top:20px;animation:popIn 0.5s}
+        .message.show{display:block}
+        .message h2{font-family:'Press Start 2P',cursive;color:#ff6b9d;font-size:0.9rem;margin-bottom:15px}
+        .message p{font-size:1rem;line-height:1.6}
+        @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+        .btn{margin-top:15px;padding:12px 25px;background:#ff6b9d;color:#fff;border:none;border-radius:8px;font-family:'Press Start 2P',cursive;font-size:0.6rem;cursor:pointer}
+        .btn:hover{background:#ff3366}
+        .sparkles{position:fixed;pointer-events:none}
+        .sparkle{position:absolute;font-size:20px;animation:sparkle 1s forwards}
+        @keyframes sparkle{to{transform:translateY(-100px) scale(0);opacity:0}}
+        .hint-btn{padding:8px 15px;background:#333;color:#fff;border:none;border-radius:5px;font-size:0.8rem;cursor:pointer;margin-top:10px}
+    </style>
+</head>
+<body>
+    <h1>BUILD OUR LOVE</h1>
+    <p class="subtitle">Tap cells to build a heart! 💕</p>
+    <div class="game-container">
+        <div class="grid" id="grid"></div>
+        <div class="progress">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <p class="progress-text"><span id="filled">0</span> / <span id="total">0</span> pixels</p>
+        </div>
+        <button class="hint-btn" onclick="showHint()">💡 Show Hint</button>
+    </div>
+    <div class="message" id="message">
+        <h2>💖 LEVEL COMPLETE!</h2>
+        <p>You built our love pixel by pixel!<br>Just like how we build our relationship<br>one moment at a time! 💕</p>
+        <button class="btn" onclick="reset()">PLAY AGAIN</button>
+    </div>
+    <div class="sparkles" id="sparkles"></div>
+    <script>
+        // Heart pattern (1 = heart cell)
+        const heart=[
+            [0,0,1,1,0,1,1,0,0],
+            [0,1,1,1,1,1,1,1,0],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1],
+            [0,1,1,1,1,1,1,1,0],
+            [0,0,1,1,1,1,1,0,0],
+            [0,0,0,1,1,1,0,0,0],
+            [0,0,0,0,1,0,0,0,0]
+        ];
+        
+        let filled=0;
+        let total=0;
+        
+        function init(){
+            const grid=document.getElementById('grid');
+            grid.innerHTML='';
+            filled=0;
+            total=0;
+            
+            for(let r=0;r<9;r++){
+                for(let c=0;c<9;c++){
+                    const cell=document.createElement('div');
+                    cell.className='cell';
+                    cell.dataset.row=r;
+                    cell.dataset.col=c;
+                    cell.dataset.isHeart=heart[r][c];
+                    if(heart[r][c])total++;
+                    cell.onclick=()=>fillCell(cell);
+                    grid.appendChild(cell);
+                }
+            }
+            document.getElementById('total').textContent=total;
+            document.getElementById('filled').textContent=0;
+            document.getElementById('progressFill').style.width='0%';
+            document.getElementById('message').classList.remove('show');
+        }
+        
+        function fillCell(cell){
+            if(cell.classList.contains('filled'))return;
+            if(cell.dataset.isHeart==='1'){
+                cell.classList.add('filled');
+                filled++;
+                document.getElementById('filled').textContent=filled;
+                document.getElementById('progressFill').style.width=(filled/total*100)+'%';
+                sparkle(cell);
+                if(filled===total)complete();
+            }else{
+                cell.style.background='#e74c3c';
+                setTimeout(()=>cell.style.background='#222',300);
+            }
+        }
+        
+        function sparkle(cell){
+            const rect=cell.getBoundingClientRect();
+            const s=document.createElement('div');
+            s.className='sparkle';
+            s.textContent='✨';
+            s.style.left=rect.left+15+'px';
+            s.style.top=rect.top+'px';
+            document.getElementById('sparkles').appendChild(s);
+            setTimeout(()=>s.remove(),1000);
+        }
+        
+        function showHint(){
+            document.querySelectorAll('.cell').forEach(cell=>{
+                if(cell.dataset.isHeart==='1'&&!cell.classList.contains('filled')){
+                    cell.classList.add('hint');
+                }
+            });
+            setTimeout(()=>{
+                document.querySelectorAll('.hint').forEach(c=>c.classList.remove('hint'));
+            },1000);
+        }
+        
+        function complete(){
+            document.getElementById('message').classList.add('show');
+            // Celebration
+            for(let i=0;i<30;i++){
+                setTimeout(()=>{
+                    const s=document.createElement('div');
+                    s.className='sparkle';
+                    s.textContent=['💕','💖','❤️','✨','🎉'][Math.floor(Math.random()*5)];
+                    s.style.left=Math.random()*window.innerWidth+'px';
+                    s.style.top=window.innerHeight+'px';
+                    s.style.fontSize='30px';
+                    document.getElementById('sparkles').appendChild(s);
+                    setTimeout(()=>s.remove(),1000);
+                },i*100);
+            }
+        }
+        
+        function reset(){
+            init();
+        }
+        
+        init();
+    </script>
+</body>
+</html>

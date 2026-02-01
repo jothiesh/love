@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 CHRONOS GARDEN | OUR STORY BLOOMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;400;600&family=Playfair+Display:ital,wght@0,400;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. GARDEN NEUMORPHIC DESIGN SYSTEM
+        ================================================================
+        */
+        :root {
+            --garden-bg: #f0f4f8;
+            --leaf-green: #7cae7a;
+            --bloom-pink: #f4978e;
+            --sky-blue: #90e0ef;
+            --shadow-light: #ffffff;
+            --shadow-dark: #d1d9e6;
+            --text-main: #4a4e69;
+            --glass: rgba(255, 255, 255, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--garden-bg);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ================================================================
+        2. THE FLOATING ISLAND (MAIN INTERFACE)
+        ================================================================
+        */
+        .garden-container {
+            width: 90vw;
+            height: 85vh;
+            max-width: 1400px;
+            background: var(--garden-bg);
+            box-shadow: 20px 20px 60px var(--shadow-dark), 
+                        -20px -20px 60px var(--shadow-light);
+            border-radius: 50px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            padding: 30px;
+            gap: 30px;
+            position: relative;
+        }
+
+        /* Navigation Rail */
+        .nurture-panel {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .growth-card {
+            padding: 20px;
+            background: var(--garden-bg);
+            border-radius: 20px;
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), 
+                        inset -6px -6px 12px var(--shadow-light);
+            transition: 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .growth-card:hover { transform: translateY(-5px); }
+        .growth-card.active { border-color: var(--leaf-green); }
+
+        .growth-card h3 { font-size: 0.9rem; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: var(--leaf-green); transition: 1s; }
+
+        /* ================================================================
+        3. THE LIVING TREE (PROCEDURAL CANVAS)
+        ================================================================
+        */
+        .canvas-wrap {
+            position: relative;
+            background: var(--garden-bg);
+            border-radius: 40px;
+            box-shadow: 10px 10px 30px var(--shadow-dark), 
+                        -10px -10px 30px var(--shadow-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #treeCanvas { width: 100%; height: 100%; }
+
+        /* ================================================================
+        4. MINI-GAMES / NURTURE OVERLAYS
+        ================================================================
+        */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(240, 244, 248, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            border-radius: 40px;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .overlay.active { display: flex; }
+
+        .btn-nurture {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: var(--leaf-green);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 5px 5px 15px rgba(124, 174, 122, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn-nurture:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        /* Rain Animation */
+        .drop { position: absolute; background: var(--sky-blue); width: 2px; height: 15px; border-radius: 2px; pointer-events: none; }
+
+        /* ================================================================
+        5. MESSAGE ARCHIVE
+        ================================================================
+        */
+        .capsule {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.5rem;
+            color: var(--text-main);
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="garden-container">
+        <aside class="nurture-panel">
+            <div>
+                <h1>Our Garden</h1>
+                <p style="opacity: 0.7;">Nurture our love to see it grow.</p>
+            </div>
+
+            <div class="growth-card" onclick="openGame('water')">
+                <h3>💧 Water (Stability)</h3>
+                <div class="progress-bar"><div class="progress-fill" id="fill-water"></div></div>
+            </div>
+
+            <div class="growth-card" onclick="openGame('sun')">
+                <h3>☀️ Light (Passion)</h3>
+                <div class="progress-bar"><div class="progress-fill" id="fill-sun"></div></div>
+            </div>
+
+            <div class="growth-card" onclick="openGame('air')">
+                <h3>🌬️ Air (Words)</h3>
+                <div class="progress-bar"><div class="progress-fill" id="fill-air"></div></div>
+            </div>
+
+            <div style="margin-top: auto; padding: 20px; text-align: center; border-top: 1px solid #ddd;">
+                <p style="font-size: 0.8rem; font-weight: 600;">GARDEN AGE: <span id="days">0</span> DAYS</p>
+            </div>
+        </aside>
+
+        <main class="canvas-wrap">
+            <canvas id="treeCanvas"></canvas>
+
+            <div id="game-water" class="overlay">
+                <h2>Rain of Stability</h2>
+                <p>Click repeatedly to shower the seed with consistent love.</p>
+                <button class="btn-nurture" onclick="nurture('water')">GIVE WATER</button>
+            </div>
+
+            <div id="game-sun" class="overlay">
+                <h2>Warmth of Passion</h2>
+                <p>Hold the button to shine light on our future.</p>
+                <button class="btn-nurture" onmousedown="startSun()" onmouseup="stopSun()">SHINE BRIGHT</button>
+            </div>
+
+            <div id="game-air" class="overlay">
+                <h2>Breath of Words</h2>
+                <div class="capsule" id="typewriter"></div>
+                <button class="btn-nurture" onclick="nurture('air')">BREATHE LIFE</button>
+            </div>
+
+            <div id="game-bloom" class="overlay">
+                <h1 style="color: var(--bloom-pink);">Full Bloom Achieved</h1>
+                <div class="capsule">"Like this tree, our love has deep roots and a beautiful future. Happy Valentine's Day."</div>
+                <button class="btn-nurture" onclick="resetGarden()">NURTURE AGAIN</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        /* ================================================================
+        6. JAVASCRIPT: THE BIOLOGICAL GROWTH ENGINE
+        ================================================================
+        */
+
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let growthMetrics = { water: 0, sun: 0, air: 0 };
+        let treeLevel = 0;
+
+        // Resize Canvas
+        function resize() {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+            drawTree();
+        }
+        window.addEventListener('resize', resize);
+        setTimeout(resize, 100);
+
+        /* --- TREE ALGORITHM (Recursive Branching) --- */
+        function drawTree() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const startX = canvas.width / 2;
+            const startY = canvas.height - 80;
+            const length = 120 + (treeLevel * 10);
+            const angle = -Math.PI / 2;
+            const branchWidth = 10 + treeLevel;
+
+            createBranch(startX, startY, length, angle, branchWidth, 'brown');
+        }
+
+        function createBranch(startX, startY, len, angle, width, color) {
+            ctx.beginPath();
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.translate(startX, startY);
+            ctx.rotate(angle);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(len, 0);
+            ctx.stroke();
+
+            if (len < 15) {
+                // Draw Leaves/Blooms
+                ctx.beginPath();
+                ctx.arc(len, 0, 10 + (growthMetrics.sun/10), 0, Math.PI*2);
+                ctx.fillStyle = growthMetrics.water > 50 ? varColor('--bloom-pink') : varColor('--leaf-green');
+                ctx.fill();
+                ctx.restore();
+                return;
+            }
+
+            // Create two new branches
+            createBranch(len, 0, len * 0.75, 0.3 + (growthMetrics.air/200), width * 0.7, color);
+            createBranch(len, 0, len * 0.75, -0.3 - (growthMetrics.air/200), width * 0.7, color);
+
+            ctx.restore();
+        }
+
+        function varColor(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name);
+        }
+
+        /* --- INTERACTION LOGIC --- */
+        function openGame(type) {
+            document.querySelectorAll('.overlay').forEach(o => o.classList.remove('active'));
+            document.getElementById('game-' + type).classList.add('active');
+        }
+
+        function nurture(type) {
+            growthMetrics[type] += 10;
+            if(growthMetrics[type] > 100) growthMetrics[type] = 100;
+            
+            updateUI();
+            checkGrowth();
+
+            if(type === 'water') spawnRain();
+            if(type === 'air') startTypewriter();
+        }
+
+        function updateUI() {
+            document.getElementById('fill-water').style.width = growthMetrics.water + '%';
+            document.getElementById('fill-sun').style.width = growthMetrics.sun + '%';
+            document.getElementById('fill-air').style.width = growthMetrics.air + '%';
+        }
+
+        function checkGrowth() {
+            const avg = (growthMetrics.water + growthMetrics.sun + growthMetrics.air) / 3;
+            treeLevel = Math.floor(avg / 20);
+            drawTree();
+
+            if(avg >= 100) {
+                setTimeout(() => openGame('bloom'), 1000);
+            }
+        }
+
+        /* --- SPECIAL EFFECTS --- */
+        function spawnRain() {
+            for(let i=0; i<20; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'drop';
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.top = '-20px';
+                document.querySelector('.canvas-wrap').appendChild(drop);
+                
+                drop.animate([
+                    { transform: 'translateY(0)' },
+                    { transform: 'translateY(600px)' }
+                ], { duration: 1000, easing: 'linear' }).onfinish = () => drop.remove();
+            }
+        }
+
+        let sunInterval;
+        function startSun() {
+            sunInterval = setInterval(() => {
+                nurture('sun');
+            }, 100);
+        }
+        function stopSun() { clearInterval(sunInterval); }
+
+        const messages = [
+            "Your laughter is the sunshine that feeds my soul.",
+            "In this garden of life, you are my favorite bloom.",
+            "We grow better together, side by side, heart by heart."
+        ];
+
+        function startTypewriter() {
+            const el = document.getElementById('typewriter');
+            const txt = messages[Math.floor(Math.random()*messages.length)];
+            el.innerText = "";
+            let i = 0;
+            const timer = setInterval(() => {
+                if(i < txt.length) {
+                    el.innerText += txt.charAt(i);
+                    i++;
+                } else { clearInterval(timer); }
+            }, 50);
+        }
+
+        function resetGarden() {
+            growthMetrics = { water: 0, sun: 0, air: 0 };
+            treeLevel = 0;
+            updateUI();
+            drawTree();
+            document.querySelectorAll('.overlay').forEach(o => o.classList.remove('active'));
+        }
+
+        // Initialize
+        setTimeout(drawTree, 500);
+        setInterval(() => {
+            document.getElementById('days').innerText = parseInt(document.getElementById('days').innerText) + 1;
+        }, 5000);
+
+    </script>
+</body>
+</html>

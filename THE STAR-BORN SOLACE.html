@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ THE STAR-BORN SOLACE | FOR HER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Montserrat:wght@200;300;400&family=Playfair+Display:ital,wght@1,400;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE CELESTIAL DESIGN SYSTEM
+        ================================================================
+        */
+        :root {
+            --cosmic-void: #020205;
+            --starlight: #f8f9fa;
+            --nebula-glow: #7b2cbf;
+            --stardust-pink: #ffafbd;
+            --gold-leaf: #d4af37;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --font-display: 'Cinzel Decorative', cursive;
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Montserrat', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--cosmic-void);
+            color: var(--starlight);
+            font-family: var(--font-sans);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ================================================================
+        2. THE STAR-LINK ENGINE (BACKGROUND)
+        ================================================================
+        */
+        #celestialCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            filter: blur(0.5px);
+        }
+
+        /* ================================================================
+        3. THE CRYSTAL SANCTUARY (INTERFACE)
+        ================================================================
+        */
+        .sanctuary {
+            width: 90vw;
+            height: 85vh;
+            max-width: 1200px;
+            background: rgba(2, 2, 5, 0.7);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2px; /* Brutalist Luxury */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            box-shadow: 0 0 100px rgba(0,0,0,1), inset 0 0 50px rgba(123, 44, 191, 0.1);
+            overflow: hidden;
+        }
+
+        /* Ornamental Borders */
+        .sanctuary::before, .sanctuary::after {
+            content: '';
+            position: absolute;
+            width: 200px; height: 200px;
+            border: 1px solid var(--gold-leaf);
+            opacity: 0.3;
+        }
+        .sanctuary::before { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .sanctuary::after { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+        /* ================================================================
+        4. NARRATIVE MODULES
+        ================================================================
+        */
+        .module {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .module.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: cosmicFadeIn 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes cosmicFadeIn {
+            from { opacity: 0; transform: scale(1.05); filter: blur(20px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 3.5rem;
+            color: var(--gold-leaf);
+            letter-spacing: 12px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .whisper {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 1.4rem;
+            line-height: 1.8;
+            color: var(--starlight);
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        /* ================================================================
+        5. INTERACTIVE SOUL-LINK (THE GAME)
+        ================================================================
+        */
+        .ember-field {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            border: 1px dashed rgba(212, 175, 55, 0.2);
+            margin-bottom: 30px;
+            cursor: move;
+        }
+
+        .ember {
+            position: absolute;
+            width: 12px; height: 12px;
+            background: var(--stardust-pink);
+            border-radius: 50%;
+            box-shadow: 0 0 15px var(--stardust-pink);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        /* ================================================================
+        6. LUXURY BUTTONS
+        ================================================================
+        */
+        .btn-celestial {
+            padding: 15px 60px;
+            background: transparent;
+            border: 1px solid var(--gold-leaf);
+            color: var(--gold-leaf);
+            font-family: var(--font-display);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-celestial:hover {
+            background: var(--gold-leaf);
+            color: var(--cosmic-void);
+            box-shadow: 0 0 40px var(--gold-leaf);
+        }
+
+        .btn-celestial::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: rgba(255,255,255,0.1);
+            transform: rotate(45deg) translateY(-100%);
+            transition: 0.5s;
+        }
+        .btn-celestial:hover::after { transform: rotate(45deg) translateY(100%); }
+
+        /* HUD Stats */
+        .hud {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            opacity: 0.3;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="celestialCanvas"></canvas>
+
+    <div class="sanctuary">
+        <div class="hud">Aeterna Protocol 2.0 // Heart-Link: Established</div>
+
+        <section id="mod-1" class="module active">
+            <h1 style="font-size: 2rem;">In the beginning,</h1>
+            <div class="whisper">The universe was a silent void, waiting for a single spark to give it meaning.</div>
+            <button class="btn-celestial" onclick="showMod(2)">Look for the Spark</button>
+        </section>
+
+        <section id="mod-2" class="module">
+            <h1>Alignment</h1>
+            <div class="whisper">Guide the drifting embers to form our shared heart.</div>
+            <div class="ember-field" id="emberField">
+                </div>
+            <p style="font-size: 0.7rem; letter-spacing: 2px; opacity: 0.6;">DRAG THE EMBERS TO THE HIGHLIGHTS</p>
+        </section>
+
+        <section id="mod-3" class="module">
+            <h1>Evermore.</h1>
+            <div class="whisper">
+                "I have seen galaxies collide and stars fade, but in the entire map of the universe, there is no coordinate I’d rather be at than wherever you are."
+            </div>
+            <div style="font-family: var(--font-display); color: var(--stardust-pink); margin-top: 20px;">
+                Happy Valentine's Day, My Constant.
+            </div>
+            <button class="btn-celestial" style="margin-top: 40px;" onclick="location.reload()">Return to the Stars</button>
+        </section>
+    </div>
+
+    <script>
+        /* ================================================================
+        7. JAVASCRIPT: THE CELESTIAL MECHANICS
+        ================================================================
+        */
+
+        // 1. STAR-LINK BACKGROUND ENGINE
+        const canvas = document.getElementById('celestialCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let mouse = { x: null, y: null };
+
+        function initStars() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 120; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3,
+                    size: Math.random() * 2
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(248, 249, 250, 0.8)";
+            
+            stars.forEach((s, i) => {
+                s.x += s.vx;
+                s.y += s.vy;
+
+                if (s.x < 0 || s.x > canvas.width) s.vx *= -1;
+                if (s.y < 0 || s.y > canvas.height) s.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw constellation lines
+                for (let j = i + 1; j < stars.length; j++) {
+                    const s2 = stars[j];
+                    const dx = s.x - s2.x;
+                    const dy = s.y - s2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(212, 175, 55, ${1 - dist / 150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(s.x, s.y);
+                        ctx.lineTo(s2.x, s2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(drawStars);
+        }
+
+        // 2. NARRATIVE CONTROLLER
+        function showMod(num) {
+            document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+            document.getElementById('mod-' + num).classList.add('active');
+            if(num === 2) initEmberGame();
+        }
+
+        // 3. SOUL-LINK GAME LOGIC
+        function initEmberGame() {
+            const field = document.getElementById('emberField');
+            field.innerHTML = '';
+            const targetPoints = [
+                {x: 50, y: 30}, {x: 40, y: 20}, {x: 30, y: 30},
+                {x: 50, y: 70}, {x: 70, y: 30}, {x: 60, y: 20}
+            ]; // Percentages for heart shape
+
+            let matches = 0;
+
+            targetPoints.forEach((pt, i) => {
+                const ember = document.createElement('div');
+                ember.className = 'ember';
+                ember.style.left = Math.random() * 90 + '%';
+                ember.style.top = Math.random() * 90 + '%';
+                
+                // Make ember draggable (Simple logic)
+                let isDragging = false;
+                ember.addEventListener('mousedown', () => isDragging = true);
+                window.addEventListener('mouseup', () => {
+                    if(isDragging) {
+                        // Check if close to its specific target
+                        const rect = field.getBoundingClientRect();
+                        const curX = (parseFloat(ember.style.left) / 100) * rect.width;
+                        const curY = (parseFloat(ember.style.top) / 100) * rect.height;
+                        const tarX = (pt.x / 100) * rect.width;
+                        const tarY = (pt.y / 100) * rect.height;
+
+                        const d = Math.sqrt((curX-tarX)**2 + (curY-tarY)**2);
+                        if(d < 40) {
+                            ember.style.left = pt.x + '%';
+                            ember.style.top = pt.y + '%';
+                            ember.style.background = 'var(--gold-leaf)';
+                            ember.style.pointerEvents = 'none';
+                            matches++;
+                            if(matches === targetPoints.length) {
+                                setTimeout(() => showMod(3), 1000);
+                            }
+                        }
+                    }
+                    isDragging = false;
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if(isDragging) {
+                        const rect = field.getBoundingClientRect();
+                        let x = ((e.clientX - rect.left) / rect.width) * 100;
+                        let y = ((e.clientY - rect.top) / rect.height) * 100;
+                        ember.style.left = x + '%';
+                        ember.style.top = y + '%';
+                    }
+                });
+
+                field.appendChild(ember);
+            });
+        }
+
+        // 4. COORDINATE TRACKER
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        // INIT
+        initStars();
+        drawStars();
+        window.addEventListener('resize', initStars);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Love Quest - A Game For You 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { min-height: 100vh; background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%); font-family: 'Poppins', sans-serif; overflow-x: hidden; color: white; }
+        .game-container { max-width: 800px; margin: 0 auto; padding: 20px; min-height: 100vh; }
+        .game-hud { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: linear-gradient(180deg, #ff6b9d 0%, #c44569 100%); border-radius: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .hud-item { display: flex; align-items: center; gap: 8px; font-family: 'Press Start 2P', cursive; font-size: 11px; }
+        .hearts-display { display: flex; gap: 5px; }
+        .heart-icon { font-size: 18px; animation: pulse 1s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+        .score-display, .level-display { background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 20px; }
+        .progress-container { width: 100%; height: 25px; background: rgba(0,0,0,0.3); border-radius: 15px; overflow: hidden; margin-bottom: 20px; position: relative; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #ff6b9d, #ff8a80, #ffab91); border-radius: 15px; transition: width 0.5s ease; }
+        .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Press Start 2P', cursive; font-size: 9px; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); }
+        .game-screen { display: none; animation: fadeIn 0.5s ease; }
+        .game-screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .start-screen, .level-screen, .proposal-screen, .victory-screen { text-align: center; padding: 30px 20px; }
+        .game-title { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ff6b9d; text-shadow: 4px 4px 0 #c44569; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .game-subtitle { font-size: 16px; color: #ffab91; margin-bottom: 30px; }
+        .couple-sprites { display: flex; justify-content: center; align-items: center; gap: 20px; margin: 30px 0; font-size: 60px; }
+        .sprite { animation: bounce 1s ease-in-out infinite; }
+        .sprite:nth-child(2) { animation: heartBeat 1s ease-in-out infinite; }
+        .sprite:nth-child(3) { animation-delay: 0.5s; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes heartBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }
+        .start-btn { font-family: 'Press Start 2P', cursive; font-size: 14px; padding: 18px 35px; background: linear-gradient(180deg, #ff6b9d 0%, #c44569 100%); color: white; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 0 #8b2a4a; }
+        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #8b2a4a; }
+        .start-btn:active { transform: translateY(3px); box-shadow: 0 3px 0 #8b2a4a; }
+        .insert-coin { font-family: 'Press Start 2P', cursive; font-size: 10px; color: #ffab91; margin-top: 25px; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }
+        .level-title { font-family: 'Press Start 2P', cursive; font-size: 20px; color: #ff6b9d; margin-bottom: 10px; }
+        .level-name { font-size: 18px; color: #ffab91; margin-bottom: 20px; }
+        .mini-game { background: rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; margin: 20px 0; }
+        .catch-game-area { width: 100%; height: 280px; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); border-radius: 15px; position: relative; overflow: hidden; cursor: pointer; touch-action: none; }
+        .falling-item { position: absolute; font-size: 28px; animation: fall linear forwards; cursor: pointer; }
+        @keyframes fall { from { top: -50px; } to { top: 100%; } }
+        .catch-score { font-family: 'Press Start 2P', cursive; font-size: 12px; margin-top: 15px; }
+        .catcher { position: absolute; bottom: 10px; width: 70px; height: 50px; font-size: 40px; text-align: center; transition: left 0.1s ease; }
+        .quiz-question { font-size: 16px; margin-bottom: 20px; line-height: 1.6; }
+        .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .quiz-option { padding: 12px; background: rgba(255,255,255,0.1); border: 2px solid transparent; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; font-size: 13px; color: white; }
+        .quiz-option:hover { background: rgba(255,107,157,0.3); border-color: #ff6b9d; transform: scale(1.03); }
+        .quiz-option.correct { background: rgba(76,175,80,0.5); border-color: #4caf50; }
+        .quiz-option.wrong { background: rgba(244,67,54,0.5); border-color: #f44336; }
+        .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 320px; margin: 0 auto; }
+        .memory-card { aspect-ratio: 1; background: linear-gradient(135deg, #ff6b9d, #c44569); border-radius: 10px; display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; transition: all 0.3s ease; }
+        .memory-card:hover { transform: scale(1.05); }
+        .memory-card.flipped { background: rgba(255,255,255,0.2); }
+        .memory-card.matched { background: rgba(76,175,80,0.5); }
+        .type-target { font-size: 22px; color: #ff6b9d; margin-bottom: 15px; letter-spacing: 2px; }
+        .type-input { width: 100%; padding: 12px; font-size: 18px; text-align: center; background: rgba(255,255,255,0.1); border: 2px solid #ff6b9d; border-radius: 10px; color: white; outline: none; }
+        .type-input:focus { box-shadow: 0 0 15px rgba(255,107,157,0.5); }
+        .type-hint { font-size: 13px; color: #ffab91; margin-top: 12px; }
+        .maze-grid { display: grid; grid-template-columns: repeat(5, 45px); gap: 4px; margin: 15px 0; }
+        .maze-cell { width: 45px; height: 45px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; transition: all 0.2s ease; }
+        .maze-cell.player { background: linear-gradient(135deg, #667eea, #764ba2); animation: playerPulse 1s ease-in-out infinite; }
+        @keyframes playerPulse { 0%, 100% { box-shadow: 0 0 8px rgba(102,126,234,0.5); } 50% { box-shadow: 0 0 15px rgba(102,126,234,0.8); } }
+        .maze-cell.goal { background: linear-gradient(135deg, #ff6b9d, #c44569); animation: goalPulse 1s ease-in-out infinite; }
+        @keyframes goalPulse { 0%, 100% { box-shadow: 0 0 8px rgba(255,107,157,0.5); } 50% { box-shadow: 0 0 15px rgba(255,107,157,0.8); } }
+        .maze-cell.obstacle { background: rgba(0,0,0,0.5); }
+        .maze-controls { display: grid; grid-template-columns: repeat(3, 55px); gap: 8px; margin-top: 15px; }
+        .maze-btn { width: 55px; height: 55px; background: linear-gradient(180deg, #ff6b9d 0%, #c44569 100%); border: none; border-radius: 10px; color: white; font-size: 20px; cursor: pointer; box-shadow: 0 4px 0 #8b2a4a; }
+        .maze-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #8b2a4a; }
+        .maze-btn.empty { visibility: hidden; }
+        .proposal-title { font-family: 'Press Start 2P', cursive; font-size: 16px; color: #ff6b9d; margin-bottom: 25px; }
+        .proposal-message { font-size: 16px; line-height: 1.8; margin-bottom: 25px; }
+        .proposal-question { font-family: 'Press Start 2P', cursive; font-size: 14px; color: #ffab91; margin: 25px 0; animation: glow 2s ease-in-out infinite; }
+        @keyframes glow { 0%, 100% { text-shadow: 0 0 10px rgba(255,171,145,0.5); } 50% { text-shadow: 0 0 25px rgba(255,171,145,0.8); } }
+        .proposal-buttons { display: flex; justify-content: center; gap: 25px; flex-wrap: wrap; position: relative; min-height: 100px; }
+        .btn-yes, .btn-no { font-family: 'Press Start 2P', cursive; font-size: 12px; padding: 18px 35px; border: none; border-radius: 10px; cursor: pointer; }
+        .btn-yes { background: linear-gradient(180deg, #4caf50 0%, #388e3c 100%); color: white; box-shadow: 0 5px 0 #2e7d32; }
+        .btn-yes:hover { transform: translateY(-3px) scale(1.1); box-shadow: 0 8px 0 #2e7d32; }
+        .btn-no { background: linear-gradient(180deg, #9e9e9e 0%, #757575 100%); color: white; box-shadow: 0 5px 0 #616161; transition: all 0.2s ease; }
+        .escape-message { position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%); font-family: 'Press Start 2P', cursive; font-size: 9px; color: #ff6b9d; white-space: nowrap; opacity: 0; transition: opacity 0.3s ease; }
+        .escape-message.show { opacity: 1; }
+        .victory-title { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #ff6b9d; margin-bottom: 20px; animation: rainbow 2s linear infinite; }
+        @keyframes rainbow { 0% { color: #ff6b9d; } 25% { color: #ffab91; } 50% { color: #ffd54f; } 75% { color: #81d4fa; } 100% { color: #ff6b9d; } }
+        .victory-couple { font-size: 80px; margin: 25px 0; animation: victoryBounce 0.5s ease-in-out infinite; }
+        @keyframes victoryBounce { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-15px) rotate(5deg); } }
+        .achievement { display: inline-block; background: linear-gradient(135deg, #ffd700, #ffab00); padding: 12px 25px; border-radius: 10px; margin: 8px; color: #333; font-weight: bold; font-size: 12px; }
+        .achievement-icon { font-size: 25px; display: block; margin-bottom: 5px; }
+        .promises-game { margin-top: 30px; text-align: left; }
+        .promise-item { background: rgba(255,255,255,0.1); padding: 12px 18px; border-radius: 10px; margin: 8px 0; border-left: 4px solid #ff6b9d; opacity: 0; transform: translateX(-30px); animation: slideIn 0.5s ease-out forwards; font-size: 14px; }
+        .promise-item:nth-child(1) { animation-delay: 0.5s; }
+        .promise-item:nth-child(2) { animation-delay: 0.7s; }
+        .promise-item:nth-child(3) { animation-delay: 0.9s; }
+        .promise-item:nth-child(4) { animation-delay: 1.1s; }
+        .promise-item:nth-child(5) { animation-delay: 1.3s; }
+        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+        .confetti { position: fixed; width: 10px; height: 10px; top: -20px; z-index: 1000; animation: confettiFall linear forwards; }
+        @keyframes confettiFall { to { top: 100vh; transform: rotate(720deg); } }
+        .continue-btn { font-family: 'Press Start 2P', cursive; font-size: 11px; padding: 12px 25px; background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 0 #5a3d8a; }
+        .continue-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #5a3d8a; }
+        .continue-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .game-instructions { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 13px; }
+        .loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f0c29; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; transition: opacity 0.5s ease; }
+        .loading-screen.hide { opacity: 0; pointer-events: none; }
+        .loading-text { font-family: 'Press Start 2P', cursive; font-size: 12px; color: #ff6b9d; margin-top: 15px; }
+        .loading-bar { width: 180px; height: 18px; background: rgba(255,255,255,0.2); border-radius: 10px; overflow: hidden; margin-top: 15px; }
+        .loading-fill { height: 100%; background: linear-gradient(90deg, #ff6b9d, #c44569); animation: loadingAnim 2s ease-out forwards; }
+        @keyframes loadingAnim { from { width: 0%; } to { width: 100%; } }
+        .sound-toggle { position: fixed; top: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; padding: 8px; border-radius: 50%; cursor: pointer; font-size: 18px; z-index: 100; }
+        .floating-elements { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .floating-emoji { position: absolute; font-size: 25px; animation: floatAround 10s ease-in-out infinite; opacity: 0.3; }
+        @keyframes floatAround { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 50% { transform: translate(30px, -40px) rotate(180deg); } }
+        @media (max-width: 600px) {
+            .game-title { font-size: 16px; }
+            .couple-sprites { font-size: 45px; gap: 15px; }
+            .hud-item { font-size: 8px; }
+            .quiz-options { grid-template-columns: 1fr; }
+            .memory-grid { max-width: 260px; }
+            .memory-card { font-size: 18px; }
+            .maze-grid { grid-template-columns: repeat(5, 38px); }
+            .maze-cell { width: 38px; height: 38px; font-size: 16px; }
+            .maze-controls { grid-template-columns: repeat(3, 48px); }
+            .maze-btn { width: 48px; height: 48px; font-size: 18px; }
+            .victory-title { font-size: 16px; }
+            .proposal-title { font-size: 12px; }
+            .catch-game-area { height: 250px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div style="font-size: 50px;">💕</div>
+        <div class="loading-text">Loading Love Quest...</div>
+        <div class="loading-bar"><div class="loading-fill"></div></div>
+    </div>
+    <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+    <div class="floating-elements" id="floatingElements"></div>
+    <div class="game-container">
+        <div class="game-hud">
+            <div class="hud-item"><span>LIVES:</span><div class="hearts-display"><span class="heart-icon" id="heart1">❤️</span><span class="heart-icon" id="heart2">❤️</span><span class="heart-icon" id="heart3">❤️</span></div></div>
+            <div class="hud-item score-display">SCORE: <span id="scoreDisplay">0</span></div>
+            <div class="hud-item level-display">LVL: <span id="levelDisplay">1</span>/5</div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            <span class="progress-text">LOVE: <span id="progressText">0</span>%</span>
+        </div>
+
+        <!-- Start Screen -->
+        <div class="game-screen active" id="startScreen">
+            <div class="start-screen">
+                <h1 class="game-title">💕 LOVE QUEST 💕</h1>
+                <p class="game-subtitle">A Special Game Made Just For You</p>
+                <div class="couple-sprites"><span class="sprite">👨‍💻</span><span class="sprite">💖</span><span class="sprite">👩</span></div>
+                <p style="margin-bottom: 25px; line-height: 1.6;">Complete all levels to unlock<br>a very special message! 🎮✨</p>
+                <button class="start-btn" onclick="startGame()">▶ START GAME</button>
+                <p class="insert-coin">~ PRESS START TO BEGIN ~</p>
+            </div>
+        </div>
+
+        <!-- Level 1 -->
+        <div class="game-screen" id="level1Screen">
+            <div class="level-screen">
+                <h2 class="level-title">LEVEL 1</h2>
+                <p class="level-name">💖 Catch My Love 💖</p>
+                <div class="game-instructions">🎮 Tap/click hearts before they fall! Catch 10 hearts! Avoid 💔!</div>
+                <div class="mini-game">
+                    <div class="catch-game-area" id="catchArea"><div class="catcher" id="catcher">🧺</div></div>
+                    <p class="catch-score">Hearts: <span id="heartsCaught">0</span>/10</p>
+                </div>
+                <button class="continue-btn" id="level1Btn" disabled onclick="completeLevel(1)">CONTINUE ➜</button>
+            </div>
+        </div>
+
+        <!-- Level 2 -->
+        <div class="game-screen" id="level2Screen">
+            <div class="level-screen">
+                <h2 class="level-title">LEVEL 2</h2>
+                <p class="level-name">🧠 Love Quiz 🧠</p>
+                <div class="game-instructions">🎮 Answer questions about love! Choose wisely! 💕</div>
+                <div class="mini-game">
+                    <div class="quiz-container" id="quizContainer">
+                        <p class="quiz-question" id="quizQuestion"></p>
+                        <div class="quiz-options" id="quizOptions"></div>
+                    </div>
+                    <p class="catch-score">Correct: <span id="quizScore">0</span>/3</p>
+                </div>
+                <button class="continue-btn" id="level2Btn" disabled onclick="completeLevel(2)">CONTINUE ➜</button>
+            </div>
+        </div>
+
+        <!-- Level 3 -->
+        <div class="game-screen" id="level3Screen">
+            <div class="level-screen">
+                <h2 class="level-title">LEVEL 3</h2>
+                <p class="level-name">🃏 Memory of Love 🃏</p>
+                <div class="game-instructions">🎮 Match all the love pairs! Find matching emojis! 💕</div>
+                <div class="mini-game">
+                    <div class="memory-grid" id="memoryGrid"></div>
+                    <p class="catch-score">Pairs: <span id="pairsFound">0</span>/6</p>
+                </div>
+                <button class="continue-btn" id="level3Btn" disabled onclick="completeLevel(3)">CONTINUE ➜</button>
+            </div>
+        </div>
+
+        <!-- Level 4 -->
+        <div class="game-screen" id="level4Screen">
+            <div class="level-screen">
+                <h2 class="level-title">LEVEL 4</h2>
+                <p class="level-name">⌨️ Type Your Love ⌨️</p>
+                <div class="game-instructions">🎮 Type the magic words to unlock the next level! 💕</div>
+                <div class="mini-game">
+                    <div class="type-game">
+                        <p class="type-target" id="typeTarget">I LOVE YOU</p>
+                        <input type="text" class="type-input" id="typeInput" placeholder="Type here..." oninput="checkTyping()">
+                        <p class="type-hint" id="typeHint">Type the words above exactly!</p>
+                    </div>
+                </div>
+                <button class="continue-btn" id="level4Btn" disabled onclick="completeLevel(4)">CONTINUE ➜</button>
+            </div>
+        </div>
+
+        <!-- Level 5 -->
+        <div class="game-screen" id="level5Screen">
+            <div class="level-screen">
+                <h2 class="level-title">FINAL LEVEL</h2>
+                <p class="level-name">🛤️ Path to Your Heart 🛤️</p>
+                <div class="game-instructions">🎮 Guide me to your heart! Use arrows or swipe! 💕</div>
+                <div class="mini-game">
+                    <div class="path-game" style="display:flex;flex-direction:column;align-items:center;">
+                        <div class="maze-grid" id="mazeGrid"></div>
+                        <div class="maze-controls">
+                            <div class="maze-btn empty"></div>
+                            <button class="maze-btn" onclick="movePlayer('up')">⬆️</button>
+                            <div class="maze-btn empty"></div>
+                            <button class="maze-btn" onclick="movePlayer('left')">⬅️</button>
+                            <button class="maze-btn" onclick="movePlayer('down')">⬇️</button>
+                            <button class="maze-btn" onclick="movePlayer('right')">➡️</button>
+                        </div>
+                    </div>
+                </div>
+                <button class="continue-btn" id="level5Btn" disabled onclick="showProposal()">UNLOCK SECRET ➜</button>
+            </div>
+        </div>
+
+        <!-- Proposal -->
+        <div class="game-screen" id="proposalScreen">
+            <div class="proposal-screen">
+                <h2 class="proposal-title">🎮 BONUS LEVEL UNLOCKED! 🎮</h2>
+                <div style="font-size: 60px; margin: 15px 0;">👨‍💻💖👩</div>
+                <p class="proposal-message">Congratulations! You've completed all the levels! 🎉<br><br>Just like you completed this game, you've completed my heart.<br>You're the player 2 I've been searching for! 🎮💕</p>
+                <h3 class="proposal-question">Will you be my Player 2 forever? 💕</h3>
+                <div class="proposal-buttons">
+                    <button class="btn-yes" onclick="sayYes()">YES! 💖</button>
+                    <button class="btn-no" id="noBtn" onmouseover="escapeNo()" onclick="escapeNo()">No</button>
+                    <span class="escape-message" id="escapeMsg"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Victory -->
+        <div class="game-screen" id="victoryScreen">
+            <div class="victory-screen">
+                <h1 class="victory-title">🎉 GAME COMPLETE! 🎉</h1>
+                <div class="victory-couple">👨‍💻❤️👩</div>
+                <p style="font-size:16px;margin-bottom:20px;">You said YES! 💖 Achievement Unlocked: Best Girlfriend Ever! 🏆</p>
+                <div>
+                    <div class="achievement"><span class="achievement-icon">🏆</span>Player 2 Joined!</div>
+                    <div class="achievement"><span class="achievement-icon">💕</span>Love: MAX</div>
+                    <div class="achievement"><span class="achievement-icon">⭐</span>Perfect!</div>
+                </div>
+                <div class="promises-game">
+                    <h3 style="text-align:center;color:#ff6b9d;margin-bottom:15px;font-size:16px;">🎮 My Game Promises 🎮</h3>
+                    <div class="promise-item">🎮 I'll never pause our love story</div>
+                    <div class="promise-item">🔋 My love will never run out of battery</div>
+                    <div class="promise-item">🏆 You're my greatest achievement</div>
+                    <div class="promise-item">💾 Our memories are saved forever</div>
+                    <div class="promise-item">⭐ Every day with you is a new high score</div>
+                </div>
+                <p style="margin-top:30px;font-family:'Press Start 2P',cursive;font-size:10px;color:#ffab91;">CREDITS: Made with 💕 by your developer</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let gameState = { score: 0, level: 1, lives: 3, progress: 0, soundEnabled: true };
+        let audioContext;
+
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loadingScreen').classList.add('hide'), 2500);
+            createFloatingElements();
+            initAudio();
+        });
+
+        function initAudio() { audioContext = new (window.AudioContext || window.webkitAudioContext)(); }
+        
+        function playSound(freq, duration, type = 'sine') {
+            if (!gameState.soundEnabled) return;
+            try {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain); gain.connect(audioContext.destination);
+                osc.frequency.value = freq; osc.type = type;
+                gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                osc.start(); osc.stop(audioContext.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function playSuccess() { playSound(523, 0.1); setTimeout(() => playSound(659, 0.1), 100); setTimeout(() => playSound(784, 0.2), 200); }
+        function playFail() { playSound(200, 0.3, 'sawtooth'); }
+        function playLevelUp() { playSound(523, 0.1); setTimeout(() => playSound(659, 0.1), 100); setTimeout(() => playSound(784, 0.1), 200); setTimeout(() => playSound(1047, 0.3), 300); }
+        function toggleSound() { gameState.soundEnabled = !gameState.soundEnabled; document.getElementById('soundToggle').textContent = gameState.soundEnabled ? '🔊' : '🔇'; }
+
+        function createFloatingElements() {
+            const container = document.getElementById('floatingElements');
+            const emojis = ['💕', '💖', '⭐', '🎮', '💝', '✨'];
+            for (let i = 0; i < 12; i++) {
+                const elem = document.createElement('div');
+                elem.className = 'floating-emoji';
+                elem.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                elem.style.left = Math.random() * 100 + '%';
+                elem.style.top = Math.random() * 100 + '%';
+                elem.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(elem);
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('scoreDisplay').textContent = gameState.score;
+            document.getElementById('levelDisplay').textContent = gameState.level;
+            document.getElementById('progressBar').style.width = gameState.progress + '%';
+            document.getElementById('progressText').textContent = gameState.progress;
+            for (let i = 1; i <= 3; i++) document.getElementById('heart' + i).textContent = i <= gameState.lives ? '❤️' : '🖤';
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startGame() { playLevelUp(); showScreen('level1Screen'); startCatchGame(); }
+
+        function completeLevel(level) {
+            gameState.level = level + 1;
+            gameState.progress = level * 20;
+            gameState.score += 100;
+            updateHUD(); playLevelUp();
+            if (level === 1) { showScreen('level2Screen'); startQuiz(); }
+            else if (level === 2) { showScreen('level3Screen'); startMemory(); }
+            else if (level === 3) { showScreen('level4Screen'); }
+            else if (level === 4) { showScreen('level5Screen'); startMaze(); }
+        }
+
+        // LEVEL 1: CATCH HEARTS
+        let catchGameInterval, heartsCaught = 0;
+        function startCatchGame() {
+            heartsCaught = 0;
+            document.getElementById('heartsCaught').textContent = '0';
+            const area = document.getElementById('catchArea');
+            const catcher = document.getElementById('catcher');
+            area.addEventListener('mousemove', (e) => {
+                const rect = area.getBoundingClientRect();
+                catcher.style.left = Math.max(0, Math.min(e.clientX - rect.left - 35, rect.width - 70)) + 'px';
+            });
+            area.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                const rect = area.getBoundingClientRect();
+                catcher.style.left = Math.max(0, Math.min(e.touches[0].clientX - rect.left - 35, rect.width - 70)) + 'px';
+            });
+            catchGameInterval = setInterval(() => { if (heartsCaught < 10) spawnFallingItem(); else clearInterval(catchGameInterval); }, 700);
+        }
+
+        function spawnFallingItem() {
+            const area = document.getElementById('catchArea');
+            const item = document.createElement('div');
+            item.className = 'falling-item';
+            const isHeart = Math.random() > 0.2;
+            item.textContent = isHeart ? '💖' : '💔';
+            item.dataset.type = isHeart ? 'heart' : 'broken';
+            item.style.left = Math.random() * (area.offsetWidth - 35) + 'px';
+            item.style.animationDuration = (2 + Math.random()) + 's';
+            item.addEventListener('click', () => catchItem(item));
+            item.addEventListener('touchstart', (e) => { e.preventDefault(); catchItem(item); });
+            area.appendChild(item);
+            setTimeout(() => { if (item.parentNode) item.remove(); }, 3000);
+        }
+
+        function catchItem(item) {
+            if (item.dataset.type === 'heart') {
+                heartsCaught++; gameState.score += 10;
+                document.getElementById('heartsCaught').textContent = heartsCaught;
+                playSuccess();
+                if (heartsCaught >= 10) { clearInterval(catchGameInterval); document.getElementById('level1Btn').disabled = false; }
+            } else { if (gameState.lives > 0) { gameState.lives--; playFail(); } }
+            updateHUD(); item.remove();
+        }
+
+        // LEVEL 2: QUIZ
+        const quizQuestions = [
+            { q: "What makes a relationship strong? 💪", options: ["Trust & Communication", "Money", "Looks", "Fame"], correct: 0 },
+            { q: "What's the best way to say 'I love you'? 💕", options: ["Through actions", "Never say it", "Only on holidays", "Only when asked"], correct: 0 },
+            { q: "What should couples do together? 👫", options: ["Support each other's dreams", "Compete", "Ignore each other", "Fight"], correct: 0 }
+        ];
+        let currentQuestion = 0, quizScore = 0;
+
+        function startQuiz() { currentQuestion = 0; quizScore = 0; showQuestion(); }
+        function showQuestion() {
+            const q = quizQuestions[currentQuestion];
+            document.getElementById('quizQuestion').textContent = q.q;
+            const optionsDiv = document.getElementById('quizOptions');
+            optionsDiv.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'quiz-option'; btn.textContent = opt;
+                btn.onclick = () => selectAnswer(i, btn);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(index, btn) {
+            const q = quizQuestions[currentQuestion];
+            document.querySelectorAll('.quiz-option').forEach(o => o.style.pointerEvents = 'none');
+            if (index === q.correct) { btn.classList.add('correct'); quizScore++; gameState.score += 20; playSuccess(); }
+            else { btn.classList.add('wrong'); document.querySelectorAll('.quiz-option')[q.correct].classList.add('correct'); playFail(); }
+            document.getElementById('quizScore').textContent = quizScore;
+            updateHUD();
+            setTimeout(() => { currentQuestion++; if (currentQuestion < quizQuestions.length) showQuestion(); else document.getElementById('level2Btn').disabled = false; }, 1000);
+        }
+
+        // LEVEL 3: MEMORY
+        const memoryEmojis = ['💕', '💖', '💗', '💓', '💝', '💘'];
+        let memoryCards = [], flippedCards = [], pairsFound = 0;
+
+        function startMemory() {
+            pairsFound = 0; flippedCards = [];
+            document.getElementById('pairsFound').textContent = '0';
+            memoryCards = [...memoryEmojis, ...memoryEmojis];
+            for (let i = memoryCards.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [memoryCards[i], memoryCards[j]] = [memoryCards[j], memoryCards[i]]; }
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            memoryCards.forEach((emoji, i) => {
+                const card = document.createElement('div');
+                card.className = 'memory-card'; card.dataset.index = i; card.dataset.emoji = emoji;
+                card.innerHTML = '❓'; card.onclick = () => flipCard(card);
+                grid.appendChild(card);
+            });
+        }
+
+        function flipCard(card) {
+            if (flippedCards.length >= 2 || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+            card.classList.add('flipped'); card.textContent = card.dataset.emoji;
+            flippedCards.push(card); playSound(400 + flippedCards.length * 100, 0.1);
+            if (flippedCards.length === 2) setTimeout(checkMatch, 500);
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            if (card1.dataset.emoji === card2.dataset.emoji) {
+                card1.classList.add('matched'); card2.classList.add('matched');
+                pairsFound++; gameState.score += 15;
+                document.getElementById('pairsFound').textContent = pairsFound;
+                playSuccess();
+                if (pairsFound >= 6) document.getElementById('level3Btn').disabled = false;
+            } else {
+                card1.classList.remove('flipped'); card2.classList.remove('flipped');
+                card1.textContent = '❓'; card2.textContent = '❓';
+                playFail();
+            }
+            flippedCards = []; updateHUD();
+        }
+
+        // LEVEL 4: TYPE
+        function checkTyping() {
+            const input = document.getElementById('typeInput').value.toUpperCase();
+            if (input === 'I LOVE YOU') {
+                document.getElementById('typeHint').textContent = '💖 Perfect! 💖';
+                document.getElementById('typeHint').style.color = '#4caf50';
+                document.getElementById('level4Btn').disabled = false;
+                gameState.score += 50; updateHUD(); playSuccess();
+            }
+        }
+
+        // LEVEL 5: MAZE
+        let playerPos = { x: 0, y: 0 }, goalPos = { x: 4, y: 4 };
+        const obstacles = [{ x: 1, y: 0 }, { x: 1, y: 1 }, { x: 3, y: 1 }, { x: 0, y: 3 }, { x: 2, y: 3 }, { x: 3, y: 3 }];
+
+        function startMaze() {
+            playerPos = { x: 0, y: 0 };
+            renderMaze();
+            document.addEventListener('keydown', handleMazeKey);
+        }
+
+        function renderMaze() {
+            const grid = document.getElementById('mazeGrid');
+            grid.innerHTML = '';
+            for (let y = 0; y < 5; y++) {
+                for (let x = 0; x < 5; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'maze-cell';
+                    if (x === playerPos.x && y === playerPos.y) { cell.classList.add('player'); cell.textContent = '👨‍💻'; }
+                    else if (x === goalPos.x && y === goalPos.y) { cell.classList.add('goal'); cell.textContent = '💖'; }
+                    else if (obstacles.some(o => o.x === x && o.y === y)) { cell.classList.add('obstacle'); cell.textContent = '🚫'; }
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function handleMazeKey(e) {
+            const keyMap = { 'ArrowUp': 'up', 'ArrowDown': 'down', 'ArrowLeft': 'left', 'ArrowRight': 'right', 'w': 'up', 's': 'down', 'a': 'left', 'd': 'right' };
+            if (keyMap[e.key]) { e.preventDefault(); movePlayer(keyMap[e.key]); }
+        }
+
+        function movePlayer(direction) {
+            let newX = playerPos.x, newY = playerPos.y;
+            if (direction === 'up') newY--; if (direction === 'down') newY++;
+            if (direction === 'left') newX--; if (direction === 'right') newX++;
+            if (newX < 0 || newX > 4 || newY < 0 || newY > 4) return;
+            if (obstacles.some(o => o.x === newX && o.y === newY)) { playFail(); return; }
+            playerPos = { x: newX, y: newY }; playSound(300, 0.1); renderMaze();
+            if (playerPos.x === goalPos.x && playerPos.y === goalPos.y) {
+                gameState.score += 100; gameState.progress = 100; updateHUD(); playLevelUp();
+                document.getElementById('level5Btn').disabled = false;
+                document.removeEventListener('keydown', handleMazeKey);
+            }
+        }
+
+        // PROPOSAL
+        const escapeMessages = ["Nice try! 😄", "Nope! 💕", "Error 404!", "Can't escape! 💖", "Please? 🥺", "Game over for No!", "Try YES! 💕", "YES required!", "No not found!", "Just say YES! 💖"];
+        let escapeCount = 0;
+
+        function showProposal() { showScreen('proposalScreen'); playLevelUp(); }
+
+        function escapeNo() {
+            const btn = document.getElementById('noBtn');
+            const container = btn.parentElement;
+            escapeCount++;
+            const msg = document.getElementById('escapeMsg');
+            msg.textContent = escapeMessages[escapeCount % escapeMessages.length];
+            msg.classList.add('show'); setTimeout(() => msg.classList.remove('show'), 1500);
+            const maxX = container.offsetWidth / 2 - 40;
+            btn.style.transform = `translate(${(Math.random() - 0.5) * maxX * 2}px, ${Math.random() * 60 - 30}px)`;
+            playSound(200, 0.1);
+            if (escapeCount > 8) { btn.textContent = 'OK, YES! 💕'; btn.onclick = sayYes; btn.onmouseover = null; }
+        }
+
+        function sayYes() { showScreen('victoryScreen'); createConfetti(); playLevelUp(); setTimeout(() => playLevelUp(), 500); }
+
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ff8a80', '#ffab91', '#ffd54f', '#81d4fa', '#b39ddb'];
+            for (let i = 0; i < 80; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = (5 + Math.random() * 8) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 30);
+            }
+        }
+
+        // Touch swipe for maze
+        let touchStartX, touchStartY;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; });
+        document.addEventListener('touchend', (e) => {
+            if (!touchStartX || !touchStartY) return;
+            const diffX = e.changedTouches[0].clientX - touchStartX;
+            const diffY = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(diffX) > Math.abs(diffY)) { if (diffX > 30) movePlayer('right'); else if (diffX < -30) movePlayer('left'); }
+            else { if (diffY > 30) movePlayer('down'); else if (diffY < -30) movePlayer('up'); }
+            touchStartX = null; touchStartY = null;
+        });
+    </script>
+</body>
+</html>

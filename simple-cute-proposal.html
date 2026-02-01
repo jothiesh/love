@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 For You</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .hearts {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .heart {
+            position: absolute;
+            opacity: 0.6;
+            animation: float 8s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 30px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 380px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .emoji {
+            font-size: 80px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #e74c3c;
+            margin: 25px 0 15px;
+        }
+
+        p {
+            color: #666;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-yes {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #ff6b9d, #ee5a85);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255,107,157,0.4);
+            transition: transform 0.2s;
+        }
+
+        .btn-yes:hover { transform: scale(1.05); }
+
+        .btn-no {
+            padding: 15px 25px;
+            background: #f0f0f0;
+            color: #999;
+            border: none;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .result {
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .result-emoji {
+            font-size: 100px;
+        }
+
+        .result h1 {
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+
+        .result p {
+            margin-bottom: 0;
+        }
+
+        .confetti {
+            position: fixed;
+            font-size: 25px;
+            top: -30px;
+            animation: fall 3s linear forwards;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hearts" id="hearts"></div>
+
+    <div class="card">
+        <!-- Question -->
+        <div id="question">
+            <div class="emoji">🥺💕</div>
+            <h1>Hey, Can I Ask You Something?</h1>
+            <p>
+                I really really like you...<br>
+                Like, a lot! 🙈<br><br>
+                Will you be my girlfriend? 💖
+            </p>
+            <div class="buttons">
+                <button class="btn-yes" onclick="sayYes()">Yes! 💕</button>
+                <button class="btn-no" id="noBtn" onmouseover="moveNo()" onclick="moveNo()">No</button>
+            </div>
+        </div>
+
+        <!-- Result -->
+        <div class="result" id="result">
+            <div class="result-emoji">🥰💖</div>
+            <h1>Yay!! I'm So Happy!</h1>
+            <p>
+                You just made me the<br>
+                happiest person ever! 🎉<br><br>
+                I promise to always<br>
+                make you smile! 💕
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Floating hearts
+        const hearts = ['💕', '💖', '💗', '❤️', '🌸'];
+        const container = document.getElementById('hearts');
+        
+        for (let i = 0; i < 15; i++) {
+            createHeart();
+        }
+        
+        setInterval(createHeart, 2000);
+
+        function createHeart() {
+            const h = document.createElement('div');
+            h.className = 'heart';
+            h.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            h.style.left = Math.random() * 100 + '%';
+            h.style.fontSize = (15 + Math.random() * 20) + 'px';
+            h.style.animationDuration = (6 + Math.random() * 6) + 's';
+            h.style.animationDelay = Math.random() * 3 + 's';
+            container.appendChild(h);
+            setTimeout(() => h.remove(), 15000);
+        }
+
+        // Move No button
+        const noMessages = ['Hehe 🙈', 'Nope!', 'Try again!', 'Can\'t click me!', '💕'];
+        let noCount = 0;
+
+        function moveNo() {
+            const btn = document.getElementById('noBtn');
+            noCount++;
+            btn.textContent = noMessages[noCount % noMessages.length];
+            btn.style.position = 'fixed';
+            btn.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            btn.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+            btn.style.zIndex = '1000';
+        }
+
+        // Say Yes
+        function sayYes() {
+            document.getElementById('question').style.display = 'none';
+            document.getElementById('result').classList.add('show');
+            document.getElementById('noBtn').style.display = 'none';
+            
+            // Confetti
+            const emojis = ['💕', '💖', '🎉', '✨', '❤️', '🥰'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const c = document.createElement('div');
+                    c.className = 'confetti';
+                    c.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    c.style.left = Math.random() * 100 + 'vw';
+                    document.body.appendChild(c);
+                    setTimeout(() => c.remove(), 3000);
+                }, i * 60);
+            }
+        }
+    </script>
+</body>
+</html>

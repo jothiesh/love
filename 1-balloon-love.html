@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎈 Pop Me!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Quicksand',sans-serif;background:linear-gradient(to bottom,#87CEEB,#E0F6FF);min-height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+        .balloon{width:120px;height:150px;background:linear-gradient(135deg,#ff6b9d,#ee3a6d);border-radius:50% 50% 50% 50%;position:relative;cursor:pointer;animation:float 3s ease-in-out infinite;box-shadow:inset -20px -10px 30px rgba(0,0,0,0.2)}
+        .balloon::before{content:'';position:absolute;bottom:-40px;left:50%;width:2px;height:40px;background:#666;transform:translateX(-50%)}
+        .balloon::after{content:'';position:absolute;bottom:-50px;left:50%;width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:15px solid #ff6b9d;transform:translateX(-50%)}
+        .balloon .shine{position:absolute;top:20px;left:25px;width:20px;height:30px;background:rgba(255,255,255,0.4);border-radius:50%;transform:rotate(-30deg)}
+        .hint{position:absolute;bottom:30%;font-size:1.2rem;color:#ff6b9d;animation:pulse 1.5s infinite}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+        .message{display:none;text-align:center;animation:popIn 0.5s ease}
+        .message.show{display:block}
+        .message h1{font-size:2.5rem;color:#ff6b9d;margin-bottom:20px}
+        .message p{font-size:1.3rem;color:#666;margin-bottom:30px}
+        .hearts{position:fixed;pointer-events:none}
+        .heart{position:absolute;font-size:20px;animation:rise 3s forwards}
+        @keyframes rise{to{transform:translateY(-100vh);opacity:0}}
+        @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+        .btn{padding:15px 40px;background:linear-gradient(135deg,#ff6b9d,#ee3a6d);color:#fff;border:none;border-radius:30px;font-size:1.1rem;font-family:inherit;cursor:pointer;box-shadow:0 10px 30px rgba(255,107,157,0.4)}
+        .btn:hover{transform:scale(1.05)}
+        .container{text-align:center}
+        .pop-particles{position:absolute;pointer-events:none}
+        .particle{position:absolute;width:10px;height:10px;border-radius:50%;animation:explode 0.6s forwards}
+        @keyframes explode{to{transform:translate(var(--x),var(--y));opacity:0}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="balloon" id="balloon" onclick="pop()">
+            <div class="shine"></div>
+        </div>
+        <p class="hint" id="hint">Tap the balloon! 🎈</p>
+        <div class="message" id="message">
+            <h1>I Love You! 💕</h1>
+            <p>You make my heart float like this balloon 🎈</p>
+            <button class="btn" onclick="reset()">Float Again 💖</button>
+        </div>
+    </div>
+    <div class="hearts" id="hearts"></div>
+    <script>
+        function pop(){
+            const b=document.getElementById('balloon');
+            const h=document.getElementById('hint');
+            const m=document.getElementById('message');
+            // Create pop particles
+            const colors=['#ff6b9d','#ffb6c1','#ff69b4','#ee3a6d','#ffd1dc'];
+            for(let i=0;i<20;i++){
+                const p=document.createElement('div');
+                p.className='particle';
+                p.style.background=colors[Math.floor(Math.random()*colors.length)];
+                p.style.left=b.offsetLeft+60+'px';
+                p.style.top=b.offsetTop+75+'px';
+                p.style.setProperty('--x',(Math.random()-0.5)*200+'px');
+                p.style.setProperty('--y',(Math.random()-0.5)*200+'px');
+                document.body.appendChild(p);
+                setTimeout(()=>p.remove(),600);
+            }
+            b.style.display='none';
+            h.style.display='none';
+            m.classList.add('show');
+            // Floating hearts
+            for(let i=0;i<30;i++){
+                setTimeout(()=>{
+                    const heart=document.createElement('div');
+                    heart.className='heart';
+                    heart.textContent='💕';
+                    heart.style.left=Math.random()*100+'vw';
+                    heart.style.bottom='0';
+                    document.getElementById('hearts').appendChild(heart);
+                    setTimeout(()=>heart.remove(),3000);
+                },i*100);
+            }
+        }
+        function reset(){
+            document.getElementById('balloon').style.display='block';
+            document.getElementById('hint').style.display='block';
+            document.getElementById('message').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

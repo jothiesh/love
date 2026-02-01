@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕹️ MISSION: ETERNAL | QUEST START</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@300;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE CYBER-QUEST DESIGN SYSTEM
+        ================================================================ */
+        :root {
+            --neon-pink: #ff007f;
+            --neon-blue: #00f2ff;
+            --terminal-green: #39ff14;
+            --bg-dark: #05050a;
+            --font-main: 'Orbitron', sans-serif;
+            --font-data: 'JetBrains Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            font-family: var(--font-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- THE HUD (HEADS UP DISPLAY) --- */
+        #gameHUD {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            border: 20px solid transparent;
+            border-image: linear-gradient(to bottom right, var(--neon-blue), transparent) 1;
+            z-index: 100;
+        }
+
+        .stats {
+            position: absolute;
+            top: 40px; left: 40px;
+            font-family: var(--font-data);
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+        }
+
+        .affinity-bar-container {
+            width: 300px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-top: 10px;
+            position: relative;
+        }
+
+        #affinityFill {
+            width: 0%;
+            height: 100%;
+            background: var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink);
+            transition: width 0.5s ease;
+        }
+
+        /* --- THE DIALOGUE BOX --- */
+        #dialogueContainer {
+            width: 700px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--neon-blue);
+            padding: 30px;
+            position: relative;
+            z-index: 50;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+        }
+
+        #speakerName {
+            color: var(--neon-pink);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        #textDisplay {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            min-height: 80px;
+            margin-bottom: 30px;
+            font-family: var(--font-data);
+        }
+
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .choice-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            color: var(--neon-blue);
+            padding: 10px 20px;
+            text-align: left;
+            font-family: var(--font-data);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .choice-btn:hover {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: var(--neon-blue);
+            padding-left: 30px;
+        }
+
+        /* --- BACKGROUND VFX --- */
+        canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        /* --- FINAL LEVEL --- */
+        #bossStage {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, var(--neon-pink), #000);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .glitch-text {
+            font-size: 4rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            animation: glitch 0.2s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(2px, 2px); }
+            50% { transform: translate(-2px, -2px); color: var(--neon-blue); }
+            100% { transform: translate(2px, -2px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gameHUD">
+        <div class="stats">
+            PLAYER: BELOVED_ONE<br>
+            LEVEL: ETERNAL<br>
+            AFFINITY GAUGE
+            <div class="affinity-bar-container"><div id="affinityFill"></div></div>
+        </div>
+    </div>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div id="dialogueContainer">
+        <div id="speakerName">SYSTEM_MSG // ENCRYPTED</div>
+        <div id="textDisplay">Initializing connection... Data stream stabilized. Are you ready to begin the final quest?</div>
+        <div class="choices" id="choicesContainer">
+            <button class="choice-btn" onclick="nextStep(1)">[ START SESSION ]</button>
+            <button class="choice-btn" onclick="nextStep(0)">[ SYSTEM BYPASS ]</button>
+        </div>
+    </div>
+
+    <div id="bossStage">
+        <div class="glitch-text">CRITICAL CHOICE</div>
+        <p style="margin-top: 20px; font-family: var(--font-data); letter-spacing: 5px;">WILL YOU BE MY PLAYER 2 FOREVER?</p>
+        <div style="margin-top: 50px; display: flex; gap: 30px;">
+            <button class="choice-btn" style="border-color: var(--neon-pink); color: white;" onclick="alert('ACHIEVEMENT UNLOCKED: TRUE LOVE')">YES [ ACCEPT ]</button>
+            <button class="choice-btn" onclick="alert('REBOOTING...')">YES [ RE-INITIALIZE ]</button>
+        </div>
+    </div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE GAME STATE ENGINE
+        ================================================================ */
+
+        const textDisplay = document.getElementById('textDisplay');
+        const choicesContainer = document.getElementById('choicesContainer');
+        const affinityFill = document.getElementById('affinityFill');
+        const bossStage = document.getElementById('bossStage');
+        
+        let affinity = 0;
+        let currentStep = 0;
+
+        const script = [
+            {
+                text: "The world is full of background characters, but I found my lead. Do you remember the moment the 'story' started?",
+                choices: [
+                    { t: "It was written in the stars.", a: 20 },
+                    { t: "I knew it from Level 1.", a: 25 }
+                ]
+            },
+            {
+                text: "Every mission is harder alone. I've been carrying a secret inventory item. It's meant for you. Want to see it?",
+                choices: [
+                    { t: "Open the inventory.", a: 25 },
+                    { t: "Unlock the secret.", a: 30 }
+                ]
+            },
+            {
+                text: "Affinity at critical levels. The system is overheating. There's only one way to stabilize the connection...",
+                choices: [
+                    { t: "Initialize Final Sequence", a: 20 },
+                    { t: "Seal the Bond", a: 30 }
+                ]
+            }
+        ];
+
+        function nextStep(bonus) {
+            if (currentStep < script.length) {
+                const step = script[currentStep];
+                typeWriter(step.text);
+                
+                choicesContainer.innerHTML = '';
+                step.choices.forEach((c, i) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-btn';
+                    btn.innerText = c.t;
+                    btn.onclick = () => {
+                        affinity += c.a;
+                        updateAffinity();
+                        currentStep++;
+                        nextStep();
+                    };
+                    choicesContainer.appendChild(btn);
+                });
+            } else {
+                triggerBoss();
+            }
+        }
+
+        function typeWriter(text) {
+            textDisplay.innerHTML = '';
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    textDisplay.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 30);
+                }
+            }
+            type();
+        }
+
+        function updateAffinity() {
+            affinityFill.style.width = affinity + '%';
+        }
+
+        function triggerBoss() {
+            bossStage.style.display = 'flex';
+        }
+
+        // --- BG ANIMATION ---
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        function draw() {
+            ctx.fillStyle = 'rgba(5, 5, 10, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00f2ff';
+            for(let i=0; i<20; i++) {
+                ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 2, 2);
+            }
+            requestAnimationFrame(draw);
+        }
+        initCanvas();
+        draw();
+
+    </script>
+</body>
+</html>

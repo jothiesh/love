@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Catch My Love!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(to bottom,#ffecd2,#fcb69f);min-height:100vh;overflow:hidden;user-select:none}
+        .game-header{position:fixed;top:0;left:0;right:0;padding:15px;background:rgba(255,255,255,0.9);display:flex;justify-content:space-between;align-items:center;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+        .score{font-size:1.2rem;color:#e74c3c}
+        .score span{font-size:1.5rem}
+        .game-area{position:fixed;top:60px;left:0;right:0;bottom:80px}
+        .falling-emoji{position:absolute;font-size:40px;cursor:pointer;animation:fall linear forwards;transition:transform 0.1s}
+        .falling-emoji:hover{transform:scale(1.3)}
+        @keyframes fall{0%{top:-50px;opacity:1}100%{top:calc(100vh - 60px);opacity:0.5}}
+        .catcher{position:fixed;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,#ff6b9d,transparent);display:flex;align-items:center;justify-content:center}
+        .basket{font-size:60px;animation:bounce 1s ease infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .caught{position:fixed;font-size:50px;animation:caught 0.5s forwards;pointer-events:none}
+        @keyframes caught{0%{transform:scale(1);opacity:1}100%{transform:scale(2) translateY(-50px);opacity:0}}
+        .start-screen,.end-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;text-align:center;padding:20px}
+        .start-screen h1,.end-screen h1{font-size:2rem;color:#e74c3c;margin-bottom:20px}
+        .start-screen p,.end-screen p{color:#666;margin-bottom:30px;font-size:1.1rem;line-height:1.6}
+        .btn{padding:15px 40px;background:linear-gradient(135deg,#ff6b9d,#ee3a6d);color:#fff;border:none;border-radius:50px;font-family:inherit;font-size:1.2rem;cursor:pointer;box-shadow:0 10px 30px rgba(255,107,157,0.4)}
+        .btn:hover{transform:scale(1.05)}
+        .end-screen{display:none}
+        .end-screen.show{display:flex}
+        .start-screen.hide{display:none}
+        .final-score{font-size:4rem;color:#ff6b9d;margin:20px 0}
+        .love-message{background:#ffe4ec;padding:20px;border-radius:15px;margin:20px 0}
+        .instructions{font-size:2rem;margin:20px 0}
+    </style>
+</head>
+<body>
+    <div class="start-screen" id="startScreen">
+        <h1>💕 Catch My Love! 💕</h1>
+        <p>Tap the falling hearts to catch my love!<br>Catch as many as you can in 20 seconds!</p>
+        <div class="instructions">👆 TAP THE HEARTS! 💖</div>
+        <button class="btn" onclick="startGame()">Start Game 💕</button>
+    </div>
+    
+    <div class="game-header">
+        <div class="score">💖 <span id="score">0</span></div>
+        <div class="score">⏱️ <span id="timer">20</span>s</div>
+    </div>
+    
+    <div class="game-area" id="gameArea"></div>
+    
+    <div class="catcher">
+        <div class="basket">🧺💕</div>
+    </div>
+    
+    <div class="end-screen" id="endScreen">
+        <h1>🎉 Time's Up! 🎉</h1>
+        <p>You caught:</p>
+        <div class="final-score" id="finalScore">0</div>
+        <p>pieces of my love!</p>
+        <div class="love-message" id="loveMessage"></div>
+        <button class="btn" onclick="restartGame()">Play Again 💕</button>
+    </div>
+    
+    <script>
+        const hearts=['❤️','💕','💖','💗','💝','💘','🥰','😍'];
+        let score=0;
+        let timeLeft=20;
+        let gameInterval;
+        let spawnInterval;
+        let isPlaying=false;
+        
+        function startGame(){
+            document.getElementById('startScreen').classList.add('hide');
+            document.getElementById('endScreen').classList.remove('show');
+            score=0;
+            timeLeft=20;
+            isPlaying=true;
+            document.getElementById('score').textContent=score;
+            document.getElementById('timer').textContent=timeLeft;
+            document.getElementById('gameArea').innerHTML='';
+            
+            // Start spawning hearts
+            spawnInterval=setInterval(spawnHeart,400);
+            
+            // Start timer
+            gameInterval=setInterval(()=>{
+                timeLeft--;
+                document.getElementById('timer').textContent=timeLeft;
+                if(timeLeft<=0)endGame();
+            },1000);
+        }
+        
+        function spawnHeart(){
+            if(!isPlaying)return;
+            
+            const heart=document.createElement('div');
+            heart.className='falling-emoji';
+            heart.textContent=hearts[Math.floor(Math.random()*hearts.length)];
+            heart.style.left=Math.random()*85+'%';
+            heart.style.animationDuration=(2+Math.random()*2)+'s';
+            
+            heart.onclick=function(e){
+                if(!isPlaying)return;
+                catchHeart(e,this);
+            };
+            
+            document.getElementById('gameArea').appendChild(heart);
+            
+            // Remove after animation
+            setTimeout(()=>heart.remove(),4000);
+        }
+        
+        function catchHeart(e,el){
+            score++;
+            document.getElementById('score').textContent=score;
+            
+            // Create caught animation
+            const caught=document.createElement('div');
+            caught.className='caught';
+            caught.textContent='💕';
+            caught.style.left=e.clientX-25+'px';
+            caught.style.top=e.clientY-25+'px';
+            document.body.appendChild(caught);
+            setTimeout(()=>caught.remove(),500);
+            
+            el.remove();
+        }
+        
+        function endGame(){
+            isPlaying=false;
+            clearInterval(gameInterval);
+            clearInterval(spawnInterval);
+            
+            document.getElementById('finalScore').textContent=score;
+            
+            // Love message based on score
+            let msg;
+            if(score>=30)msg='😍 WOW! You caught ALL my love! You\'re amazing! I LOVE YOU SO MUCH! 💕💕💕';
+            else if(score>=20)msg='🥰 Great job! You really know how to catch my heart! I love you! 💖';
+            else if(score>=10)msg='😊 Nice try! My love is always here for you! Keep catching! 💕';
+            else msg='💕 Every heart you catch is my love for you! Try again to catch more! ❤️';
+            
+            document.getElementById('loveMessage').innerHTML=msg;
+            document.getElementById('endScreen').classList.add('show');
+        }
+        
+        function restartGame(){
+            startGame();
+        }
+    </script>
+</body>
+</html>

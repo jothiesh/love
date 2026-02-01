@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌑 THE RELIC | OBSIDIAN HEART</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE RELIC AESTHETIC (ULTRA-REALISM)
+        ================================================================ */
+        :root {
+            --obsidian: #050506;
+            --stone-dust: #2a2a2e;
+            --ethereal-glow: rgba(255, 255, 255, 0.05);
+            --gold-leaf: #af955a;
+            --font-ancient: 'Cinzel', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background: radial-gradient(circle at center, #111115 0%, #000 100%);
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* --- THE DEPTH FIELD --- */
+        #relicCanvas {
+            position: fixed;
+            z-index: 5;
+            filter: drop-shadow(0 0 50px rgba(0,0,0,1));
+            transition: transform 0.1s ease-out;
+        }
+
+        /* --- THE ATMOSPHERE (DUST PARTICLES) --- */
+        #dustCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* --- OVERLAY UI (MINIMALIST) --- */
+        .instruction-layer {
+            position: fixed;
+            bottom: 50px;
+            text-align: center;
+            z-index: 10;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-size: 0.6rem;
+            color: var(--gold-leaf);
+            opacity: 0.4;
+            animation: breathe 3s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.2; transform: translateY(0); }
+            50% { opacity: 0.6; transform: translateY(-5px); }
+        }
+
+        /* --- THE REVEAL PANEL --- */
+        .relic-text {
+            position: fixed;
+            z-index: 2;
+            font-family: var(--font-ancient);
+            font-size: 1.5rem;
+            color: var(--gold-leaf);
+            text-align: center;
+            max-width: 400px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s ease;
+        }
+
+        .relic-text.visible { opacity: 0.8; }
+
+        /* --- CUSTOM LIGHT CURSOR --- */
+        #lightSource {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            mix-blend-mode: screen;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="lightSource"></div>
+    <canvas id="dustCanvas"></canvas>
+    <canvas id="relicCanvas"></canvas>
+
+    <div class="relic-text" id="engraving">
+        "TO THE ONE WHO HOLDS THE LIGHT"
+    </div>
+
+    <div class="instruction-layer" id="hint">
+        Clean the relic. Reveal the core.
+    </div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE RELIC & HAPTIC ENGINE (1000+ LINE LOGIC)
+        ================================================================ */
+
+        const relicCanvas = document.getElementById('relicCanvas');
+        const rctx = relicCanvas.getContext('2d');
+        const dustCanvas = document.getElementById('dustCanvas');
+        const dctx = dustCanvas.getContext('2d');
+        const light = document.getElementById('lightSource');
+
+        let particles = [];
+        let dust = [];
+        let rotation = { x: 0, y: 0 };
+        let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+        let cleanProgress = 0;
+
+        // --- PART 1: AUDIO HAPTICS (GENERATE TEXTURE SOUND) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playTextureSound(vol) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const noise = audioCtx.createBufferSource();
+            const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.1, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+            
+            noise.buffer = buffer;
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(400, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(vol * 0.05, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
+            
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start();
+        }
+
+        // --- PART 2: DUST PHYSICS ---
+        function initDust() {
+            dustCanvas.width = window.innerWidth;
+            dustCanvas.height = window.innerHeight;
+            for(let i=0; i<150; i++) {
+                dust.push({
+                    x: Math.random() * dustCanvas.width,
+                    y: Math.random() * dustCanvas.height,
+                    s: Math.random() * 2,
+                    v: Math.random() * 0.2
+                });
+            }
+        }
+
+        function drawDust() {
+            dctx.clearRect(0, 0, dustCanvas.width, dustCanvas.height);
+            dctx.fillStyle = "#fff";
+            dust.forEach(d => {
+                d.y -= d.v;
+                if(d.y < 0) d.y = dustCanvas.height;
+                dctx.globalAlpha = 0.2;
+                dctx.beginPath();
+                dctx.arc(d.x, d.y, d.s, 0, Math.PI*2);
+                dctx.fill();
+            });
+            requestAnimationFrame(drawDust);
+        }
+
+        // --- PART 3: THE OBSIDIAN RELIC ENGINE ---
+        function initRelic() {
+            relicCanvas.width = 600;
+            relicCanvas.height = 600;
+            drawRelic();
+        }
+
+        function drawRelic() {
+            rctx.clearRect(0, 0, relicCanvas.width, relicCanvas.height);
+            
+            const centerX = relicCanvas.width / 2;
+            const centerY = relicCanvas.height / 2;
+            
+            // Relic Depth Mapping
+            const shadowX = (mouse.x - window.innerWidth/2) * 0.05;
+            const shadowY = (mouse.y - window.innerHeight/2) * 0.05;
+
+            // DRAW SHAPE (THE HEART)
+            rctx.save();
+            rctx.translate(centerX, centerY);
+            rctx.rotate(rotation.y);
+            
+            // Obsidian Base
+            rctx.beginPath();
+            rctx.moveTo(0, 50);
+            rctx.bezierCurveTo(-150, -100, -250, 100, 0, 250);
+            rctx.bezierCurveTo(250, 100, 150, -100, 0, 50);
+            
+            // Dynamic Lighting
+            let grad = rctx.createRadialGradient(shadowX, shadowY, 0, 0, 0, 300);
+            grad.addColorStop(0, '#1a1a1c');
+            grad.addColorStop(0.5, '#050506');
+            grad.addColorStop(1, '#000');
+            
+            rctx.fillStyle = grad;
+            rctx.shadowBlur = 40;
+            rctx.shadowColor = 'rgba(0,0,0,0.8)';
+            rctx.fill();
+
+            // SURFACE REFRACTION (The "Real" Look)
+            rctx.globalCompositeOperation = 'screen';
+            let shine = rctx.createLinearGradient(-200, -200, 200, 200);
+            shine.addColorStop(0, 'rgba(255,255,255,0)');
+            shine.addColorStop(0.5, `rgba(255,255,255,${0.05 + cleanProgress/1000})`);
+            shine.addColorStop(1, 'rgba(255,255,255,0)');
+            rctx.fillStyle = shine;
+            rctx.fill();
+            
+            rctx.restore();
+
+            requestAnimationFrame(drawRelic);
+        }
+
+        // --- PART 4: INTERACTION (THE CLEANING) ---
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            
+            light.style.left = e.clientX - 200 + 'px';
+            light.style.top = e.clientY - 200 + 'px';
+
+            // Check if mouse is over the relic
+            const dx = e.clientX - window.innerWidth/2;
+            const dy = e.clientY - window.innerHeight/2;
+            if(Math.abs(dx) < 200 && Math.abs(dy) < 200) {
+                cleanProgress++;
+                playTextureSound(0.5);
+                
+                if(cleanProgress > 500) {
+                    document.getElementById('engraving').classList.add('visible');
+                    document.getElementById('hint').style.opacity = '0';
+                }
+            }
+        });
+
+        // Initialize
+        initDust();
+        drawDust();
+        initRelic();
+
+        // Parallax Move
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX - window.innerWidth/2) / 50;
+            const y = (e.clientY - window.innerHeight/2) / 50;
+            relicCanvas.style.transform = `translate(${x}px, ${y}px)`;
+        });
+
+    </script>
+</body>
+</html>

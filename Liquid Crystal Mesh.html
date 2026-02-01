@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ RESONANCE | FOR YOU</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,700&family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE ETHEREAL DESIGN SYSTEM
+        ================================================================
+        */
+        :root {
+            --void: #050508;
+            --ethereal-blue: #a2d2ff;
+            --ethereal-pink: #ffafbd;
+            --glass: rgba(255, 255, 255, 0.05);
+            --font-main: 'Montserrat', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--void);
+            color: #fff;
+            font-family: var(--font-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ================================================================
+        2. LIQUID CRYSTAL MESH (CANVAS)
+        ================================================================
+        */
+        #liquidCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* ================================================================
+        3. THE INTERACTIVE DECK
+        ================================================================
+        */
+        .deck {
+            width: 80vw;
+            height: 70vh;
+            max-width: 1000px;
+            background: var(--glass);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .stage {
+            display: none;
+            animation: fadeIn 1.5s ease-out forwards;
+        }
+
+        .stage.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            font-style: italic;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--ethereal-blue), var(--ethereal-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-weight: 200;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 40px;
+        }
+
+        /* ================================================================
+        4. INTERACTIVE NODES
+        ================================================================
+        */
+        .node-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .node {
+            width: 80px; height: 80px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .node:hover {
+            transform: scale(1.2);
+            border-color: var(--ethereal-blue);
+            background: rgba(162, 210, 255, 0.1);
+            box-shadow: 0 0 30px var(--ethereal-blue);
+        }
+
+        .node.completed {
+            background: var(--ethereal-blue);
+            border-color: var(--ethereal-blue);
+            color: var(--void);
+            box-shadow: 0 0 50px var(--ethereal-blue);
+        }
+
+        /* ================================================================
+        5. BUTTONS & UI
+        ================================================================
+        */
+        .btn-action {
+            padding: 15px 40px;
+            background: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: 0.4s;
+            margin-top: 20px;
+        }
+
+        .btn-action:hover {
+            background: #fff;
+            color: var(--void);
+            box-shadow: 0 0 40px rgba(255,255,255,0.3);
+        }
+
+        .hud {
+            position: absolute;
+            bottom: 40px;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="liquidCanvas"></canvas>
+
+    <div class="deck">
+        <div class="hud">RES_VER: 2026.02 // CORE_SYNC: ACTIVE</div>
+
+        <div id="stage1" class="stage active">
+            <h1>Resonance.</h1>
+            <p>Our frequencies are beginning to align.</p>
+            <button class="btn-action" onclick="toStage(2)">Initiate Connection</button>
+        </div>
+
+        <div id="stage2" class="stage">
+            <h1>Sync the Soul.</h1>
+            <p>Activate the nodes of my heart.</p>
+            <div class="node-container">
+                <div class="node" id="n1" onclick="completeNode('n1')">✨</div>
+                <div class="node" id="n2" onclick="completeNode('n2')">🌙</div>
+                <div class="node" id="n3" onclick="completeNode('n3')">🌊</div>
+            </div>
+        </div>
+
+        <div id="stage3" class="stage">
+            <h1>It's You.</h1>
+            <p>Always has been. Always will be.</p>
+            <div style="font-family: var(--font-serif); font-style: italic; font-size: 1.5rem; margin-top: 20px; color: var(--ethereal-pink);">
+                "In a sea of people, my eyes will always search for you."
+            </div>
+            <button class="btn-action" onclick="toStage(1)">Replay the Moment</button>
+        </div>
+    </div>
+
+    <script>
+        /* ================================================================
+        6. JAVASCRIPT: THE LIQUID PHYSICS ENGINE
+        ================================================================
+        */
+
+        const canvas = document.getElementById('liquidCanvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        let mouse = { x: -100, y: -100 };
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            points = [];
+            for (let i = 0; i < 60; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    baseX: 0,
+                    baseY: 0,
+                    vx: Math.random() * 2 - 1,
+                    vy: Math.random() * 2 - 1,
+                    r: Math.random() * 3 + 1
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            points.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                // Bounce off edges
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                // Connection lines based on mouse proximity
+                points.forEach((p2, j) => {
+                    let dx = p.x - p2.x;
+                    let dy = p.y - p2.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(162, 210, 255, ${1 - dist/150})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                });
+
+                // Draw point
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(255, 175, 189, 0.5)";
+                ctx.fill();
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        // STAGE LOGIC
+        function toStage(num) {
+            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+            document.getElementById('stage' + num).classList.add('active');
+        }
+
+        let completed = 0;
+        function completeNode(id) {
+            const el = document.getElementById(id);
+            if (!el.classList.contains('completed')) {
+                el.classList.add('completed');
+                completed++;
+                if (completed === 3) {
+                    setTimeout(() => {
+                        toStage(3);
+                        completed = 0;
+                        document.querySelectorAll('.node').forEach(n => n.classList.remove('completed'));
+                    }, 800);
+                }
+            }
+        }
+
+        init();
+        draw();
+        window.addEventListener('resize', init);
+    </script>
+</body>
+</html>

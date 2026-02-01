@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕯️ THE VIGIL | A MOMENT FOR US</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,600&family=Inter:wght@100;300;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #faf9f6;
+            --text-charcoal: #2d2d2d;
+            --flame-core: #ffffff;
+            --flame-outer: #ff9d00;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-charcoal);
+            font-family: var(--font-sans);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- BACKGROUND GRADIENT --- */
+        #ambientCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+        }
+
+        /* --- FROST REVEAL LAYER --- */
+        #frostCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5;
+            cursor: cell;
+        }
+
+        /* --- THE CONTENT --- */
+        .content-layer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            padding: 40px;
+        }
+
+        h2 {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        h2.visible { opacity: 1; transform: translateY(0); }
+
+        .letter {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            line-height: 1.6;
+            opacity: 0;
+            transition: opacity 3s ease;
+        }
+
+        .letter.visible { opacity: 0.8; }
+
+        /* --- THE DIGITAL CANDLE --- */
+        .candle-container {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .candle-container.ready { opacity: 1; }
+
+        .flame {
+            width: 20px;
+            height: 35px;
+            background: var(--flame-core);
+            border-radius: 50% 50% 20% 20%;
+            position: relative;
+            box-shadow: 0 0 20px var(--flame-outer), 0 0 40px var(--flame-outer);
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        .candle-stick {
+            width: 12px;
+            height: 40px;
+            background: #e0e0e0;
+            margin-top: 5px;
+            border-radius: 2px;
+            box-shadow: inset 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        @keyframes flicker {
+            0% { transform: scale(1) rotate(-1deg); opacity: 0.9; }
+            100% { transform: scale(1.05) rotate(1deg); opacity: 1; }
+        }
+
+        .instruction {
+            margin-top: 15px;
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.4;
+        }
+
+        /* --- FINAL REVEAL STYLING --- */
+        .final-reveal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff;
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            animation: whiteOut 2s forwards;
+        }
+
+        @keyframes whiteOut {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="ambientCanvas"></canvas>
+    <canvas id="frostCanvas"></canvas>
+
+    <main class="content-layer">
+        <h2 id="mainTitle">Found me.</h2>
+        <div class="letter" id="mainLetter">
+            The glass is clear, but the moment isn't finished.<br>
+            A wish remains in the flame below.
+        </div>
+    </main>
+
+    <div class="candle-container" id="candle" onclick="extinguish()">
+        <div class="flame" id="flame"></div>
+        <div class="candle-stick"></div>
+        <div class="instruction">Hold to make a wish</div>
+    </div>
+
+    <div class="final-reveal" id="final">
+        <h1 style="font-family: var(--font-serif); font-style: italic; font-size: 3rem;">I am yours.</h1>
+        <p style="letter-spacing: 5px; margin-top: 20px; font-size: 0.7rem; opacity: 0.5;">HAPPY VALENTINE'S DAY</p>
+    </div>
+
+    <script>
+        // 1. DYNAMIC AMBIENT GRADIENT
+        const ambCanvas = document.getElementById('ambientCanvas');
+        const ambCtx = ambCanvas.getContext('2d');
+        let time = 0;
+
+        function drawAmbient() {
+            ambCanvas.width = window.innerWidth;
+            ambCanvas.height = window.innerHeight;
+            const r = Math.sin(time) * 15 + 245;
+            const g = Math.cos(time) * 10 + 240;
+            const b = 240;
+
+            const grad = ambCtx.createRadialGradient(
+                ambCanvas.width/2, ambCanvas.height/2, 0, 
+                ambCanvas.width/2, ambCanvas.height/2, ambCanvas.width
+            );
+            grad.addColorStop(0, `rgb(${r},${g},${b})`);
+            grad.addColorStop(1, '#d7ccc8');
+
+            ambCtx.fillStyle = grad;
+            ambCtx.fillRect(0, 0, ambCanvas.width, ambCanvas.height);
+            time += 0.005;
+            requestAnimationFrame(drawAmbient);
+        }
+
+        // 2. FROST REVEAL
+        const frostCanvas = document.getElementById('frostCanvas');
+        const fctx = frostCanvas.getContext('2d');
+        let wipeCount = 0;
+        let isWiping = false;
+
+        function initFrost() {
+            frostCanvas.width = window.innerWidth;
+            frostCanvas.height = window.innerHeight;
+            fctx.fillStyle = '#ffffff';
+            fctx.fillRect(0, 0, frostCanvas.width, frostCanvas.height);
+            fctx.globalCompositeOperation = 'destination-out';
+        }
+
+        function handleWipe(e) {
+            if(!isWiping) return;
+            const x = e.clientX || e.touches[0].clientX;
+            const y = e.clientY || e.touches[0].clientY;
+
+            fctx.beginPath();
+            const grad = fctx.createRadialGradient(x, y, 0, x, y, 70);
+            grad.addColorStop(0, 'rgba(255,255,255,1)');
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            fctx.fillStyle = grad;
+            fctx.arc(x, y, 70, 0, Math.PI * 2);
+            fctx.fill();
+
+            wipeCount++;
+            if(wipeCount > 400) {
+                document.getElementById('mainTitle').classList.add('visible');
+                document.getElementById('mainLetter').classList.add('visible');
+                document.getElementById('candle').classList.add('ready');
+            }
+        }
+
+        // 3. CANDLE LOGIC
+        let pressTimer;
+        function extinguish() {
+            const flame = document.getElementById('flame');
+            flame.style.animation = "none";
+            flame.style.transform = "scale(0)";
+            flame.style.transition = "transform 1.5s ease";
+            
+            setTimeout(() => {
+                document.getElementById('final').style.display = 'flex';
+            }, 1000);
+        }
+
+        // Event Bindings
+        frostCanvas.addEventListener('mousedown', () => isWiping = true);
+        window.addEventListener('mouseup', () => isWiping = false);
+        frostCanvas.addEventListener('mousemove', handleWipe);
+        
+        // Mobile Support
+        frostCanvas.addEventListener('touchstart', () => isWiping = true);
+        frostCanvas.addEventListener('touchmove', handleWipe);
+
+        drawAmbient();
+        initFrost();
+        window.addEventListener('resize', initFrost);
+    </script>
+</body>
+</html>

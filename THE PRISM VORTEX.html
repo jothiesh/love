@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌈 PRISM | ETERNAL RESONANCE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Montserrat:wght@100;400;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --void: #020205;
+            --gold: #d4af37;
+            --font-tech: 'Syncopate', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--void);
+            color: #fff;
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+        /* --- THE PRISM SINGULARITY --- */
+        #prismCursor {
+            position: fixed; width: 45px; height: 45px; border: 1px solid #fff;
+            transform: rotate(45deg); z-index: 100; pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.1s;
+        }
+        .core { width: 8px; height: 8px; background: #fff; box-shadow: 0 0 20px #fff; }
+
+        /* --- THE KINETIC QUOTES --- */
+        #quoteStage {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; pointer-events: none;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .q-line {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 4.5rem;
+            text-align: center;
+            opacity: 0;
+            filter: blur(20px);
+            transform: scale(0.8) translateY(50px);
+            transition: all 2s cubic-bezier(0.19, 1, 0.22, 1);
+            background: linear-gradient(90deg, #fff, #888, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+        }
+
+        .q-line.active { opacity: 1; filter: blur(0px); transform: scale(1) translateY(0); }
+
+        /* --- KEEPSAKE MODAL --- */
+        #keepsakeOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.98); color: #000;
+            animation: whiteOut 1.5s forwards;
+        }
+
+        @keyframes whiteOut { from { opacity: 0; } to { opacity: 1; } }
+
+        .certificate-box {
+            border: 3px solid #000; padding: 60px; text-align: center;
+            max-width: 700px; background: #fff; box-shadow: 0 0 100px rgba(0,0,0,0.1);
+        }
+
+        input[type="text"] {
+            border: none; border-bottom: 2px solid #000; padding: 15px;
+            font-family: var(--font-serif); font-size: 2rem; text-align: center;
+            width: 100%; outline: none; margin-bottom: 40px; background: transparent;
+        }
+
+        .btn-download {
+            background: #000; color: #fff; border: none;
+            padding: 20px 60px; font-family: var(--font-tech);
+            letter-spacing: 5px; cursor: pointer; transition: 0.4s;
+        }
+        .btn-download:hover { letter-spacing: 10px; background: #333; }
+
+        .hud {
+            position: fixed; bottom: 30px; font-family: var(--font-tech);
+            font-size: 0.6rem; letter-spacing: 5px; opacity: 0.4; z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="prismCursor"><div class="core"></div></div>
+    <canvas id="canvas"></canvas>
+
+    <div class="hud">RESONANCE MASS: <span id="mass">0</span> // CLICK TO DETONATE ETERNITY</div>
+
+    <div id="quoteStage">
+        <div class="q-line" id="line1">In every frequency,</div>
+        <div class="q-line" id="line2">In every color,</div>
+        <div class="q-line" id="line3" style="font-size: 5.5rem; font-weight: 900; -webkit-text-fill-color: white;">It was always you.</div>
+    </div>
+
+    <div id="keepsakeOverlay">
+        <div class="certificate-box">
+            <p style="font-family: var(--font-tech); font-size: 0.7rem; letter-spacing: 8px; margin-bottom: 30px;">THE FINAL FREQUENCY</p>
+            <h1 style="font-family: var(--font-serif); font-style: italic; font-size: 3rem; margin-bottom: 50px;">Validation of Infinite Love</h1>
+            <input type="text" id="partnerName" placeholder="Sign Your Name">
+            <button class="btn-download" onclick="exportKeepsake()">SEAL & DOWNLOAD</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        let particles = [];
+        let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+        let isShattered = false;
+        let resonance = 0;
+
+        // --- PARTICLE DYNAMICS ---
+        
+        class Particle {
+            constructor(x, y, hue, velocity = 5, isSupernova = false) {
+                this.x = x; this.y = y;
+                this.hue = hue;
+                this.isSupernova = isSupernova;
+                this.vx = (Math.random() - 0.5) * (isSupernova ? 40 : velocity);
+                this.vy = (Math.random() - 0.5) * (isSupernova ? 40 : velocity);
+                this.size = Math.random() * (isSupernova ? 8 : 3) + 1;
+                this.life = 1;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if(this.isSupernova) { this.vx *= 0.98; this.vy *= 0.98; }
+                this.life -= 0.008;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, ${this.life})`;
+                if(this.isSupernova) ctx.shadowBlur = 15; ctx.shadowColor = `hsla(${this.hue}, 100%, 50%, 0.5)`;
+                ctx.fill();
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = isShattered ? 'rgba(255,255,255,0.1)' : 'rgba(2, 2, 5, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach((p, i) => {
+                p.update(); p.draw();
+                if (p.life <= 0) particles.splice(i, 1);
+            });
+
+            if(!isShattered) {
+                document.getElementById('mass').innerText = particles.length;
+                resonance = (resonance + 2) % 360;
+                document.getElementById('prismCursor').style.transform = `rotate(${resonance}deg)`;
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // --- INTERACTION ---
+        window.addEventListener('mousemove', (e) => {
+            if(isShattered) return;
+            mouse.x = e.clientX; mouse.y = e.clientY;
+            document.getElementById('prismCursor').style.left = e.clientX - 22 + 'px';
+            document.getElementById('prismCursor').style.top = e.clientY - 22 + 'px';
+            for(let i=0; i<6; i++) particles.push(new Particle(e.clientX, e.clientY, resonance));
+        });
+
+        window.addEventListener('mousedown', () => {
+            if(particles.length < 300 || isShattered) return;
+            detonate();
+        });
+
+        function detonate() {
+            isShattered = true;
+            playFrequencySwell();
+            
+            // Create Supernova
+            for(let i=0; i<1500; i++) {
+                particles.push(new Particle(mouse.x, mouse.y, Math.random() * 360, 10, true));
+            }
+
+            // Sequence Quotes
+            setTimeout(() => document.getElementById('line1').classList.add('active'), 500);
+            setTimeout(() => document.getElementById('line2').classList.add('active'), 1500);
+            setTimeout(() => document.getElementById('line3').classList.add('active'), 2500);
+
+            // Final White Out
+            setTimeout(() => {
+                document.getElementById('keepsakeOverlay').style.display = 'flex';
+            }, 6000);
+        }
+
+        function playFrequencySwell() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 1);
+            g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2);
+            osc.connect(g); g.connect(audioCtx.destination);
+            osc.start();
+        }
+
+        // --- KEEPSAKE EXPORT ENGINE ---
+        function exportKeepsake() {
+            const name = document.getElementById('partnerName').value || "Beloved";
+            const exportCanvas = document.createElement('canvas');
+            exportCanvas.width = 1200; exportCanvas.height = 1600;
+            const ectx = exportCanvas.getContext('2d');
+
+            ectx.fillStyle = "#fff";
+            ectx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+            ectx.strokeStyle = "#000"; ectx.lineWidth = 20;
+            ectx.strokeRect(40, 40, 1120, 1520);
+
+            ectx.fillStyle = "#000";
+            ectx.textAlign = "center";
+            ectx.font = "italic 90px 'Playfair Display'";
+            ectx.fillText(name, 600, 800);
+            
+            ectx.font = "40px 'Syncopate'";
+            ectx.fillText("ETERNITY VALIDATED", 600, 950);
+            ectx.fillText(new Date().toLocaleDateString(), 600, 1050);
+
+            const link = document.createElement('a');
+            link.download = `Love_Keepsake_${name}.png`;
+            link.href = exportCanvas.toDataURL();
+            link.click();
+            
+            alert("The certificate is yours. As am I.");
+            location.reload();
+        }
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        animate();
+    </script>
+</body>
+</html>

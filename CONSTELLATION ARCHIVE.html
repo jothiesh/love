@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ THE REGISTRY | CELESTIAL ARCHIVE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;900&family=Montserrat:wght@100;300;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --starlight: #ffffff;
+            --void: #010105;
+            --gold: #f5cc00;
+            --font-celestial: 'Cinzel', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--void);
+            color: #fff;
+            height: 100vh; overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
+
+        /* --- THE REGISTRY MODAL --- */
+        #registryOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 3000; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(1, 1, 5, 0.98);
+        }
+
+        .certificate {
+            border: 1px solid var(--gold);
+            padding: 60px; text-align: center;
+            max-width: 650px; background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .cert-border {
+            position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 1px solid rgba(245, 204, 0, 0.2); pointer-events: none;
+        }
+
+        input[type="text"] {
+            background: transparent; border: none; border-bottom: 2px solid var(--gold);
+            color: #fff; font-family: var(--font-celestial); font-size: 2rem;
+            text-align: center; width: 100%; outline: none; margin: 30px 0;
+            padding: 10px;
+        }
+
+        .btn-register {
+            background: var(--gold); color: #000; border: none;
+            padding: 15px 45px; font-family: var(--font-celestial);
+            font-weight: 900; letter-spacing: 3px; cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-register:hover { letter-spacing: 6px; transform: scale(1.05); }
+
+        /* --- UI ELEMENTS --- */
+        #sight {
+            position: fixed; width: 80px; height: 80px;
+            border: 1px solid rgba(245, 204, 0, 0.3);
+            border-radius: 50%; z-index: 100; pointer-events: none;
+        }
+
+        .hud {
+            position: fixed; top: 30px; font-family: var(--font-celestial);
+            font-size: 0.6rem; letter-spacing: 5px; opacity: 0.4; z-index: 10;
+        }
+
+        #finalMessage {
+            position: fixed; z-index: 1000; width: 100%; height: 100%;
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; background: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sight"></div>
+    <div class="hud">SECTOR_8_ALPHA // NEBULA_COUNT: <span id="sync">0</span>/5</div>
+
+    <canvas id="starField"></canvas>
+
+    <div id="finalMessage">
+        <h1 style="font-family: var(--font-celestial); font-size: 3rem; margin-bottom: 20px; letter-spacing: 15px;">WILL YOU BE MINE?</h1>
+        <button onclick="openRegistry()" style="background:none; border: 1px solid var(--gold); color: var(--gold); padding: 15px 40px; cursor: pointer; font-family: var(--font-celestial);">NAME OUR STAR</button>
+    </div>
+
+    <div id="registryOverlay">
+        <div class="certificate">
+            <div class="cert-border"></div>
+            <p style="font-family: var(--font-celestial); font-size: 0.7rem; letter-spacing: 5px; color: var(--gold);">OFFICIAL STAR REGISTRY</p>
+            <h2 style="font-family: var(--font-celestial); font-size: 1.5rem; margin: 20px 0;">Designate the Core Star</h2>
+            <input type="text" id="starName" placeholder="Enter Star Name...">
+            <button class="btn-register" onclick="registerStar()">REGISTER COORDINATES</button>
+            <p id="coordsDisplay" style="margin-top: 20px; font-size: 0.6rem; opacity: 0.5;"></p>
+        </div>
+    </div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE CELESTIAL REGISTRY ENGINE
+        ================================================================ */
+
+        const canvas = document.getElementById('starField');
+        const ctx = canvas.getContext('2d');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        let width, height, stars = [], nebulas = [], foundCount = 0;
+        let mouse = { x: 0, y: 0 };
+
+        class Nebula {
+            constructor() {
+                this.x = (Math.random() - 0.5) * 2000;
+                this.y = (Math.random() - 0.5) * 2000;
+                this.z = Math.random() * 1000 + 500;
+                this.found = false;
+                this.hue = Math.random() * 360;
+            }
+            draw(camX, camY) {
+                if(this.found) return;
+                const scale = 800 / this.z;
+                const sx = (this.x - camX) * scale + width/2;
+                const sy = (this.y - camY) * scale + height/2;
+
+                const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, 40 * scale);
+                g.addColorStop(0, `hsla(${this.hue}, 80%, 50%, 0.5)`);
+                g.addColorStop(1, 'transparent');
+                ctx.fillStyle = g;
+                ctx.beginPath(); ctx.arc(sx, sy, 40 * scale, 0, Math.PI*2); ctx.fill();
+
+                if(Math.abs(mouse.x - sx) < 40 && Math.abs(mouse.y - sy) < 40) {
+                    this.found = true;
+                    foundCount++;
+                    document.getElementById('sync').innerText = foundCount;
+                    if(foundCount === 5) setTimeout(() => document.getElementById('finalMessage').style.display = 'flex', 1000);
+                }
+            }
+        }
+
+        function init() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            for(let i=0; i<600; i++) {
+                stars.push({x: (Math.random()-0.5)*3000, y: (Math.random()-0.5)*3000, z: Math.random()*2000, s: Math.random()*2});
+            }
+            for(let i=0; i<5; i++) nebulas.push(new Nebula());
+        }
+
+        function animate() {
+            ctx.fillStyle = '#010105';
+            ctx.fillRect(0, 0, width, height);
+            const camX = (mouse.x - width/2) * 1.2;
+            const camY = (mouse.y - height/2) * 1.2;
+
+            stars.forEach(s => {
+                const scale = 800 / s.z;
+                const x = (s.x - camX) * scale + width/2;
+                const y = (s.y - camY) * scale + height/2;
+                ctx.fillStyle = "white";
+                ctx.globalAlpha = 1 - s.z/2000;
+                ctx.beginPath(); ctx.arc(x, y, s.s, 0, Math.PI*2); ctx.fill();
+            });
+
+            nebulas.forEach(n => n.draw(camX, camY));
+            requestAnimationFrame(animate);
+        }
+
+        function openRegistry() {
+            document.getElementById('finalMessage').style.display = 'none';
+            document.getElementById('registryOverlay').style.display = 'flex';
+            document.getElementById('coordsDisplay').innerText = `COORDINATES: RA ${Math.floor(Math.random()*24)}h ${Math.floor(Math.random()*60)}m | DEC +${Math.floor(Math.random()*90)}°`;
+        }
+
+        function registerStar() {
+            const name = document.getElementById('starName').value || "Aeterna";
+            alert(`Star "${name}" has been registered to your unique universe. I love you.`);
+            location.reload();
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX; mouse.y = e.clientY;
+            document.getElementById('sight').style.left = e.clientX - 40 + 'px';
+            document.getElementById('sight').style.top = e.clientY - 40 + 'px';
+        });
+
+        init();
+        animate();
+    </script>
+</body>
+</html>

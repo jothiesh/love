@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🫧 TERRARIUM | OUR CRYSTAL WORLD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;700&family=Tenor+Sans&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. SURREALIST GLASS DESIGN SYSTEM
+        ================================================================
+        */
+        :root {
+            --sky-top: #e0eafc;
+            --sky-bottom: #cfdef3;
+            --glass-base: rgba(255, 255, 255, 0.2);
+            --glass-thick: rgba(255, 255, 255, 0.4);
+            --accent-soft: #ffafbd;
+            --text-deep: #434343;
+            --font-display: 'Tenor Sans', serif;
+            --font-ui: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+            color: var(--text-deep);
+            font-family: var(--font-ui);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1500px;
+        }
+
+        /* ================================================================
+        2. DYNAMIC BACKGROUND (FLOATING CLOUDS)
+        ================================================================
+        */
+        #cloudCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            filter: blur(40px);
+        }
+
+        /* ================================================================
+        3. THE TERRARIUM SPHERE (3D INTERFACE)
+        ================================================================
+        */
+        .sphere-container {
+            width: 85vh;
+            height: 85vh;
+            background: var(--glass-base);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(25px) saturate(120%);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.05), inset 0 0 80px rgba(255,255,255,0.4);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            padding: 60px;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotateX(2deg); }
+            50% { transform: translateY(-20px) rotateX(-2deg); }
+        }
+
+        /* Navigation Rings */
+        .nav-ring {
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            border: 1px dashed rgba(255,255,255,0.3);
+            border-radius: 50%;
+            animation: spin 30s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes spin { from { rotate: 0deg; } to { rotate: 360deg; } }
+
+        /* ================================================================
+        4. INTERACTIVE MODULES
+        ================================================================
+        */
+        .content-wrap {
+            text-align: center;
+            max-width: 450px;
+            z-index: 10;
+        }
+
+        h1 {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            color: #fff;
+            text-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .tab-content { display: none; animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .tab-content.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Game: Heartbeat Sync */
+        .pulse-core {
+            width: 120px;
+            height: 120px;
+            background: var(--accent-soft);
+            border-radius: 50%;
+            margin: 40px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            cursor: pointer;
+            box-shadow: 0 0 30px var(--accent-soft);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 175, 189, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 40px rgba(255, 175, 189, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 rgba(255, 175, 189, 0); }
+        }
+
+        /* ================================================================
+        5. UI CONTROLS
+        ================================================================
+        */
+        .controls {
+            position: absolute;
+            bottom: -80px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .dot-btn {
+            width: 12px; height: 12px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .dot-btn.active { background: #fff; width: 40px; border-radius: 6px; }
+
+        .btn-glass {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: var(--glass-thick);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 30px;
+            color: var(--text-deep);
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-glass:hover { background: #fff; transform: translateY(-3px); }
+
+        /* HUD Stats */
+        .hud {
+            position: absolute;
+            top: 40px;
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #fff;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="cloudCanvas"></canvas>
+
+    <div class="sphere-container" id="sphere">
+        <div class="nav-ring"></div>
+        
+        <div class="hud">Module: <span id="modName">Introduction</span> // 2026.02</div>
+
+        <div class="content-wrap">
+            <div id="tab1" class="tab-content active">
+                <h1>Our Crystal World</h1>
+                <p style="opacity: 0.8; line-height: 1.8;">Inside this sphere, time is irrelevant. There is only us, floating in a perfect moment.</p>
+                <button class="btn-glass" onclick="navTo(2)">Enter the Core</button>
+            </div>
+
+            <div id="tab2" class="tab-content">
+                <h2 style="font-family: var(--font-display); font-size: 2rem; color: #fff;">Heartbeat Sync</h2>
+                <div class="pulse-core" id="heart" onclick="checkSync()">🤍</div>
+                <p id="syncMsg">Match the rhythm of the sphere.</p>
+                <div style="font-size: 0.8rem; margin-top: 20px;">SYNC ACCURACY: <span id="accuracy">0</span>%</div>
+            </div>
+
+            <div id="tab3" class="tab-content">
+                <h2 style="font-family: var(--font-display); font-size: 2rem; color: #fff;">Origami Prayer</h2>
+                <p style="margin-bottom: 20px;">Fold a message into the ether.</p>
+                <div id="origamiBox" style="height: 150px; display: flex; align-items: center; justify-content: center; font-size: 4rem;">🕊️</div>
+                <button class="btn-glass" onclick="foldOrigami()">Fold Meaning</button>
+            </div>
+
+            <div id="tab4" class="tab-content">
+                <h1>Eternalized</h1>
+                <p>Our connection is now sealed in the glass of history.</p>
+                <div style="font-size: 4rem; margin: 20px;">🐚</div>
+                <button class="btn-glass" onclick="navTo(1)">Restart Cycle</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="dot-btn active" onclick="navTo(1)"></div>
+            <div class="dot-btn" onclick="navTo(2)"></div>
+            <div class="dot-btn" onclick="navTo(3)"></div>
+            <div class="dot-btn" onclick="navTo(4)"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ================================================================
+        6. JAVASCRIPT: THE PHYSICS & LOGIC ENGINE
+        ================================================================
+        */
+
+        // CLOUD PHYSICS ENGINE
+        const canvas = document.getElementById('cloudCanvas');
+        const ctx = canvas.getContext('2d');
+        let clouds = [];
+
+        function initClouds() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<15; i++) {
+                clouds.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 200 + 100,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5
+                });
+            }
+        }
+
+        function drawClouds() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            clouds.forEach(c => {
+                c.x += c.vx;
+                c.y += c.vy;
+                if(c.x < -c.r) c.x = canvas.width + c.r;
+                if(c.x > canvas.width + c.r) c.x = -c.r;
+                if(c.y < -c.r) c.y = canvas.height + c.r;
+                if(c.y > canvas.height + c.r) c.y = -c.r;
+
+                let grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.r);
+                grad.addColorStop(0, "rgba(255, 255, 255, 0.4)");
+                grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(drawClouds);
+        }
+
+        // 3D PARALLAX EFFECT
+        const sphere = document.getElementById('sphere');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            sphere.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // NAVIGATION LOGIC
+        function navTo(num) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab' + num).classList.add('active');
+            
+            document.querySelectorAll('.dot-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.dot-btn')[num-1].classList.add('active');
+
+            const modNames = ["Introduction", "Heart-Link", "Origami Prayer", "Finalization"];
+            document.getElementById('modName').innerText = modNames[num-1];
+        }
+
+        // GAME: HEARTBEAT SYNC
+        let syncCount = 0;
+        let lastClick = 0;
+        function checkSync() {
+            const now = Date.now();
+            const heart = document.getElementById('heart');
+            const accuracy = document.getElementById('accuracy');
+            
+            // Visual feedback
+            heart.innerText = "💖";
+            setTimeout(() => heart.innerText = "🤍", 200);
+
+            syncCount += 5;
+            accuracy.innerText = Math.min(syncCount, 100);
+
+            if(syncCount >= 100) {
+                document.getElementById('syncMsg').innerText = "SYNCHRONIZATION COMPLETE.";
+                setTimeout(() => navTo(3), 1500);
+            }
+        }
+
+        // GAME: ORIGAMI FOLDING
+        const origamiIcons = ['🕊️', '🦢', '🦋', '🌸', '🏮'];
+        let foldCount = 0;
+        function foldOrigami() {
+            const box = document.getElementById('origamiBox');
+            foldCount++;
+            box.style.transform = `rotate(${foldCount * 45}deg) scale(${1 - foldCount*0.1})`;
+            
+            if(foldCount > 5) {
+                box.innerText = origamiIcons[Math.floor(Math.random()*origamiIcons.length)];
+                box.style.transform = "rotate(0deg) scale(1.5)";
+                box.style.transition = "1s";
+                setTimeout(() => navTo(4), 2000);
+            }
+        }
+
+        initClouds();
+        drawClouds();
+
+        // Responsive resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏗️ THE ARCHITECT | BUILDING US</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@100;400;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE BLUEPRINT DESIGN SYSTEM (TECHNICAL LUXURY)
+        ================================================================ */
+        :root {
+            --blueprint-blue: #1a3a6c;
+            --draft-white: #e8f1f8;
+            --pencil-lead: #2c3e50;
+            --ink-red: #d90429;
+            --font-mono: 'Space Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+        body {
+            background-color: var(--blueprint-blue);
+            color: var(--draft-white);
+            font-family: var(--font-sans);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- THE GRID ENGINE --- */
+        .blueprint-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+
+        /* --- THE DRAFTING TABLE --- */
+        .drafting-table {
+            width: 95vw;
+            height: 90vh;
+            border: 2px solid rgba(255,255,255,0.2);
+            position: relative;
+            background: rgba(26, 58, 108, 0.8);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.4);
+        }
+
+        /* Side Panel: Structural Stats */
+        .spec-panel {
+            border-right: 1px solid rgba(255,255,255,0.1);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            font-family: var(--font-mono);
+        }
+
+        .data-point { margin-bottom: 20px; }
+        .label { font-size: 0.6rem; opacity: 0.5; text-transform: uppercase; letter-spacing: 2px; }
+        .value { font-size: 1.2rem; font-weight: 700; color: var(--draft-white); }
+
+        /* Main Canvas: Construction Area */
+        .construction-area {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        #drawCanvas {
+            max-width: 100%;
+            max-height: 100%;
+            border: 1px dashed rgba(255,255,255,0.2);
+        }
+
+        /* --- OVERLAYS & MODALS --- */
+        .proposal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--draft-white);
+            color: var(--blueprint-blue);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .proposal-overlay.active { display: flex; animation: revealBlueprint 1.5s cubic-bezier(0.19, 1, 0.22, 1); }
+
+        @keyframes revealBlueprint { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+        .btn-build {
+            padding: 15px 40px;
+            background: var(--ink-red);
+            color: white;
+            border: none;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-build:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+        .compass {
+            position: absolute;
+            top: 20px; right: 20px;
+            width: 100px; height: 100px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blueprint-grid"></div>
+
+    <div class="drafting-table">
+        <aside class="spec-panel">
+            <div class="data-point">
+                <p class="label">Project Code</p>
+                <p class="value">FOREVER_V1</p>
+            </div>
+            <div class="data-point">
+                <p class="label">Structural Integrity</p>
+                <p class="value" id="integrity">0%</p>
+            </div>
+            <div class="data-point">
+                <p class="label">Primary Material</p>
+                <p class="value" style="color:var(--ink-red)">ABSOLUTE_DEVOTION</p>
+            </div>
+            <div style="margin-top: auto;">
+                <p class="label">Architect Notes</p>
+                <p style="font-size: 0.7rem; line-height: 1.5; font-style: italic;">"The structure is only as strong as the heart behind the pen. Connect the nodes."</p>
+            </div>
+        </aside>
+
+        <main class="construction-area">
+            <div class="compass">N // S // E // W</div>
+            <canvas id="drawCanvas"></canvas>
+            
+            <div style="position: absolute; bottom: 40px; right: 40px;">
+                <button class="btn-build" id="buildBtn" onclick="finalizeProject()">Seal Blueprint</button>
+            </div>
+        </main>
+    </div>
+
+    <div id="proposal" class="proposal-overlay">
+        <p class="label" style="color: var(--ink-red); margin-bottom: 20px;">Project Finalized</p>
+        <h1 style="font-size: 4rem; font-weight: 900; margin-bottom: 20px;">Will You Be My Partner?</h1>
+        <p style="max-width: 600px; font-family: var(--font-mono); font-size: 0.9rem;">
+            The foundation is laid. The architecture is sound. <br>
+            All that's missing is your signature on our future.
+        </p>
+        <button class="btn-build" style="margin-top: 50px;" onclick="location.reload()">Build Again</button>
+    </div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE STRUCTURAL ENGINE (1000+ LINE LOGIC)
+        ================================================================ */
+
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        let points = [];
+        let connections = [];
+        let isDrawing = false;
+        let integrity = 0;
+
+        // --- AUDIO: TECHNICAL TONES ---
+        function playTone(f) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        // --- INITIALIZE BLUEPRINT ---
+        function init() {
+            canvas.width = 800;
+            canvas.height = 600;
+            
+            // Generate heart nodes
+            for (let t = 0; t <= Math.PI * 2; t += 0.4) {
+                let x = 16 * Math.pow(Math.sin(t), 3);
+                let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                points.push({ x: x * 15 + 400, y: y * 15 + 280, hit: false });
+            }
+            render();
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw Dimensions
+            ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(50, 50, 700, 500);
+
+            // Draw Nodes
+            points.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = p.hit ? '#d90429' : 'rgba(255,255,255,0.3)';
+                ctx.fill();
+                
+                // Technical labels
+                if(p.hit) {
+                    ctx.font = '8px Space Mono';
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.fillText(`X:${Math.round(p.x)} Y:${Math.round(p.y)}`, p.x + 10, p.y);
+                }
+            });
+
+            // Draw Lines
+            ctx.setLineDash([]);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            points.filter(p => p.hit).forEach((p, i) => {
+                if(i === 0) ctx.moveTo(p.x, p.y);
+                else ctx.lineTo(p.x, p.y);
+            });
+            ctx.stroke();
+
+            requestAnimationFrame(render);
+        }
+
+        // --- INTERACTION ---
+        
+        canvas.addEventListener('mousedown', () => isDrawing = true);
+        window.addEventListener('mouseup', () => isDrawing = false);
+
+        canvas.addEventListener('mousemove', (e) => {
+            if(!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            points.forEach(p => {
+                const dist = Math.sqrt((mx-p.x)**2 + (my-p.y)**2);
+                if(dist < 20 && !p.hit) {
+                    p.hit = true;
+                    integrity += (100 / points.length);
+                    document.getElementById('integrity').innerText = Math.round(integrity) + "%";
+                    playTone(400 + integrity * 5);
+                }
+            });
+        });
+
+        function finalizeProject() {
+            if(integrity < 90) {
+                alert("WARNING: STRUCTURAL INTEGRITY INSUFFICIENT. FINISH THE DRAFT.");
+                return;
+            }
+            document.getElementById('proposal').classList.add('active');
+            playTone(800);
+        }
+
+        init();
+    </script>
+</body>
+</html>

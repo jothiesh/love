@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥰 Tap My Mood!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#a18cd1,#fbc2eb);min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;overflow:hidden}
+        h1{color:#fff;font-size:1.5rem;margin-bottom:10px;text-shadow:2px 2px rgba(0,0,0,0.2)}
+        .subtitle{color:#fff;opacity:0.9;margin-bottom:30px}
+        .emoji-face{font-size:150px;cursor:pointer;transition:transform 0.2s;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.2));user-select:none}
+        .emoji-face:hover{transform:scale(1.1)}
+        .emoji-face:active{transform:scale(0.9)}
+        .emoji-face.animate{animation:wiggle 0.5s}
+        @keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-20deg)}75%{transform:rotate(20deg)}}
+        .message{margin-top:30px;background:#fff;padding:20px 30px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.15);text-align:center;max-width:300px}
+        .message h2{color:#e74c3c;font-size:1.3rem;margin-bottom:10px}
+        .message p{color:#666;font-size:1rem;line-height:1.5}
+        .tap-count{margin-top:20px;color:#fff;font-size:0.9rem;opacity:0.8}
+        .tap-count span{font-size:1.5rem}
+        .love-burst{position:fixed;pointer-events:none}
+        .burst{position:absolute;font-size:30px;animation:burst 1s forwards}
+        @keyframes burst{0%{transform:scale(0);opacity:1}100%{transform:scale(1) translate(var(--x),var(--y));opacity:0}}
+        .progress-ring{margin-top:20px;position:relative;width:100px;height:100px}
+        .progress-ring svg{transform:rotate(-90deg)}
+        .progress-ring circle{fill:none;stroke-width:8}
+        .progress-ring .bg{stroke:rgba(255,255,255,0.3)}
+        .progress-ring .progress{stroke:#fff;stroke-linecap:round;transition:stroke-dashoffset 0.3s}
+        .progress-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:1.2rem}
+        .final-message{display:none;text-align:center;animation:popIn 0.5s}
+        .final-message.show{display:block}
+        @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+        .final-message h1{font-size:2rem;margin-bottom:20px}
+        .hearts-explosion{position:fixed;pointer-events:none}
+        .explode-heart{position:absolute;font-size:40px;animation:explodeOut 2s forwards}
+        @keyframes explodeOut{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--x),var(--y)) scale(0);opacity:0}}
+    </style>
+</head>
+<body>
+    <div id="mainContent">
+        <h1>🥰 How Do I Feel About You?</h1>
+        <p class="subtitle">Tap me to find out! 👇</p>
+        
+        <div class="emoji-face" id="emoji" onclick="tap()">🙂</div>
+        
+        <div class="progress-ring">
+            <svg width="100" height="100">
+                <circle class="bg" cx="50" cy="50" r="40"/>
+                <circle class="progress" id="progress" cx="50" cy="50" r="40" stroke-dasharray="251" stroke-dashoffset="251"/>
+            </svg>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+        
+        <p class="tap-count">Taps: <span id="count">0</span> / 20</p>
+    </div>
+    
+    <div class="final-message" id="final">
+        <h1>😍 I LOVE YOU! 😍</h1>
+        <div class="message">
+            <h2>💕 You Made It!</h2>
+            <p>Every tap was like my heartbeat for you! You're the reason I smile every day! 🥰💖</p>
+        </div>
+    </div>
+    
+    <div class="love-burst" id="burst"></div>
+    <div class="hearts-explosion" id="explosion"></div>
+    
+    <script>
+        const stages=[
+            {emoji:'🙂',msg:'Hmm...'},
+            {emoji:'😊',msg:'Getting warmer...'},
+            {emoji:'😄',msg:'Keep going!'},
+            {emoji:'🥹',msg:'Almost there...'},
+            {emoji:'🥰',msg:'So close!'},
+            {emoji:'😍',msg:'YES!!!'}
+        ];
+        
+        let taps=0;
+        const maxTaps=20;
+        
+        function tap(){
+            taps++;
+            if(taps>maxTaps)return;
+            
+            const emoji=document.getElementById('emoji');
+            emoji.classList.remove('animate');
+            void emoji.offsetWidth;
+            emoji.classList.add('animate');
+            
+            // Update emoji based on progress
+            const stageIndex=Math.min(Math.floor(taps/(maxTaps/stages.length)),stages.length-1);
+            emoji.textContent=stages[stageIndex].emoji;
+            
+            // Update progress
+            const progress=Math.min((taps/maxTaps)*100,100);
+            const offset=251-(251*progress/100);
+            document.getElementById('progress').style.strokeDashoffset=offset;
+            document.getElementById('progressText').textContent=Math.round(progress)+'%';
+            document.getElementById('count').textContent=Math.min(taps,maxTaps);
+            
+            // Burst effect
+            createBurst();
+            
+            // Check completion
+            if(taps>=maxTaps){
+                complete();
+            }
+        }
+        
+        function createBurst(){
+            const burst=document.getElementById('burst');
+            const emojis=['💕','💖','❤️','💗','✨'];
+            for(let i=0;i<5;i++){
+                const b=document.createElement('div');
+                b.className='burst';
+                b.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+                b.style.left='50%';
+                b.style.top='40%';
+                b.style.setProperty('--x',(Math.random()-0.5)*200+'px');
+                b.style.setProperty('--y',(Math.random()-0.5)*200+'px');
+                burst.appendChild(b);
+                setTimeout(()=>b.remove(),1000);
+            }
+        }
+        
+        function complete(){
+            document.getElementById('mainContent').style.display='none';
+            document.getElementById('final').classList.add('show');
+            
+            // Massive heart explosion
+            const explosion=document.getElementById('explosion');
+            for(let i=0;i<50;i++){
+                setTimeout(()=>{
+                    const h=document.createElement('div');
+                    h.className='explode-heart';
+                    h.textContent=['💕','💖','❤️','😍','🥰','💝'][Math.floor(Math.random()*6)];
+                    h.style.left='50%';
+                    h.style.top='50%';
+                    h.style.setProperty('--x',(Math.random()-0.5)*window.innerWidth+'px');
+                    h.style.setProperty('--y',(Math.random()-0.5)*window.innerHeight+'px');
+                    explosion.appendChild(h);
+                    setTimeout(()=>h.remove(),2000);
+                },i*50);
+            }
+        }
+    </script>
+</body>
+</html>

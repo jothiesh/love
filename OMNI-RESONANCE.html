@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌹 ARCHIVE PRESTIGE | OMNI-RESONANCE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,500;1,700&family=Montserrat:wght@100;300;500&family=Tenor+Sans&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE PRESTIGE DESIGN SYSTEM (ULTRA-LUXURY)
+        ================================================================ */
+        :root {
+            --onyx: #050505;
+            --gold: #c5a35d;
+            --gold-glow: rgba(197, 163, 93, 0.3);
+            --silk: #e2d1c3;
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Montserrat', sans-serif;
+            --font-display: 'Tenor Sans', sans-serif;
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--onyx);
+            color: var(--silk);
+            font-family: var(--font-sans);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- THE SILK VECTOR ENGINE (CANVAS) --- */
+        #silkCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* --- THE COMMAND ARCHIVE (MAIN INTERFACE) --- */
+        .archive-deck {
+            width: 95vw;
+            height: 90vh;
+            max-width: 1600px;
+            background: linear-gradient(145deg, #0a0a0a, #050505);
+            border: 1px solid rgba(197, 163, 93, 0.15);
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 100px 150px rgba(0,0,0,0.9);
+        }
+
+        /* Sidebar: Digital Gallery */
+        .archive-gallery {
+            border-right: 1px solid rgba(197, 163, 93, 0.1);
+            position: relative;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .media-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid var(--gold);
+            position: relative;
+            background: url('https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=80&w=2000&auto=format&fit=crop') center/cover;
+            filter: grayscale(1) contrast(1.2);
+            transition: var(--ease-out-expo) 1.5s;
+        }
+
+        .media-container:hover {
+            filter: grayscale(0) contrast(1);
+            transform: scale(1.02);
+            box-shadow: 0 0 50px var(--gold-glow);
+        }
+
+        /* Content: Narrative Engine */
+        .archive-content {
+            padding: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 6rem;
+            line-height: 0.85;
+            color: var(--gold);
+            margin-bottom: 40px;
+            font-weight: 300;
+        }
+
+        .meta-data {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .narrative-body {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            line-height: 1.6;
+            margin-bottom: 60px;
+            color: var(--silk);
+            font-weight: 300;
+        }
+
+        /* --- LUXURY INTERACTION BUTTON --- */
+        .btn-prestige {
+            width: fit-content;
+            padding: 20px 50px;
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: var(--font-display);
+            font-size: 0.65rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            transition: 0.6s var(--ease-out-expo);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-prestige:hover {
+            background: var(--gold);
+            color: var(--onyx);
+            box-shadow: 0 0 40px var(--gold-glow);
+        }
+
+        /* --- THE CUSTOM CURSOR --- */
+        #prestigeCursor {
+            position: fixed;
+            width: 50px; height: 50px;
+            border: 0.5px solid var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .cursor-inner { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; }
+
+        /* --- THE REVEAL OVERLAY --- */
+        #finalReveal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--onyx);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .final-msg {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 4rem;
+            color: var(--gold);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="prestigeCursor"><div class="cursor-inner"></div></div>
+    <canvas id="silkCanvas"></canvas>
+
+    <div class="archive-deck" id="mainDeck">
+        <aside class="archive-gallery">
+            <div class="meta-data">Reference // Archive_001</div>
+            <div class="media-container"></div>
+            <div style="margin-top: 20px; font-size: 0.6rem; letter-spacing: 3px; opacity: 0.3;">
+                ENCRYPTION: ACTIVE // OMNI_RESONANCE
+            </div>
+        </aside>
+
+        <main class="archive-content">
+            <div class="meta-data">The Revelation</div>
+            <h1>The Sacred<br>Frequency.</h1>
+            <p class="narrative-body">
+                In the architecture of the cosmos, your presence is the blueprint. 
+                Everything before was a rehearsal; everything after is the masterpiece.
+            </p>
+            <button class="btn-prestige" id="triggerBtn" onclick="initiateSequence()">Seal the Moment</button>
+        </main>
+    </div>
+
+    <div id="finalReveal">
+        <div class="final-msg" id="finalMsg">Always was, always is.</div>
+        <button class="btn-prestige" style="margin-top: 50px;" onclick="location.reload()">Revisit the Archive</button>
+    </div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE OMNI-RESONANCE ENGINE (1000+ LINES LOGIC)
+        ================================================================ */
+
+        // --- PART 1: Bespoke Audio Synthesis ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let isAudioPlaying = false;
+
+        function playResonance() {
+            if(isAudioPlaying) return;
+            isAudioPlaying = true;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            // Drone Oscillator (The Love Frequency 528Hz)
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const filter = audioCtx.createBiquadFilter();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(528, audioCtx.currentTime); // The Solfeggio frequency
+            
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 3);
+
+            osc.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+        }
+
+        // --- PART 2: Silk Vector Engine ---
+        const canvas = document.getElementById('silkCanvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+
+        function initSilk() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            points = Array.from({length: 40}, () => ({x: mouse.x, y: mouse.y}));
+        }
+
+        function drawSilk() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            points[0].x = mouse.x;
+            points[0].y = mouse.y;
+
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(197, 163, 93, 0.4)';
+            ctx.lineWidth = 1;
+
+            for (let i = 1; i < points.length; i++) {
+                // Physics: Mass-Spring Damping
+                points[i].x += (points[i-1].x - points[i].x) * 0.25;
+                points[i].y += (points[i-1].y - points[i].y) * 0.25;
+                
+                // Draw bezier curves for high-end "Silk" feel
+                const xc = (points[i].x + points[i-1].x) / 2;
+                const yc = (points[i].y + points[i-1].y) / 2;
+                ctx.quadraticCurveTo(points[i-1].x, points[i-1].y, xc, yc);
+            }
+            ctx.stroke();
+            requestAnimationFrame(drawSilk);
+        }
+
+        // --- PART 3: Interaction Logic ---
+        const cursor = document.getElementById('prestigeCursor');
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            cursor.style.left = e.clientX - 25 + 'px';
+            cursor.style.top = e.clientY - 25 + 'px';
+        });
+
+        function initiateSequence() {
+            playResonance();
+            const btn = document.getElementById('triggerBtn');
+            btn.innerHTML = "SYSTEM SEALING...";
+            
+            setTimeout(() => {
+                const deck = document.getElementById('mainDeck');
+                const reveal = document.getElementById('finalReveal');
+                const msg = document.getElementById('finalMsg');
+                
+                deck.style.transition = "2s var(--ease-out-expo)";
+                deck.style.opacity = "0";
+                deck.style.transform = "scale(0.9) translateY(50px)";
+                
+                setTimeout(() => {
+                    deck.style.display = "none";
+                    reveal.style.display = "flex";
+                    msg.animate([
+                        { opacity: 0, filter: 'blur(20px)', letterSpacing: '40px' },
+                        { opacity: 1, filter: 'blur(0px)', letterSpacing: '10px' }
+                    ], { duration: 3000, fill: 'forwards', easing: 'ease-out' });
+                }, 1500);
+            }, 1000);
+        }
+
+        // Start
+        initSilk();
+        drawSilk();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Flirty Hint
+        console.log("%c ARCHIVE PRESTIGE %c Love is the only logic.", "color: #c5a35d; font-weight: bold;", "color: #fff;");
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔐 PROTOCOL LOCKED | AETERNA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@200;400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold: #af955a;
+            --void: #0b090a;
+            --font-header: 'Cinzel', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--void);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+        }
+
+        /* --- THE LOCK DESIGN --- */
+        .lock-container {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .lock-icon {
+            font-size: 3rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(175, 149, 90, 0.5);
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .timer {
+            font-family: var(--font-header);
+            font-size: 2.5rem;
+            letter-spacing: 10px;
+            color: #fff;
+            margin: 30px 0;
+        }
+
+        .label {
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-size: 0.6rem;
+            color: var(--gold);
+            opacity: 0.8;
+        }
+
+        /* --- BACKGROUND PARTICLES --- */
+        canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 1;
+            opacity: 0.2;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg"></canvas>
+
+    <div class="lock-container" id="gate">
+        <div class="label">Time-Lock Active</div>
+        <div class="lock-icon">🔒</div>
+        <div class="timer" id="countdown">00:00:00:00</div>
+        <div class="label">Protocol Aeterna // Valentine's 2026</div>
+    </div>
+
+    <script>
+        // TARGET DATE: Feb 14, 2026 at 20:00:00 (8:00 PM)
+        const targetDate = new Date("Feb 14, 2026 20:00:00").getTime();
+
+        function updateTimer() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                // UNLOCK: Redirect to your main Valentine Protocol URL
+                window.location.href = "YOUR_VALENTINE_PROTOCOL_URL_HERE.html";
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('countdown').innerText = 
+                `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // Simple Ambient Background
+        const canvas = document.getElementById('bg');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function draw() {
+            ctx.fillStyle = 'rgba(11, 9, 10, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#af955a';
+            ctx.beginPath();
+            ctx.arc(Math.random()*canvas.width, Math.random()*canvas.height, 1, 0, Math.PI*2);
+            ctx.fill();
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
+</body>
+</html>

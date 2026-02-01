@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💌 A Letter For You</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:wght@400;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#ffecd2,#fcb69f);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+        .letter{background:#fffef5;border-radius:5px;padding:40px;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,0.15);position:relative;transform:rotate(-1deg)}
+        .letter::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(transparent,transparent 27px,#e8e8e8 28px);pointer-events:none}
+        .letter-content{position:relative;z-index:1}
+        .date{font-size:0.85rem;color:#888;text-align:right;margin-bottom:20px}
+        .greeting{font-family:'Caveat',cursive;font-size:1.8rem;color:#e74c3c;margin-bottom:20px}
+        .body{font-family:'Caveat',cursive;font-size:1.4rem;color:#333;line-height:1.8;min-height:200px}
+        .body span{opacity:0;animation:typeIn 0.05s forwards}
+        @keyframes typeIn{to{opacity:1}}
+        .signature{font-family:'Caveat',cursive;font-size:1.6rem;color:#e74c3c;text-align:right;margin-top:30px;opacity:0}
+        .signature.show{opacity:1;animation:fadeIn 1s}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .heart-stamp{position:absolute;top:20px;right:20px;font-size:40px;transform:rotate(15deg);opacity:0.8}
+        .cursor{display:inline-block;width:2px;height:20px;background:#e74c3c;animation:blink 0.8s infinite;vertical-align:middle;margin-left:2px}
+        @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:0}}
+        .envelope{position:fixed;top:0;left:0;width:100%;height:100%;background:#d4a574;display:flex;align-items:center;justify-content:center;z-index:100;cursor:pointer;transition:transform 1s}
+        .envelope.open{transform:translateY(-100%)}
+        .envelope-inner{text-align:center;color:#8b4513}
+        .envelope-icon{font-size:80px;animation:bounce 1s infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+        .envelope p{font-size:1.2rem;margin-top:20px}
+        .floating-hearts{position:fixed;pointer-events:none;z-index:0}
+        .float-heart{position:absolute;animation:floatUp 6s linear infinite;opacity:0.5}
+        @keyframes floatUp{0%{transform:translateY(100vh) rotate(0deg)}100%{transform:translateY(-100px) rotate(360deg)}}
+        .restart{position:fixed;bottom:20px;right:20px;padding:10px 20px;background:#e74c3c;color:#fff;border:none;border-radius:20px;cursor:pointer;font-family:inherit;z-index:10}
+    </style>
+</head>
+<body>
+    <div class="envelope" id="envelope" onclick="openEnvelope()">
+        <div class="envelope-inner">
+            <div class="envelope-icon">💌</div>
+            <p>You have a letter! Tap to open 💕</p>
+        </div>
+    </div>
+    
+    <div class="floating-hearts" id="hearts"></div>
+    
+    <div class="letter">
+        <div class="heart-stamp">💝</div>
+        <div class="letter-content">
+            <p class="date" id="date"></p>
+            <p class="greeting">My Dearest Love,</p>
+            <div class="body" id="letterBody"></div>
+            <p class="signature" id="signature">Forever Yours,<br>💕 Me</p>
+        </div>
+    </div>
+    
+    <button class="restart" onclick="restart()">📩 Read Again</button>
+    
+    <script>
+        const letterText=`I wanted to write you this letter to tell you something really important...
+
+Every time I see you, my heart skips a beat. Your smile makes my whole day brighter. ☀️
+
+You're not just someone I love - you're my best friend, my partner, my everything. 💫
+
+I fall in love with you more every single day, and I can't imagine my life without you.
+
+Thank you for being YOU. 💕
+
+Will you be mine... forever?`;
+
+        let charIndex=0;
+        let isTyping=false;
+        
+        function openEnvelope(){
+            document.getElementById('envelope').classList.add('open');
+            setTimeout(startTyping,1000);
+            createFloatingHearts();
+        }
+        
+        function startTyping(){
+            if(isTyping)return;
+            isTyping=true;
+            const body=document.getElementById('letterBody');
+            body.innerHTML='';
+            charIndex=0;
+            
+            // Set current date
+            const now=new Date();
+            document.getElementById('date').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+            
+            typeNextChar();
+        }
+        
+        function typeNextChar(){
+            if(charIndex>=letterText.length){
+                document.getElementById('signature').classList.add('show');
+                isTyping=false;
+                return;
+            }
+            
+            const body=document.getElementById('letterBody');
+            const char=letterText[charIndex];
+            
+            if(char==='\n'){
+                body.innerHTML+='<br>';
+            }else{
+                const span=document.createElement('span');
+                span.textContent=char;
+                span.style.animationDelay='0s';
+                body.appendChild(span);
+            }
+            
+            charIndex++;
+            
+            // Variable typing speed for natural feel
+            let delay=30;
+            if(char===','||char==='-')delay=100;
+            if(char==='.'||char==='!'||char==='?')delay=200;
+            if(char==='\n')delay=300;
+            
+            setTimeout(typeNextChar,delay);
+        }
+        
+        function createFloatingHearts(){
+            const container=document.getElementById('hearts');
+            const hearts=['💕','💖','💗','❤️','💝','🌸'];
+            
+            for(let i=0;i<15;i++){
+                const h=document.createElement('div');
+                h.className='float-heart';
+                h.textContent=hearts[Math.floor(Math.random()*hearts.length)];
+                h.style.left=Math.random()*100+'vw';
+                h.style.fontSize=(15+Math.random()*20)+'px';
+                h.style.animationDuration=(4+Math.random()*4)+'s';
+                h.style.animationDelay=Math.random()*5+'s';
+                container.appendChild(h);
+            }
+        }
+        
+        function restart(){
+            document.getElementById('envelope').classList.remove('open');
+            document.getElementById('letterBody').innerHTML='';
+            document.getElementById('signature').classList.remove('show');
+            document.getElementById('hearts').innerHTML='';
+            isTyping=false;
+        }
+    </script>
+</body>
+</html>

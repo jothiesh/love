@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛰️ NEON NEBULA | ULTIMATE LOVE COMMAND v3.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Quicksand:wght@300;500;700&family=JetBrains+Mono:wght@300&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. SYSTEM CORE & THEME VARIABLES
+        ================================================================
+        */
+        :root {
+            --neon-violet: #bc13fe;
+            --neon-cyan: #05ffa1;
+            --neon-pink: #ff0055;
+            --neon-blue: #2de2ff;
+            --bg-deep: #010103;
+            --glass-bright: rgba(255, 255, 255, 0.08);
+            --glass-dark: rgba(0, 0, 0, 0.4);
+            --border-glow: rgba(188, 19, 254, 0.3);
+            --font-cyber: 'Syncopate', sans-serif;
+            --font-data: 'JetBrains+Mono', monospace;
+            --font-soft: 'Quicksand', sans-serif;
+        }
+
+        /* ================================================================
+        2. GLOBAL ATMOSPHERE
+        ================================================================
+        */
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            font-family: var(--font-soft);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #nebulaCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+        }
+
+        /* ================================================================
+        3. THE COMMAND DECK (MAIN INTERFACE)
+        ================================================================
+        */
+        .command-deck {
+            width: 98vw;
+            height: 95vh;
+            max-width: 1600px;
+            background: var(--glass-dark);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: 320px 1fr 300px;
+            grid-template-rows: 80px 1fr 60px;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 40px var(--border-glow);
+            position: relative;
+        }
+
+        /* Header / HUD Top */
+        header {
+            grid-column: 1 / -1;
+            border-bottom: 1px solid var(--border-glow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .os-logo {
+            font-family: var(--font-cyber);
+            font-size: 1.1rem;
+            color: var(--neon-cyan);
+            letter-spacing: 5px;
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        /* Sidebar Left: Mission Selector */
+        .mission-sidebar {
+            border-right: 1px solid var(--border-glow);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mission-btn {
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            text-align: left;
+            transition: all 0.4s ease;
+            font-family: var(--font-cyber);
+            font-size: 0.65rem;
+            color: #aaa;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-btn.active {
+            border-color: var(--neon-pink);
+            color: #fff;
+            background: rgba(255, 0, 85, 0.1);
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.2);
+            transform: translateX(5px);
+        }
+
+        .mission-btn::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; height: 100%; width: 4px;
+            background: var(--neon-pink);
+            transform: scaleY(0);
+            transition: 0.3s;
+        }
+
+        .mission-btn.active::before { transform: scaleY(1); }
+
+        /* ================================================================
+        4. MODULES (THE GAMES)
+        ================================================================
+        */
+        .viewport-core {
+            position: relative;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .module {
+            display: none;
+            width: 100%; height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .module.active { display: flex; animation: moduleEnter 0.6s ease-out; }
+
+        @keyframes moduleEnter {
+            from { opacity: 0; transform: scale(1.05); filter: blur(10px); }
+            to { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+
+        /* GAME 1: SYNC_CORE */
+        .ring-engine {
+            position: relative;
+            width: 500px; height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: border-color 0.3s;
+        }
+
+        .ring.synced { border-color: var(--neon-cyan); box-shadow: 0 0 20px var(--neon-cyan); }
+
+        .data-planet {
+            position: absolute;
+            width: 15px; height: 15px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #fff;
+        }
+
+        /* GAME 2: MEMORY_VAULT */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 120px);
+            gap: 15px;
+        }
+
+        .data-card {
+            width: 120px; height: 160px;
+            perspective: 1000px;
+        }
+
+        .data-card-inner {
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+
+        .data-card.flipped .data-card-inner { transform: rotateY(180deg); }
+
+        .card-side {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--border-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .card-back { background: rgba(188, 19, 254, 0.1); color: var(--neon-violet); }
+        .card-front { background: rgba(5, 255, 161, 0.1); transform: rotateY(180deg); }
+
+        /* ================================================================
+        5. HUD & DATA COMPONENTS
+        ================================================================
+        */
+        .right-hud {
+            border-left: 1px solid var(--border-glow);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .hud-panel {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-glow);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .label { font-family: var(--font-cyber); font-size: 0.5rem; color: var(--neon-blue); margin-bottom: 10px; display: block; }
+        
+        /* Frequency Visualizer */
+        .vis-container {
+            height: 60px;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+        }
+        .vis-bar { width: 4px; background: var(--neon-blue); min-height: 5px; transition: height 0.1s; }
+
+        /* ================================================================
+        6. BUTTONS & OVERLAYS
+        ================================================================
+        */
+        .btn-sync {
+            margin-top: 30px;
+            padding: 15px 40px;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-family: var(--font-cyber);
+            letter-spacing: 3px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .btn-sync:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 30px var(--neon-cyan);
+        }
+
+        #terminal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            display: none;
+            padding: 100px;
+            font-family: var(--font-data);
+            color: var(--neon-cyan);
+            font-size: 1.2rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="nebulaCanvas"></canvas>
+
+    <div class="command-deck">
+        <header>
+            <div class="os-logo">LOVE_OS // STATION_2026</div>
+            <div style="display: flex; gap: 30px; font-family: var(--font-data); font-size: 0.8rem;">
+                <span id="coordX">X: 000</span>
+                <span id="coordY">Y: 000</span>
+                <span style="color: var(--neon-pink);">STATUS: CONNECTED</span>
+            </div>
+        </header>
+
+        <aside class="mission-sidebar">
+            <button class="mission-btn active" onclick="nav('sync', this)">01 / ORBITAL_SYNC</button>
+            <button class="mission-btn" onclick="nav('memory', this)">02 / DATA_RECOVERY</button>
+            <button class="mission-btn" onclick="nav('frequency', this)">03 / FREQ_MATCHER</button>
+            <button class="mission-btn" onclick="nav('uplink', this)">04 / HEART_UPLINK</button>
+            
+            <div class="hud-panel" style="margin-top: auto;">
+                <span class="label">SYSTEM_UPTIME</span>
+                <div id="timer" style="font-family: var(--font-data); color: #fff;">00:00:00</div>
+            </div>
+        </aside>
+
+        <main class="viewport-core">
+            
+            <section id="mod-sync" class="module active">
+                <div class="ring-engine">
+                    <div class="ring" style="width: 400px; height: 400px;" id="r1"></div>
+                    <div class="ring" style="width: 300px; height: 300px;" id="r2"></div>
+                    <div class="ring" style="width: 200px; height: 200px;" id="r3"></div>
+                    <div class="data-planet" id="p1"></div>
+                    <div class="data-planet" id="p2"></div>
+                    <div class="data-planet" id="p3"></div>
+                    <div style="font-size: 60px; filter: drop-shadow(0 0 20px var(--neon-pink));">🌌</div>
+                </div>
+                <button class="btn-sync" onclick="checkSync()">INITIATE SYNC BURST</button>
+            </section>
+
+            <section id="mod-memory" class="module">
+                <div class="memory-grid" id="memContainer"></div>
+                <button class="btn-sync" style="border-color: var(--neon-violet); color: var(--neon-violet);" onclick="resetMemory()">REBOOT DATABASE</button>
+            </section>
+
+            <section id="mod-frequency" class="module">
+                <h2 style="font-family: var(--font-cyber); margin-bottom: 20px;">FREQUENCY MATCH</h2>
+                <div id="freqTarget" style="width: 100%; height: 200px; background: rgba(0,0,0,0.5); border: 1px solid var(--neon-blue); position: relative;">
+                    <canvas id="freqCanvas" width="800" height="200"></canvas>
+                </div>
+                <input type="range" id="freqSlider" min="1" max="100" value="50" style="width: 80%; margin-top: 30px;">
+                <button class="btn-sync" style="border-color: var(--neon-blue); color: var(--neon-blue);" onclick="matchFrequency()">LOCK SIGNAL</button>
+            </section>
+
+            <section id="mod-uplink" class="module">
+                <div id="uplinkDisplay" style="text-align: center;">
+                    <h1 style="font-family: var(--font-cyber); color: var(--neon-pink); font-size: 3rem;">WARNING</h1>
+                    <p style="font-family: var(--font-data); margin: 20px 0;">Final synchronization required to unlock eternal vault.</p>
+                    <button class="btn-sync" onclick="finalUplink()">EXECUTE FINAL_STRIKE</button>
+                </div>
+            </section>
+
+        </main>
+
+        <aside class="right-hud">
+            <div class="hud-panel">
+                <span class="label">CONNECTION_STRENGTH</span>
+                <div style="width: 100%; height: 8px; background: #222; border-radius: 4px;">
+                    <div id="syncProgress" style="width: 10%; height: 100%; background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); transition: 0.5s;"></div>
+                </div>
+            </div>
+
+            <div class="hud-panel">
+                <span class="label">HEART_VISUALIZER</span>
+                <div class="vis-container" id="visualizer"></div>
+            </div>
+
+            <div class="hud-panel">
+                <span class="label">LOG_FEED</span>
+                <div id="logs" style="font-family: var(--font-data); font-size: 0.6rem; color: #666; height: 150px; overflow-y: hidden;">
+                    > SYSTEM BOOT SUCCESS...<br>
+                    > SCANNING FOR SOULMATE...<br>
+                    > TARGET LOCATED: YOU...<br>
+                </div>
+            </div>
+        </aside>
+
+        <footer style="grid-column: 1 / -1; border-top: 1px solid var(--border-glow); display: flex; align-items: center; padding: 0 40px; font-size: 0.7rem; color: #444;">
+            <div style="flex: 1;">LATENCY: 12ms // PACKET_LOSS: 0%</div>
+            <div style="font-family: var(--font-cyber); color: var(--neon-violet);">STATION_AUTHORIZED_ONLY</div>
+        </footer>
+    </div>
+
+    <div id="terminal-overlay"></div>
+
+    <script>
+        /* ================================================================
+        7. SYSTEM JAVASCRIPT: THE ENGINE
+        ================================================================
+        */
+
+        // NEBULA & STAR PHYSICS
+        const canvas = document.getElementById('nebulaCanvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function initStars() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<300; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    z: Math.random() * canvas.width,
+                    size: Math.random() * 1.5,
+                    color: Math.random() > 0.8 ? '#ff0055' : '#05ffa1'
+                });
+            }
+        }
+
+        function drawNebula() {
+            ctx.fillStyle = "rgba(1, 1, 3, 0.2)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            stars.forEach(s => {
+                s.z -= 2;
+                if(s.z <= 0) s.z = canvas.width;
+                
+                let sx = (s.x - canvas.width/2) * (canvas.width / s.z) + canvas.width/2;
+                let sy = (s.y - canvas.height/2) * (canvas.width / s.z) + canvas.height/2;
+                let size = (1 - s.z / canvas.width) * 3;
+
+                ctx.beginPath();
+                ctx.arc(sx, sy, size, 0, Math.PI * 2);
+                ctx.fillStyle = s.color;
+                ctx.globalAlpha = 1 - s.z / canvas.width;
+                ctx.fill();
+            });
+            requestAnimationFrame(drawNebula);
+        }
+
+        // NAVIGATION ENGINE
+        function nav(id, btn) {
+            document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+            document.getElementById('mod-' + id).classList.add('active');
+            document.querySelectorAll('.mission-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            log(`SWITCHING TO MODULE: ${id.toUpperCase()}`);
+            if(id === 'memory') resetMemory();
+        }
+
+        function log(msg) {
+            const feed = document.getElementById('logs');
+            feed.innerHTML += `> ${msg}<br>`;
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        // GAME 1: ORBITAL SYNC
+        let orbitAngles = [0, 0, 0];
+        let orbitSpeeds = [0.02, 0.04, 0.06];
+        let globalSync = 10;
+
+        function updateOrbits() {
+            const radii = [200, 150, 100];
+            const planets = [document.getElementById('p1'), document.getElementById('p2'), document.getElementById('p3')];
+            
+            for(let i=0; i<3; i++) {
+                orbitAngles[i] += orbitSpeeds[i];
+                const x = Math.cos(orbitAngles[i]) * radii[i];
+                const y = Math.sin(orbitAngles[i]) * radii[i];
+                planets[i].style.transform = `translate(${x}px, ${y}px)`;
+            }
+            requestAnimationFrame(updateOrbits);
+        }
+
+        function checkSync() {
+            // Complex alignment check
+            const diff1 = Math.abs((orbitAngles[0] % (Math.PI*2)) - (orbitAngles[1] % (Math.PI*2)));
+            if(diff1 < 0.4) {
+                globalSync += 15;
+                log("SYNC BURST SUCCESSFUL");
+                updateHUD();
+            } else {
+                log("SYNC MISALIGNMENT DETECTED");
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('syncProgress').style.width = Math.min(globalSync, 100) + "%";
+        }
+
+        // GAME 2: MEMORY RECOVERY
+        const memoryItems = ['🧬','🧬','🪐','🪐','💎','💎','📡','📡','🛸','🛸','🔋','🔋','🧠','🧠','❤️','❤️'];
+        let firstCard = null;
+        let lockGrid = false;
+
+        function resetMemory() {
+            const container = document.getElementById('memContainer');
+            container.innerHTML = '';
+            const shuffled = [...memoryItems].sort(() => Math.random() - 0.5);
+            shuffled.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'data-card';
+                card.innerHTML = `
+                    <div class="data-card-inner">
+                        <div class="card-side card-back">0x1</div>
+                        <div class="card-side card-front">${item}</div>
+                    </div>
+                `;
+                card.onclick = () => flipCard(card, item);
+                container.appendChild(card);
+            });
+        }
+
+        function flipCard(el, item) {
+            if(lockGrid || el.classList.contains('flipped')) return;
+            el.classList.add('flipped');
+            if(!firstCard) {
+                firstCard = {el, item};
+            } else {
+                if(firstCard.item === item) {
+                    firstCard = null;
+                    globalSync += 5;
+                    updateHUD();
+                } else {
+                    lockGrid = true;
+                    setTimeout(() => {
+                        el.classList.remove('flipped');
+                        firstCard.el.classList.remove('flipped');
+                        firstCard = null;
+                        lockGrid = false;
+                    }, 1000);
+                }
+            }
+        }
+
+        // VISUALIZER
+        function initVisualizer() {
+            const container = document.getElementById('visualizer');
+            for(let i=0; i<25; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'vis-bar';
+                container.appendChild(bar);
+            }
+            setInterval(() => {
+                document.querySelectorAll('.vis-bar').forEach(bar => {
+                    bar.style.height = Math.random() * 50 + 5 + 'px';
+                    bar.style.opacity = Math.random();
+                });
+            }, 100);
+        }
+
+        // FINAL UPLINK
+        function finalUplink() {
+            if(globalSync < 80) {
+                alert("STATION ERROR: SYSTEM SYNC LEVEL < 80%. INSUFFICIENT HEART-DATA.");
+                return;
+            }
+            const overlay = document.getElementById('terminal-overlay');
+            overlay.style.display = 'block';
+            let i = 0;
+            const text = `
+                >> CRITICAL SYNC ACHIEVED...
+                >> DECRYPTING ETERNAL_VALULT.DAT...
+                >> ACCESSING SOULMATE_ID: [YOU]
+                >> SYSTEM STATUS: 100% COMPATIBLE
+                >> MESSAGE: My love for you is a constant in a universe of variables.
+                >> Forever is not enough time to explore our nebula.
+                >> WILL YOU BE MY FOREVER COMMANDER?
+                >> [END OF DATA]
+            `;
+            function typeWriter() {
+                if (i < text.length) {
+                    overlay.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 40);
+                }
+            }
+            typeWriter();
+        }
+
+        // HUD UTILS
+        document.onmousemove = (e) => {
+            document.getElementById('coordX').innerText = `X: ${e.pageX}`;
+            document.getElementById('coordY').innerText = `Y: ${e.pageY}`;
+        };
+
+        function startTimer() {
+            let s = 0;
+            setInterval(() => {
+                s++;
+                let date = new Date(null);
+                date.setSeconds(s);
+                document.getElementById('timer').innerText = date.toISOString().substr(11, 8);
+            }, 1000);
+        }
+
+        // STARTUP
+        initStars();
+        drawNebula();
+        updateOrbits();
+        initVisualizer();
+        startTimer();
+
+    </script>
+</body>
+</html>

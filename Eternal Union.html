@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌈 PRISM | QUANTUM ENTANGLEMENT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&family=Montserrat:wght@100;400;900&family=Playfair+Display:ital,wght@1,900&family=Space+Mono&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --void: #010103;
+            --gold: #d4af37;
+            --font-tech: 'Syncopate', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--void);
+            color: #fff;
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+        /* --- THE ENTANGLEMENT HUB (CURSOR) --- */
+        #prismCursor {
+            position: fixed; width: 50px; height: 50px; 
+            border: 1px solid rgba(255,255,255,0.8);
+            transform: rotate(45deg); z-index: 100; pointer-events: none;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .core { 
+            width: 10px; height: 10px; background: #fff; 
+            box-shadow: 0 0 30px #fff, 0 0 60px var(--gold); 
+        }
+
+        /* --- DATA HUD --- */
+        .hud-system {
+            position: fixed; top: 30px; left: 30px;
+            font-family: var(--font-mono); font-size: 0.6rem;
+            color: var(--gold); opacity: 0.6; z-index: 10;
+        }
+
+        /* --- KINETIC PROPOSAL STAGE --- */
+        #quoteStage {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10; pointer-events: none;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .math-symbol {
+            font-family: var(--font-serif); font-size: 8rem;
+            color: rgba(255,255,255,0.05); position: absolute;
+            z-index: -1;
+        }
+
+        .q-line {
+            font-family: var(--font-serif); font-style: italic; font-size: 3.8rem;
+            opacity: 0; filter: blur(30px); transform: scale(1.2);
+            transition: all 2.5s cubic-bezier(0.19, 1, 0.22, 1);
+            background: linear-gradient(to bottom, #fff, var(--gold));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .q-line.active { opacity: 1; filter: blur(0px); transform: scale(1); }
+
+        /* --- CERTIFICATE MODAL --- */
+        #keepsakeOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2000; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            background: #fff; color: #000;
+        }
+
+        .cert-container {
+            border: 1px solid #000; padding: 40px; width: 850px;
+            background: #fff; position: relative; box-shadow: 0 0 100px rgba(0,0,0,0.1);
+        }
+
+        #matrixOutput {
+            font-family: var(--font-mono); font-size: 0.75rem;
+            background: #f9f9f9; padding: 20px; border-left: 4px solid var(--gold);
+            margin: 20px 0; min-height: 200px; color: #444;
+        }
+
+        .seal-input {
+            border: none; border-bottom: 2px solid #000; padding: 10px;
+            font-family: var(--font-serif); font-size: 2.2rem;
+            width: 100%; text-align: center; margin: 20px 0; outline: none;
+        }
+
+        .final-btn {
+            background: #000; color: #fff; border: none; padding: 20px 50px;
+            font-family: var(--font-tech); cursor: pointer; letter-spacing: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hud-system">
+        ENTANGLEMENT_STATUS: ACTIVE<br>
+        COORDINATE_SYNC: <span id="sync">0.00</span><br>
+        PROBABILITY: 1.000000
+    </div>
+
+    <div id="prismCursor"><div class="core"></div></div>
+    <canvas id="canvas"></canvas>
+
+    <div id="quoteStage">
+        <div class="math-symbol">∫</div>
+        <div class="q-line" id="l1">If probability is infinite...</div>
+        <div class="q-line" id="l2">And attraction is constant...</div>
+        <div class="q-line" id="l3">Then we are the only solution.</div>
+    </div>
+
+    <div id="keepsakeOverlay">
+        <div class="cert-container">
+            <h2 style="font-family: var(--font-tech); font-size: 0.7rem; letter-spacing: 10px;">QUANTUM CERTIFICATION</h2>
+            <div id="matrixOutput"></div>
+            <input type="text" class="seal-input" id="partnerName" placeholder="AUTHORIZE WITH YOUR NAME">
+            <button class="final-btn" onclick="sealEternity()">GENERATE SEAL</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        let particles = [];
+        let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+        let isDetonated = false;
+        let mass = 0;
+
+        // --- PARTICLE PHYSICS (QUANTUM MODEL) ---
+        class QuantumShard {
+            constructor(x, y, hue, velocity = 4) {
+                this.x = x; this.y = y;
+                this.hue = hue;
+                this.originX = x; this.originY = y;
+                this.vx = (Math.random() - 0.5) * velocity;
+                this.vy = (Math.random() - 0.5) * velocity;
+                this.friction = 0.98;
+                this.life = 1;
+                this.entanglement = Math.random();
+            }
+
+            update() {
+                // Non-local movement: React to mouse velocity even at a distance
+                if(!isDetonated) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let d = Math.sqrt(dx*dx + dy*dy);
+                    if(d < 400) {
+                        this.vx += (dx / d) * this.entanglement * 0.5;
+                        this.vy += (dy / d) * this.entanglement * 0.5;
+                    }
+                }
+                
+                this.x += this.vx; this.y += this.vy;
+                this.vx *= this.friction; this.vy *= this.friction;
+                this.life -= 0.006;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, Math.random() * 4, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 70%, ${this.life})`;
+                ctx.fill();
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = isDetonated ? 'rgba(255,255,255,0.1)' : 'rgba(1, 1, 3, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach((p, i) => {
+                p.update(); p.draw();
+                if (p.life <= 0) particles.splice(i, 1);
+            });
+
+            if(!isDetonated) {
+                mass = particles.length;
+                document.getElementById('sync').innerText = (Math.random() * 0.99).toFixed(4);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // --- INTERACTION ---
+        window.addEventListener('mousemove', (e) => {
+            if(isDetonated) return;
+            mouse.x = e.clientX; mouse.y = e.clientY;
+            document.getElementById('prismCursor').style.left = e.clientX - 25 + 'px';
+            document.getElementById('prismCursor').style.top = e.clientY - 25 + 'px';
+            for(let i=0; i<8; i++) particles.push(new QuantumShard(e.clientX, e.clientY, (Date.now()/20)%360));
+        });
+
+        window.addEventListener('mousedown', () => {
+            if(mass < 600 || isDetonated) return;
+            detonate();
+        });
+
+        function detonate() {
+            isDetonated = true;
+            document.getElementById('prismCursor').style.opacity = 0;
+            // Explosion
+            for(let i=0; i<2000; i++) {
+                let p = new QuantumShard(mouse.x, mouse.y, Math.random()*360, 60);
+                p.life = 1.5;
+                particles.push(p);
+            }
+            // Sequence
+            setTimeout(() => document.getElementById('l1').classList.add('active'), 800);
+            setTimeout(() => document.getElementById('l2').classList.add('active'), 2500);
+            setTimeout(() => document.getElementById('l3').classList.add('active'), 4500);
+            setTimeout(() => {
+                document.getElementById('keepsakeOverlay').style.display = 'flex';
+                typeMatrix();
+            }, 8000);
+        }
+
+        function typeMatrix() {
+            const lines = [
+                "> INITIALIZING QUANTUM PROOF...",
+                "> ATTRACTION (A) = 1.0",
+                "> TIME (T) = ∞",
+                "> ENTANGLEMENT DETECTED: 99.99%",
+                "> CALCULATING SHARED FREQUENCY...",
+                "> SOLUTION FOUND: YOU + ME",
+                "> STATUS: PERMANENTLY SEALED."
+            ];
+            let i = 0;
+            const div = document.getElementById('matrixOutput');
+            function type() {
+                if(i < lines.length) {
+                    div.innerHTML += lines[i] + "<br>";
+                    i++;
+                    setTimeout(type, 700);
+                }
+            }
+            type();
+        }
+
+        function sealEternity() {
+            const name = document.getElementById('partnerName').value || "Beloved";
+            alert(`Quantum Union Certified for ${name}.`);
+            location.reload();
+        }
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        animate();
+    </script>
+</body>
+</html>

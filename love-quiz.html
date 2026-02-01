@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💕 Love Quiz - Do You Know Me?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        :root { --pink: #ff6b9d; --purple: #c44569; --light-pink: #ffe4ec; --dark: #2d3436; --success: #00b894; --danger: #e74c3c; --warning: #f39c12; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); min-height: 100vh; }
+        .bg-emojis { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .floating-emoji { position: absolute; animation: floatUp 15s linear infinite; opacity: 0.3; font-size: 30px; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) rotate(0deg); } 100% { transform: translateY(-100px) rotate(360deg); } }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+        .screen { display: none; animation: slideIn 0.5s ease; }
+        .screen.active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .card { background: white; border-radius: 30px; padding: 30px; box-shadow: 0 20px 60px rgba(255,107,157,0.3); margin-bottom: 20px; }
+        .welcome-icon { font-size: 80px; text-align: center; animation: bounce 1s ease infinite; }
+        @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .welcome-title { font-family: 'Pacifico', cursive; font-size: 2rem; text-align: center; color: var(--purple); margin: 20px 0; }
+        .welcome-subtitle { text-align: center; color: #666; margin-bottom: 30px; line-height: 1.6; }
+        .gender-selection { display: flex; gap: 15px; margin-bottom: 20px; }
+        .gender-btn { flex: 1; padding: 20px; border: 3px solid #eee; border-radius: 20px; background: white; cursor: pointer; transition: all 0.3s; text-align: center; }
+        .gender-btn:hover { border-color: var(--pink); transform: translateY(-5px); }
+        .gender-btn.selected { border-color: var(--pink); background: var(--light-pink); }
+        .gender-btn .emoji { font-size: 40px; display: block; margin-bottom: 10px; }
+        .gender-btn .label { font-weight: 600; color: var(--dark); }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: 600; color: var(--dark); margin-bottom: 8px; }
+        .input-group input { width: 100%; padding: 15px 20px; border: 2px solid #eee; border-radius: 15px; font-size: 1rem; font-family: 'Poppins', sans-serif; }
+        .input-group input:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255,107,157,0.2); }
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 50px; font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background: linear-gradient(135deg, var(--pink), var(--purple)); color: white; box-shadow: 0 10px 30px rgba(255,107,157,0.4); }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(255,107,157,0.5); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .quiz-type-selection { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
+        .quiz-type-btn { padding: 20px; border: 2px solid #eee; border-radius: 20px; background: white; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 15px; }
+        .quiz-type-btn:hover { border-color: var(--pink); background: var(--light-pink); }
+        .quiz-type-btn.selected { border-color: var(--purple); background: linear-gradient(135deg, rgba(255,107,157,0.1), rgba(196,69,105,0.1)); }
+        .quiz-type-btn .emoji { font-size: 35px; }
+        .quiz-type-btn .title { font-weight: 700; color: var(--dark); }
+        .quiz-type-btn .desc { font-size: 0.85rem; color: #888; }
+        .question-card { background: linear-gradient(135deg, #fff, var(--light-pink)); border-radius: 20px; padding: 25px; margin-bottom: 15px; border: 2px solid rgba(255,107,157,0.2); }
+        .question-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .question-number { background: var(--pink); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+        .question-input { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 0.95rem; margin-bottom: 15px; }
+        .question-input:focus { outline: none; border-color: var(--pink); }
+        .options-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .option-input { padding: 12px; border: 2px solid #eee; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; text-align: center; }
+        .option-input:focus { outline: none; border-color: var(--pink); }
+        .option-input.correct-answer { border-color: var(--success); background: rgba(0,184,148,0.1); }
+        .correct-label { grid-column: 1/-1; text-align: center; font-size: 0.85rem; color: #888; margin-top: 10px; }
+        .correct-select { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
+        .correct-btn { padding: 8px 20px; border: 2px solid #ddd; border-radius: 20px; background: white; cursor: pointer; font-family: 'Poppins', sans-serif; transition: all 0.3s; }
+        .correct-btn:hover { border-color: var(--success); }
+        .correct-btn.selected { background: var(--success); color: white; border-color: var(--success); }
+        .share-card { text-align: center; }
+        .share-icon { font-size: 60px; margin-bottom: 20px; }
+        .share-title { font-family: 'Pacifico', cursive; font-size: 1.8rem; color: var(--purple); margin-bottom: 10px; }
+        .share-link-box { background: var(--light-pink); border-radius: 15px; padding: 15px; margin: 20px 0; word-break: break-all; font-size: 0.85rem; border: 2px dashed var(--pink); }
+        .share-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .share-btn { flex: 1; padding: 15px; border: none; border-radius: 15px; font-family: 'Poppins', sans-serif; font-weight: 600; cursor: pointer; }
+        .share-btn.copy { background: var(--dark); color: white; }
+        .share-btn.whatsapp { background: #25d366; color: white; }
+        .quiz-header { text-align: center; margin-bottom: 25px; }
+        .quiz-from { font-size: 0.9rem; color: #888; }
+        .quiz-from span { color: var(--purple); font-weight: 600; }
+        .quiz-title { font-family: 'Pacifico', cursive; font-size: 1.5rem; color: var(--purple); margin: 10px 0; }
+        .progress-bar { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; margin: 20px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--pink), var(--purple)); border-radius: 4px; transition: width 0.5s; }
+        .question-display { text-align: center; margin-bottom: 25px; }
+        .q-number { display: inline-block; background: var(--pink); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; }
+        .q-text { font-size: 1.2rem; font-weight: 600; color: var(--dark); line-height: 1.5; }
+        .options-grid { display: grid; gap: 12px; }
+        .option-btn { padding: 18px 20px; border: 2px solid #eee; border-radius: 15px; background: white; cursor: pointer; font-family: 'Poppins', sans-serif; font-size: 1rem; transition: all 0.3s; text-align: center; }
+        .option-btn:hover { border-color: var(--pink); background: var(--light-pink); transform: scale(1.02); }
+        .option-btn.correct { border-color: var(--success); background: var(--success); color: white; }
+        .option-btn.wrong { border-color: var(--danger); background: var(--danger); color: white; animation: shake 0.5s; }
+        @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .results-card { text-align: center; }
+        .results-emoji { font-size: 80px; margin-bottom: 15px; }
+        .results-score { font-size: 4rem; font-weight: 800; background: linear-gradient(135deg, var(--pink), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .results-text { font-size: 1.3rem; color: var(--dark); margin: 10px 0 20px; }
+        .results-message { background: var(--light-pink); border-radius: 20px; padding: 25px; margin: 20px 0; }
+        .results-message h3 { color: var(--purple); margin-bottom: 10px; }
+        .results-message p { color: #666; line-height: 1.6; }
+        .score-breakdown { display: flex; justify-content: center; gap: 20px; margin: 20px 0; }
+        .score-item { text-align: center; }
+        .score-item .number { font-size: 2rem; font-weight: 700; }
+        .score-item.correct .number { color: var(--success); }
+        .score-item.wrong .number { color: var(--danger); }
+        .score-item .label { font-size: 0.8rem; color: #888; }
+        .love-meter { margin: 25px 0; }
+        .love-meter-label { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: 600; }
+        .love-meter-bar { height: 25px; background: #eee; border-radius: 15px; overflow: hidden; }
+        .love-meter-fill { height: 100%; background: linear-gradient(90deg, var(--danger), var(--warning), var(--success)); border-radius: 15px; transition: width 1s; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
+        .action-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .action-buttons .btn { flex: 1; }
+        .btn-secondary { background: white; color: var(--purple); border: 2px solid var(--purple); }
+        .btn-secondary:hover { background: var(--purple); color: white; }
+        .fight-popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+        .fight-popup.active { display: flex; }
+        .fight-card { background: white; border-radius: 25px; padding: 30px; text-align: center; max-width: 350px; width: 100%; animation: popIn 0.5s; }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .fight-emoji { font-size: 60px; margin-bottom: 15px; }
+        .fight-text { font-size: 1.2rem; color: var(--dark); margin-bottom: 20px; line-height: 1.5; }
+        .fight-text .highlight { color: var(--danger); font-weight: 700; }
+        @media (max-width: 500px) { .options-container, .gender-selection { grid-template-columns: 1fr; flex-direction: column; } }
+        @keyframes confettiFall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="bg-emojis" id="bgEmojis"></div>
+    <div class="container">
+        <div class="screen active" id="welcomeScreen">
+            <div class="card">
+                <div class="welcome-icon">💕</div>
+                <h1 class="welcome-title">Love Quiz</h1>
+                <p class="welcome-subtitle">Create a fun quiz to test how well your partner knows you! 😍</p>
+                <p style="text-align:center;font-weight:600;margin-bottom:15px;color:var(--dark);">I am...</p>
+                <div class="gender-selection">
+                    <button class="gender-btn" onclick="selectGender('bf')" id="genderBf"><span class="emoji">👨</span><span class="label">Boyfriend</span></button>
+                    <button class="gender-btn" onclick="selectGender('gf')" id="genderGf"><span class="emoji">👩</span><span class="label">Girlfriend</span></button>
+                </div>
+                <div class="input-group"><label>Your Name</label><input type="text" id="creatorName" placeholder="Enter your name..."></div>
+                <button class="btn btn-primary" onclick="goToQuizSetup()" id="startBtn" disabled>Create My Quiz 💝</button>
+            </div>
+        </div>
+        <div class="screen" id="quizTypeScreen">
+            <div class="card">
+                <h2 style="text-align:center;color:var(--purple);margin-bottom:5px;">Hey <span id="displayName"></span>! 👋</h2>
+                <p style="text-align:center;color:#888;margin-bottom:20px;">Choose your quiz style</p>
+                <div class="quiz-type-selection">
+                    <button class="quiz-type-btn" onclick="selectQuizType('sweet')" id="typeSweet"><span class="emoji">🥰</span><div><div class="title">Sweet & Romantic</div><div class="desc">Cute questions about your relationship</div></div></button>
+                    <button class="quiz-type-btn" onclick="selectQuizType('spicy')" id="typeSpicy"><span class="emoji">🔥</span><div><div class="title">Spicy Challenge</div><div class="desc">Fun & tricky questions!</div></div></button>
+                    <button class="quiz-type-btn" onclick="selectQuizType('fight')" id="typeFight"><span class="emoji">😤</span><div><div class="title">Love Fight Mode</div><div class="desc">"You don't remember?!" mode 😂</div></div></button>
+                </div>
+                <button class="btn btn-primary" onclick="goToQuestions()" id="typeNextBtn" disabled>Next: Create Questions →</button>
+            </div>
+        </div>
+        <div class="screen" id="createQuestionsScreen">
+            <div class="card">
+                <h2 style="text-align:center;color:var(--purple);margin-bottom:20px;">Create Your 3 Questions ✍️</h2>
+                <div id="questionsContainer"></div>
+                <button class="btn btn-primary" onclick="generateQuiz()" id="generateBtn" disabled>Generate Quiz Link 🔗</button>
+            </div>
+        </div>
+        <div class="screen" id="shareLinkScreen">
+            <div class="card share-card">
+                <div class="share-icon">🎉</div>
+                <h2 class="share-title">Quiz Ready!</h2>
+                <p style="color:#888;">Send this link to your <span id="partnerLabel"></span></p>
+                <div class="share-link-box" id="shareLink"></div>
+                <div class="share-buttons">
+                    <button class="share-btn copy" onclick="copyLink()">📋 Copy</button>
+                    <button class="share-btn whatsapp" onclick="shareWhatsApp()">💬 WhatsApp</button>
+                </div>
+            </div>
+        </div>
+        <div class="screen" id="takeQuizScreen">
+            <div class="card">
+                <div class="quiz-header">
+                    <p class="quiz-from">A quiz from <span id="quizCreator"></span></p>
+                    <h2 class="quiz-title">Do You Know Me? 💕</h2>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="quizProgress"></div></div>
+                <div class="question-display"><span class="q-number" id="qNumber"></span><p class="q-text" id="qText"></p></div>
+                <div class="options-grid" id="optionsGrid"></div>
+            </div>
+        </div>
+        <div class="screen" id="resultsScreen">
+            <div class="card results-card">
+                <div class="results-emoji" id="resultsEmoji">💖</div>
+                <div class="results-score" id="resultsScore">0/3</div>
+                <p class="results-text" id="resultsText">Your Score</p>
+                <div class="score-breakdown">
+                    <div class="score-item correct"><div class="number" id="correctCount">0</div><div class="label">Correct ✓</div></div>
+                    <div class="score-item wrong"><div class="number" id="wrongCount">0</div><div class="label">Wrong ✗</div></div>
+                </div>
+                <div class="love-meter">
+                    <div class="love-meter-label"><span>Love Connection</span><span id="lovePercent">0%</span></div>
+                    <div class="love-meter-bar"><div class="love-meter-fill" id="loveFill"><span>💕</span></div></div>
+                </div>
+                <div class="results-message" id="resultsMessage"><h3></h3><p></p></div>
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="location.reload()">Create My Quiz</button>
+                    <button class="btn btn-primary" onclick="shareResults()">Share 💕</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fight-popup" id="fightPopup">
+        <div class="fight-card">
+            <div class="fight-emoji" id="fightEmoji">😤</div>
+            <p class="fight-text" id="fightText"></p>
+            <button class="btn btn-primary" onclick="closeFight()">I'm Sorry! 😅</button>
+        </div>
+    </div>
+    <script>
+        const $ = id => document.getElementById(id);
+        let quiz = { creator: '', gender: '', type: '', questions: [] }, current = 0, score = 0, correct = [-1,-1,-1];
+        
+        function createEmojis() {
+            const e = ['💕','💖','💗','❤️','💝','✨'];
+            for(let i=0;i<20;i++) {
+                const d = document.createElement('div');
+                d.className = 'floating-emoji';
+                d.textContent = e[Math.floor(Math.random()*e.length)];
+                d.style.left = Math.random()*100+'%';
+                d.style.animationDuration = (10+Math.random()*10)+'s';
+                d.style.animationDelay = Math.random()*10+'s';
+                $('bgEmojis').appendChild(d);
+            }
+        }
+        
+        function selectGender(g) {
+            quiz.gender = g;
+            document.querySelectorAll('.gender-btn').forEach(b=>b.classList.remove('selected'));
+            $(g==='bf'?'genderBf':'genderGf').classList.add('selected');
+            checkStart();
+        }
+        
+        $('creatorName').addEventListener('input', checkStart);
+        function checkStart() { $('startBtn').disabled = !($('creatorName').value.trim() && quiz.gender); }
+        
+        function selectQuizType(t) {
+            quiz.type = t;
+            document.querySelectorAll('.quiz-type-btn').forEach(b=>b.classList.remove('selected'));
+            $('type'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('selected');
+            $('typeNextBtn').disabled = false;
+        }
+        
+        function show(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); $(id).classList.add('active'); }
+        function goToQuizSetup() { quiz.creator = $('creatorName').value.trim(); $('displayName').textContent = quiz.creator; show('quizTypeScreen'); }
+        function goToQuestions() { createForms(); show('createQuestionsScreen'); }
+        
+        function getPlaceholders() {
+            const s = [{q:"What's my favorite food?",o:["Pizza","Pasta","Sushi","Biryani"]},{q:"What makes me happiest?",o:["Your hugs","Gifts","Travel","Food"]},{q:"My dream date?",o:["Beach","Movie","Dinner","Adventure"]}];
+            const p = [{q:"My biggest pet peeve?",o:["Late replies","Lying","Mess","Noise"]},{q:"What do I secretly judge?",o:["Fashion","Grammar","Food","Music"]},{q:"What makes me jealous?",o:["Friends","Ex","Nothing","Others"]}];
+            const f = [{q:"When did we first meet?",o:["Jan 2023","Feb 2023","Mar 2023","Apr 2023"]},{q:"My first date outfit?",o:["Red dress","Blue jeans","Black top","White shirt"]},{q:"My cafe order?",o:["Latte","Cappuccino","Cold coffee","Tea"]}];
+            return quiz.type==='sweet'?s:quiz.type==='spicy'?p:f;
+        }
+        
+        function createForms() {
+            const c = $('questionsContainer'); c.innerHTML = '';
+            const ph = getPlaceholders();
+            for(let i=0;i<3;i++) {
+                const d = document.createElement('div'); d.className = 'question-card';
+                d.innerHTML = `<div class="question-header"><div class="question-number">${i+1}</div><span>Question ${i+1}</span></div>
+                <input class="question-input" id="q${i}" placeholder="${ph[i].q}">
+                <div class="options-container">
+                    <input class="option-input" id="q${i}o0" placeholder="${ph[i].o[0]}">
+                    <input class="option-input" id="q${i}o1" placeholder="${ph[i].o[1]}">
+                    <input class="option-input" id="q${i}o2" placeholder="${ph[i].o[2]}">
+                    <input class="option-input" id="q${i}o3" placeholder="${ph[i].o[3]}">
+                </div>
+                <p class="correct-label">Correct answer?</p>
+                <div class="correct-select">
+                    <button class="correct-btn" onclick="setCorrect(${i},0)">A</button>
+                    <button class="correct-btn" onclick="setCorrect(${i},1)">B</button>
+                    <button class="correct-btn" onclick="setCorrect(${i},2)">C</button>
+                    <button class="correct-btn" onclick="setCorrect(${i},3)">D</button>
+                </div>`;
+                c.appendChild(d);
+            }
+            document.querySelectorAll('.question-input,.option-input').forEach(inp=>inp.addEventListener('input',checkComplete));
+        }
+        
+        function setCorrect(q,o) {
+            correct[q] = o;
+            const card = document.querySelectorAll('.question-card')[q];
+            card.querySelectorAll('.correct-btn').forEach((b,i)=>b.classList.toggle('selected',i===o));
+            card.querySelectorAll('.option-input').forEach((inp,i)=>inp.classList.toggle('correct-answer',i===o));
+            checkComplete();
+        }
+        
+        function checkComplete() {
+            let ok = true;
+            for(let i=0;i<3;i++) if(!$(`q${i}`).value.trim()||!$(`q${i}o0`).value.trim()||!$(`q${i}o1`).value.trim()||!$(`q${i}o2`).value.trim()||!$(`q${i}o3`).value.trim()||correct[i]===-1) ok=false;
+            $('generateBtn').disabled = !ok;
+        }
+        
+        function generateQuiz() {
+            quiz.questions = [];
+            for(let i=0;i<3;i++) quiz.questions.push({q:$(`q${i}`).value.trim(),o:[$(`q${i}o0`).value.trim(),$(`q${i}o1`).value.trim(),$(`q${i}o2`).value.trim(),$(`q${i}o3`).value.trim()],c:correct[i]});
+            const link = location.origin+location.pathname+'?quiz='+btoa(encodeURIComponent(JSON.stringify(quiz)));
+            $('shareLink').textContent = link;
+            $('partnerLabel').textContent = quiz.gender==='bf'?'Girlfriend 👩':'Boyfriend 👨';
+            show('shareLinkScreen');
+        }
+        
+        function copyLink() { navigator.clipboard.writeText($('shareLink').textContent).then(()=>{document.querySelector('.share-btn.copy').textContent='✅ Copied!';setTimeout(()=>document.querySelector('.share-btn.copy').textContent='📋 Copy',2000);}); }
+        function shareWhatsApp() { window.open('https://wa.me/?text='+encodeURIComponent(`💕 ${quiz.creator} created a Love Quiz for you!\n\n${$('shareLink').textContent}`),'_blank'); }
+        
+        function loadQuiz(d) { quiz=d; $('quizCreator').textContent=d.creator; current=0; score=0; showQ(); show('takeQuizScreen'); }
+        function showQ() {
+            const q = quiz.questions[current];
+            $('qNumber').textContent = `Question ${current+1} of 3`;
+            $('qText').textContent = q.q;
+            $('quizProgress').style.width = (current/3*100)+'%';
+            const g = $('optionsGrid'); g.innerHTML = '';
+            q.o.forEach((o,i)=>{const b=document.createElement('button');b.className='option-btn';b.textContent=o;b.onclick=()=>answer(i);g.appendChild(b);});
+        }
+        
+        function answer(i) {
+            const q=quiz.questions[current], ok=i===q.c;
+            document.querySelectorAll('.option-btn').forEach((b,j)=>{b.onclick=null;if(j===i)b.classList.add(ok?'correct':'wrong');if(j===q.c)b.classList.add('correct');});
+            if(ok)score++;else if(quiz.type==='fight')showFight(q.q);
+            setTimeout(()=>{current++;current<3?showQ():results();},1500);
+        }
+        
+        function showFight(q) {
+            const t=[`You don't know this?! 😤<br><span class="highlight">"${q}"</span>`,`Seriously?! 💔<br><span class="highlight">"${q}"</span>`,`How could you forget?! 😭<br><span class="highlight">"${q}"</span>`];
+            $('fightEmoji').textContent=['😤','💔','😭','😡','🥺'][Math.floor(Math.random()*5)];
+            $('fightText').innerHTML=t[Math.floor(Math.random()*t.length)];
+            $('fightPopup').classList.add('active');
+        }
+        function closeFight() { $('fightPopup').classList.remove('active'); }
+        
+        function results() {
+            const pct=Math.round(score/3*100);
+            $('resultsScore').textContent=`${score}/3`;
+            $('correctCount').textContent=score;
+            $('wrongCount').textContent=3-score;
+            $('lovePercent').textContent=pct+'%';
+            setTimeout(()=>$('loveFill').style.width=pct+'%',500);
+            let e,t,m;
+            if(score===3){e='🥰';t='Perfect!';m={h:'💖 True Soulmate!',p:`You know ${quiz.creator} perfectly!`};}
+            else if(score===2){e='😊';t='Almost!';m={h:'💕 So Close!',p:`Pretty good! Just a bit more attention! 😉`};}
+            else if(score===1){e='😅';t='Hmm...';m={h:'💛 Room to Grow',p:`${quiz.creator} needs more attention! 🤔`};}
+            else{e='😢';t='Uh oh...';m={h:quiz.type==='fight'?'😤 We Need to Talk!':'💔 Try Again?',p:quiz.type==='fight'?`Zero?! ${quiz.creator} is NOT happy! 😅`:`Time to learn about ${quiz.creator}!`};}
+            $('resultsEmoji').textContent=e;$('resultsText').textContent=t;$('resultsMessage').querySelector('h3').textContent=m.h;$('resultsMessage').querySelector('p').textContent=m.p;
+            show('resultsScreen');
+            if(score===3)confetti();
+        }
+        
+        function confetti() {
+            const c=['#ff6b9d','#c44569','#f39c12','#00b894'];
+            for(let i=0;i<50;i++)setTimeout(()=>{const d=document.createElement('div');d.style.cssText=`position:fixed;width:10px;height:10px;background:${c[Math.floor(Math.random()*4)]};left:${Math.random()*100}vw;top:-20px;z-index:1000;border-radius:${Math.random()>.5?'50%':'0'};animation:confettiFall ${2+Math.random()*2}s linear forwards;`;document.body.appendChild(d);setTimeout(()=>d.remove(),4000);},i*50);
+        }
+        
+        function shareResults() {
+            const t=`💕 I scored ${score}/3 on ${quiz.creator}'s Love Quiz!\n\nCreate yours: ${location.origin+location.pathname}`;
+            navigator.share?navigator.share({text:t}):navigator.clipboard.writeText(t).then(()=>alert('Copied!'));
+        }
+        
+        (function init() {
+            createEmojis();
+            const p=new URLSearchParams(location.search).get('quiz');
+            if(p)try{loadQuiz(JSON.parse(decodeURIComponent(atob(p))));}catch(e){}
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Love Potion Mixer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#2c3e50,#4a569d,#6c5ce7);min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;overflow:hidden}
+        h1{font-family:'Fredoka One',cursive;color:#fff;font-size:1.8rem;margin-bottom:10px;text-shadow:2px 2px rgba(0,0,0,0.3)}
+        .subtitle{color:#fff;opacity:0.8;margin-bottom:20px}
+        .lab{background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);border-radius:25px;padding:25px;text-align:center}
+        .ingredients{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+        .ingredient{font-size:40px;padding:10px;background:rgba(255,255,255,0.2);border-radius:15px;cursor:pointer;transition:all 0.2s;border:3px solid transparent}
+        .ingredient:hover{transform:scale(1.2);background:rgba(255,255,255,0.3)}
+        .ingredient.selected{border-color:#ff6b9d;background:rgba(255,107,157,0.3)}
+        .ingredient.added{animation:addToPot 0.5s forwards}
+        @keyframes addToPot{0%{transform:scale(1)}50%{transform:scale(1.5) translateY(-20px)}100%{transform:scale(0);opacity:0}}
+        .potion-container{position:relative;margin:20px auto}
+        .cauldron{font-size:120px;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.3))}
+        .bubbles{position:absolute;top:20px;left:50%;transform:translateX(-50%);pointer-events:none}
+        .bubble{position:absolute;font-size:20px;animation:bubble 2s infinite;opacity:0}
+        @keyframes bubble{0%{transform:translateY(0) scale(0);opacity:0}20%{opacity:1;transform:scale(1)}100%{transform:translateY(-80px) scale(0.5);opacity:0}}
+        .mix-btn{padding:15px 40px;background:linear-gradient(135deg,#ff6b9d,#ee3a6d);color:#fff;border:none;border-radius:50px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;margin-top:10px;box-shadow:0 10px 30px rgba(255,107,157,0.4)}
+        .mix-btn:hover{transform:scale(1.05)}
+        .mix-btn:disabled{opacity:0.5;cursor:not-allowed}
+        .recipe{color:#fff;font-size:0.9rem;margin:15px 0;min-height:30px}
+        .result{display:none;text-align:center;animation:popIn 0.5s}
+        .result.show{display:block}
+        @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+        .result-potion{font-size:100px;animation:glow 1s ease infinite}
+        @keyframes glow{0%,100%{filter:drop-shadow(0 0 20px #ff6b9d)}50%{filter:drop-shadow(0 0 40px #ff6b9d) drop-shadow(0 0 60px #ff6b9d)}}
+        .result h2{font-family:'Fredoka One',cursive;color:#ff6b9d;font-size:1.8rem;margin:15px 0}
+        .result p{color:#fff;font-size:1.1rem;line-height:1.6;max-width:300px;margin:0 auto}
+        .restart{margin-top:20px;padding:12px 30px;background:rgba(255,255,255,0.2);color:#fff;border:2px solid #fff;border-radius:25px;font-family:inherit;cursor:pointer}
+        .sparkle{position:fixed;font-size:30px;animation:sparkleAnim 1s forwards;pointer-events:none}
+        @keyframes sparkleAnim{to{transform:translate(var(--x),var(--y)) scale(0);opacity:0}}
+        .mixing .cauldron{animation:shake 0.3s infinite}
+        @keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+    </style>
+</head>
+<body>
+    <h1>🧪 Love Potion Lab</h1>
+    <p class="subtitle">Mix ingredients to create a love potion!</p>
+    
+    <div class="lab" id="lab">
+        <p style="color:#fff;margin-bottom:10px;">Select 3 ingredients:</p>
+        <div class="ingredients" id="ingredients">
+            <div class="ingredient" onclick="selectIngredient(this)" data-name="Heart">❤️</div>
+            <div class="ingredient" onclick="selectIngredient(this)" data-name="Kiss">💋</div>
+            <div class="ingredient" onclick="selectIngredient(this)" data-name="Sparkle">✨</div>
+            <div class="ingredient" onclick="selectIngredient(this)" data-name="Rose">🌹</div>
+            <div class="ingredient" onclick="selectIngredient(this)" data-name="Moon">🌙</div>
+            <div class="ingredient" onclick="selectIngredient(this)" data-name="Star">⭐</div>
+        </div>
+        
+        <p class="recipe" id="recipe">Your potion: ...</p>
+        
+        <div class="potion-container" id="potionContainer">
+            <div class="cauldron">🧪</div>
+            <div class="bubbles" id="bubbles"></div>
+        </div>
+        
+        <button class="mix-btn" id="mixBtn" onclick="mixPotion()" disabled>🔮 Mix Potion!</button>
+    </div>
+    
+    <div class="result" id="result">
+        <div class="result-potion">💕</div>
+        <h2>Love Potion Complete!</h2>
+        <p id="resultText"></p>
+        <button class="restart" onclick="restart()">🧪 Make Another</button>
+    </div>
+    
+    <script>
+        let selected=[];
+        let bubbleInterval;
+        
+        // Create bubbles
+        function startBubbles(){
+            bubbleInterval=setInterval(()=>{
+                const bubble=document.createElement('div');
+                bubble.className='bubble';
+                bubble.textContent=['💗','💕','✨','💖'][Math.floor(Math.random()*4)];
+                bubble.style.left=(Math.random()*60-30)+'px';
+                bubble.style.animationDelay=Math.random()*0.5+'s';
+                document.getElementById('bubbles').appendChild(bubble);
+                setTimeout(()=>bubble.remove(),2000);
+            },300);
+        }
+        startBubbles();
+        
+        function selectIngredient(el){
+            if(el.classList.contains('selected')){
+                el.classList.remove('selected');
+                selected=selected.filter(e=>e!==el.dataset.name);
+            }else if(selected.length<3){
+                el.classList.add('selected');
+                selected.push(el.dataset.name);
+            }
+            
+            updateRecipe();
+        }
+        
+        function updateRecipe(){
+            const recipe=document.getElementById('recipe');
+            const mixBtn=document.getElementById('mixBtn');
+            
+            if(selected.length===0){
+                recipe.textContent='Your potion: ...';
+            }else{
+                recipe.textContent='Your potion: '+selected.join(' + ')+(selected.length<3?' + ?':'');
+            }
+            
+            mixBtn.disabled=selected.length!==3;
+        }
+        
+        function mixPotion(){
+            const lab=document.getElementById('lab');
+            const container=document.getElementById('potionContainer');
+            
+            // Animate ingredients into pot
+            document.querySelectorAll('.ingredient.selected').forEach((el,i)=>{
+                setTimeout(()=>{
+                    el.classList.add('added');
+                    createSparkle(el);
+                },i*300);
+            });
+            
+            // Mixing animation
+            setTimeout(()=>{
+                container.classList.add('mixing');
+                
+                // More bubbles!
+                for(let i=0;i<20;i++){
+                    setTimeout(()=>{
+                        const bubble=document.createElement('div');
+                        bubble.className='bubble';
+                        bubble.textContent=['💗','💕','✨','💖','❤️'][Math.floor(Math.random()*5)];
+                        bubble.style.left=(Math.random()*60-30)+'px';
+                        bubble.style.fontSize='30px';
+                        document.getElementById('bubbles').appendChild(bubble);
+                    },i*100);
+                }
+            },1000);
+            
+            // Show result
+            setTimeout(()=>{
+                clearInterval(bubbleInterval);
+                lab.style.display='none';
+                
+                const messages=[
+                    "This potion makes me fall in love with you every single day! 💕",
+                    "The most powerful love potion ever - MY LOVE FOR YOU! 💖",
+                    "Warning: Side effects include butterflies and constant smiling! 🥰",
+                    "This potion grants: Forever together with YOU! ❤️",
+                    "Magic result: I'M CRAZY ABOUT YOU! 😍"
+                ];
+                
+                document.getElementById('resultText').textContent=messages[Math.floor(Math.random()*messages.length)];
+                document.getElementById('result').classList.add('show');
+                
+                // Celebration sparkles
+                for(let i=0;i<30;i++){
+                    setTimeout(()=>{
+                        const s=document.createElement('div');
+                        s.className='sparkle';
+                        s.textContent=['💕','💖','✨','❤️','🥰'][Math.floor(Math.random()*5)];
+                        s.style.left=Math.random()*100+'vw';
+                        s.style.top=Math.random()*100+'vh';
+                        s.style.setProperty('--x',(Math.random()-0.5)*100+'px');
+                        s.style.setProperty('--y',(Math.random()-0.5)*100+'px');
+                        document.body.appendChild(s);
+                        setTimeout(()=>s.remove(),1000);
+                    },i*100);
+                }
+            },3000);
+        }
+        
+        function createSparkle(el){
+            for(let i=0;i<5;i++){
+                const s=document.createElement('div');
+                s.className='sparkle';
+                s.textContent='✨';
+                const rect=el.getBoundingClientRect();
+                s.style.left=rect.left+20+'px';
+                s.style.top=rect.top+20+'px';
+                s.style.setProperty('--x',(Math.random()-0.5)*100+'px');
+                s.style.setProperty('--y',(Math.random()-0.5)*100+'px');
+                document.body.appendChild(s);
+                setTimeout(()=>s.remove(),1000);
+            }
+        }
+        
+        function restart(){
+            selected=[];
+            document.getElementById('lab').style.display='block';
+            document.getElementById('result').classList.remove('show');
+            document.querySelectorAll('.ingredient').forEach(el=>{
+                el.classList.remove('selected','added');
+            });
+            document.getElementById('potionContainer').classList.remove('mixing');
+            updateRecipe();
+            startBubbles();
+        }
+    </script>
+</body>
+</html>

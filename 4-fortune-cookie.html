@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥠 Love Fortune Cookie</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#ffeaa7,#fdcb6e,#f39c12);min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;overflow:hidden}
+        h1{color:#fff;font-size:1.8rem;margin-bottom:10px;text-shadow:2px 2px rgba(0,0,0,0.2)}
+        .subtitle{color:#fff;opacity:0.9;margin-bottom:30px}
+        .cookie-container{position:relative;cursor:pointer}
+        .cookie{font-size:150px;transition:transform 0.3s;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.3))}
+        .cookie:hover{transform:scale(1.1) rotate(5deg)}
+        .cookie.crack{animation:crack 0.5s forwards}
+        @keyframes crack{0%{transform:scale(1)}50%{transform:scale(1.2) rotate(10deg)}100%{transform:scale(0);opacity:0}}
+        .fortune{display:none;background:#fff;padding:25px 35px;border-radius:20px;box-shadow:0 15px 40px rgba(0,0,0,0.2);text-align:center;max-width:320px;animation:popIn 0.5s}
+        .fortune.show{display:block}
+        @keyframes popIn{from{transform:scale(0) rotate(-10deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+        .fortune-emoji{font-size:60px;margin-bottom:15px}
+        .fortune-text{font-size:1.2rem;color:#333;line-height:1.6;margin-bottom:15px}
+        .fortune-love{color:#e74c3c;font-weight:700;font-size:1.4rem}
+        .lucky-numbers{margin-top:15px;padding-top:15px;border-top:2px dashed #eee;color:#888;font-size:0.9rem}
+        .btn{margin-top:20px;padding:12px 30px;background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff;border:none;border-radius:25px;font-family:inherit;font-size:1rem;cursor:pointer}
+        .btn:hover{transform:scale(1.05)}
+        .sparkles{position:fixed;pointer-events:none}
+        .sparkle{position:absolute;font-size:25px;animation:sparkle 1s forwards}
+        @keyframes sparkle{0%{transform:scale(0) rotate(0);opacity:1}100%{transform:scale(1) rotate(360deg) translate(var(--x),var(--y));opacity:0}}
+        .hint{margin-top:20px;color:#fff;opacity:0.8;animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{opacity:0.8}50%{opacity:1}}
+        .crumbs{position:absolute;font-size:30px;animation:crumb 1s forwards;pointer-events:none}
+        @keyframes crumb{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+    </style>
+</head>
+<body>
+    <h1>🥠 Love Fortune Cookie</h1>
+    <p class="subtitle">Tap to crack open your fortune!</p>
+    
+    <div class="cookie-container" id="cookieContainer">
+        <div class="cookie" id="cookie" onclick="crackCookie()">🥠</div>
+    </div>
+    
+    <p class="hint" id="hint">👆 Tap the cookie!</p>
+    
+    <div class="fortune" id="fortune">
+        <div class="fortune-emoji" id="fortuneEmoji">💕</div>
+        <p class="fortune-text" id="fortuneText"></p>
+        <p class="fortune-love" id="fortuneLove"></p>
+        <div class="lucky-numbers" id="luckyNumbers"></div>
+        <button class="btn" onclick="reset()">🥠 Another Fortune</button>
+    </div>
+    
+    <div class="sparkles" id="sparkles"></div>
+    
+    <script>
+        const fortunes=[
+            {text:"Someone special is thinking about you right now...",love:"And that someone is ME! 💕",emoji:"🥰"},
+            {text:"Love is in the air today...",love:"Because I LOVE YOU! 💖",emoji:"😍"},
+            {text:"Your soulmate is closer than you think...",love:"It's ME, standing right here! ❤️",emoji:"💕"},
+            {text:"Today you will receive a kiss...",love:"*Sending virtual kisses* 😘💋",emoji:"😘"},
+            {text:"Someone's heart beats only for you...",love:"That's MY heart! 💗",emoji:"💖"},
+            {text:"You are loved more than you know...",love:"I love you to the moon and back! 🌙",emoji:"🥹"},
+            {text:"Happiness is just a hug away...",love:"Come here, let me hug you! 🤗",emoji:"🤗"},
+            {text:"Your smile makes someone's day...",love:"Your smile makes MY day! 😊",emoji:"😊"},
+            {text:"True love finds you when you least expect it...",love:"And I found YOU! 💝",emoji:"💝"},
+            {text:"Someone wants to hold your hand forever...",love:"That someone is ME! 🤝💕",emoji:"🫶"}
+        ];
+        
+        function crackCookie(){
+            const cookie=document.getElementById('cookie');
+            const hint=document.getElementById('hint');
+            
+            cookie.classList.add('crack');
+            hint.style.display='none';
+            
+            // Create crumbs
+            for(let i=0;i<8;i++){
+                const crumb=document.createElement('div');
+                crumb.className='crumbs';
+                crumb.textContent='🥠';
+                crumb.style.left='50%';
+                crumb.style.top='50%';
+                crumb.style.setProperty('--x',(Math.random()-0.5)*200+'px');
+                crumb.style.setProperty('--y',(Math.random()-0.5)*200+'px');
+                crumb.style.setProperty('--r',(Math.random()*720-360)+'deg');
+                document.getElementById('cookieContainer').appendChild(crumb);
+                setTimeout(()=>crumb.remove(),1000);
+            }
+            
+            // Create sparkles
+            for(let i=0;i<15;i++){
+                setTimeout(()=>{
+                    const s=document.createElement('div');
+                    s.className='sparkle';
+                    s.textContent=['✨','💫','⭐','💕'][Math.floor(Math.random()*4)];
+                    s.style.left='50%';
+                    s.style.top='50%';
+                    s.style.setProperty('--x',(Math.random()-0.5)*300+'px');
+                    s.style.setProperty('--y',(Math.random()-0.5)*300+'px');
+                    document.getElementById('sparkles').appendChild(s);
+                    setTimeout(()=>s.remove(),1000);
+                },i*50);
+            }
+            
+            // Show fortune
+            setTimeout(()=>{
+                document.getElementById('cookieContainer').style.display='none';
+                const f=fortunes[Math.floor(Math.random()*fortunes.length)];
+                document.getElementById('fortuneEmoji').textContent=f.emoji;
+                document.getElementById('fortuneText').textContent=f.text;
+                document.getElementById('fortuneLove').textContent=f.love;
+                document.getElementById('luckyNumbers').textContent='Lucky numbers: '+generateLuckyNumbers();
+                document.getElementById('fortune').classList.add('show');
+            },500);
+        }
+        
+        function generateLuckyNumbers(){
+            const nums=[];
+            while(nums.length<4){
+                const n=Math.floor(Math.random()*99)+1;
+                if(!nums.includes(n))nums.push(n);
+            }
+            return nums.join(' - ')+ ' 💕';
+        }
+        
+        function reset(){
+            document.getElementById('cookie').classList.remove('crack');
+            document.getElementById('cookieContainer').style.display='block';
+            document.getElementById('fortune').classList.remove('show');
+            document.getElementById('hint').style.display='block';
+        }
+    </script>
+</body>
+</html>

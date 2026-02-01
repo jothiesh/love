@@ -1,0 +1,398 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛸 NEON NEBULA | LOVE COMMAND</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Quicksand:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. NEON NEBULA SYSTEM VARIABLES 
+        ================================================================
+        */
+        :root {
+            --neon-violet: #bc13fe;
+            --neon-cyan: #05ffa1;
+            --neon-pink: #ff0055;
+            --bg-dark: #020205;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --font-main: 'Quicksand', sans-serif;
+            --font-cyber: 'Syncopate', sans-serif;
+        }
+
+        /* ================================================================
+        2. COSMIC BACKGROUND & ATMOSPHERE
+        ================================================================
+        */
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: var(--font-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #starfield {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #020205 100%);
+        }
+
+        /* ================================================================
+        3. HOLOGRAPHIC INTERFACE (GLASS)
+        ================================================================
+        */
+        .main-deck {
+            width: 95vw;
+            height: 90vh;
+            max-width: 1200px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(188, 19, 254, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            border-right: 1px solid var(--border);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .nav-item {
+            padding: 15px 20px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid transparent;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            font-family: var(--font-cyber);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .nav-item.active {
+            color: var(--neon-cyan);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(5, 255, 161, 0.2);
+            background: rgba(5, 255, 161, 0.05);
+            transform: translateX(10px);
+        }
+
+        /* ================================================================
+        4. MODULES (GAME SCREENS)
+        ================================================================
+        */
+        .viewport {
+            padding: 40px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .module {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .module.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* GAME: NEBULA SYNC (The Ring Game) */
+        .sync-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            border: 2px solid rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        #r1 { width: 300px; height: 300px; border-color: var(--neon-violet); border-style: dashed; }
+        #r2 { width: 220px; height: 220px; border-color: var(--neon-cyan); }
+        #r3 { width: 140px; height: 140px; border-color: var(--neon-pink); border-width: 4px; }
+
+        .planet {
+            position: absolute;
+            width: 20px; height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #fff;
+        }
+
+        /* ================================================================
+        5. UI COMPONENTS 
+        ================================================================
+        */
+        .status-display {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            text-align: right;
+        }
+
+        .stat-line {
+            font-family: var(--font-cyber);
+            font-size: 0.8rem;
+            color: var(--neon-cyan);
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        .btn-action {
+            padding: 20px 60px;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-family: var(--font-cyber);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            border-radius: 50px;
+            margin-top: 40px;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-action:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 30px var(--neon-cyan);
+        }
+
+        /* MESSAGE DECODER */
+        .decoder-box {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 20px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.8;
+            color: var(--neon-cyan);
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px; height: 20px;
+            background: var(--neon-cyan);
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <div class="main-deck">
+        <aside class="sidebar">
+            <h1 style="font-family: var(--font-cyber); font-size: 1.2rem; color: var(--neon-pink); margin-bottom: 30px; letter-spacing: 4px;">LOVE_OS</h1>
+            <button class="nav-item active" onclick="switchMod('sync', this)">01 // SYNC_CORE</button>
+            <button class="nav-item" onclick="switchMod('decrypt', this)">02 // MESSAGE_DECODE</button>
+            <button class="nav-item" onclick="switchMod('vault', this)">03 // ETERNAL_VAULT</button>
+            <div style="margin-top: auto;">
+                <p style="font-size: 0.6rem; opacity: 0.4; letter-spacing: 1px;">ENCRYPTION: ACTIVE</p>
+                <p style="font-size: 0.6rem; opacity: 0.4; letter-spacing: 1px;">HEART_RATE: STABLE</p>
+            </div>
+        </aside>
+
+        <main class="viewport">
+            
+            <section id="mod-sync" class="module active">
+                <h2 style="font-family: var(--font-cyber); font-size: 1.5rem; margin-bottom: 10px;">NEBULA SYNC</h2>
+                <p style="opacity: 0.6; margin-bottom: 40px;">Sync our orbit to unlock the message</p>
+                
+                <div class="sync-container">
+                    <div class="orbit-ring" id="r1"></div>
+                    <div class="orbit-ring" id="r2"></div>
+                    <div class="orbit-ring" id="r3"></div>
+                    <div class="planet" id="p1"></div>
+                    <div class="planet" id="p2"></div>
+                    <div class="planet" id="p3"></div>
+                    <div style="font-size: 50px; filter: drop-shadow(0 0 20px var(--neon-pink));">💖</div>
+                </div>
+
+                <button class="btn-action" onmousedown="attemptSync()">INITIATE SYNC</button>
+            </section>
+
+            <section id="mod-decrypt" class="module">
+                <h2 style="font-family: var(--font-cyber); font-size: 1.5rem; margin-bottom: 40px;">DECODER</h2>
+                <div class="decoder-box" id="decoderText">
+                    [SYSTEM READY]... <br>
+                    WAITING FOR SYNC DATA... <br>
+                    <span class="cursor"></span>
+                </div>
+                <button class="btn-action" style="border-color: var(--neon-pink); color: var(--neon-pink);" onclick="startDecipher()">DECODE LOVE</button>
+            </section>
+
+            <section id="mod-vault" class="module">
+                <h2 style="font-family: var(--font-cyber); font-size: 1.5rem; margin-bottom: 20px;">THE VAULT</h2>
+                <p style="opacity: 0.6; margin-bottom: 40px;">Our love is stored in the eternal cloud</p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%;">
+                    <div style="height: 150px; background: rgba(255,255,255,0.05); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 40px;">💍</div>
+                    <div style="height: 150px; background: rgba(255,255,255,0.05); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 40px;">🥂</div>
+                    <div style="height: 150px; background: rgba(255,255,255,0.05); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 40px;">🏡</div>
+                </div>
+                <button class="btn-action" onclick="alert('Accessing our future...')">VIEW TIMELINE</button>
+            </section>
+
+            <div class="status-display">
+                <div class="stat-line">STATION_VALENTINE_2026</div>
+                <div class="stat-line" style="color: var(--neon-violet);">SYNC_LEVEL: <span id="syncPct">0%</span></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        /* ================================================================
+        6. JAVASCRIPT: NEBULA CORE LOGIC 
+        ================================================================
+        */
+
+        // STARFIELD CANVAS
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function initStars() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            for(let i=0; i<200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    blink: Math.random() * 0.05
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            ctx.fillStyle = "#fff";
+            stars.forEach(s => {
+                ctx.globalAlpha = Math.abs(Math.sin(Date.now() * s.blink));
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
+                ctx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        }
+
+        // ORBITAL MECHANICS
+        let angles = [0, 0, 0];
+        let speeds = [0.02, 0.035, 0.05];
+        let syncLevel = 0;
+
+        function updateOrbits() {
+            const radii = [150, 110, 70];
+            const planets = [document.getElementById('p1'), document.getElementById('p2'), document.getElementById('p3')];
+            
+            for(let i=0; i<3; i++) {
+                angles[i] += speeds[i];
+                const x = Math.cos(angles[i]) * radii[i];
+                const y = Math.sin(angles[i]) * radii[i];
+                planets[i].style.transform = `translate(${x}px, ${y}px)`;
+            }
+            requestAnimationFrame(updateOrbits);
+        }
+
+        function attemptSync() {
+            // Check if planets are roughly aligned on the same side
+            const diff1 = Math.abs((angles[0] % (Math.PI*2)) - (angles[1] % (Math.PI*2)));
+            const diff2 = Math.abs((angles[1] % (Math.PI*2)) - (angles[2] % (Math.PI*2)));
+
+            if(diff1 < 0.5 && diff2 < 0.5) {
+                syncLevel += 25;
+                document.body.style.boxShadow = "inset 0 0 100px var(--neon-cyan)";
+                setTimeout(() => document.body.style.boxShadow = "none", 300);
+            } else {
+                syncLevel = Math.max(0, syncLevel - 10);
+            }
+
+            document.getElementById('syncPct').innerText = syncLevel + "%";
+            if(syncLevel >= 100) {
+                alert("STATION FULLY SYNCED. MESSAGE DECRYPTED.");
+                switchMod('decrypt', document.querySelectorAll('.nav-item')[1]);
+            }
+        }
+
+        // NAVIGATION
+        function switchMod(id, btn) {
+            document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+            document.getElementById('mod-' + id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // TYPING ENGINE
+        function startDecipher() {
+            if(syncLevel < 100) {
+                alert("Error: Connection weak. Sync orbits first!");
+                return;
+            }
+            const el = document.getElementById('decoderText');
+            const lines = [
+                "> INITIALIZING HEART-LINK...",
+                "> BYPASSING EMOTIONAL FIREWALLS...",
+                "> ACCESS GRANTED: [MY FOREVER PERSON]",
+                "> MESSAGE: I love you more than all the stars in this nebula.",
+                "> Side effects: Extreme happiness and forever-hugs.",
+                "> VALENTINE STATUS: LOCKED FOREVER ❤️"
+            ];
+            el.innerHTML = "";
+            let l = 0;
+            function nextLine() {
+                if(l < lines.length) {
+                    el.innerHTML += lines[l] + "<br>";
+                    l++;
+                    setTimeout(nextLine, 1000);
+                }
+            }
+            nextLine();
+        }
+
+        initStars();
+        drawStars();
+        updateOrbits();
+
+    </script>
+</body>
+</html>

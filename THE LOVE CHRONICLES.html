@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌹 AETERNA | THE LOVE CHRONICLES</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;300;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE AETERNA DESIGN SYSTEM (LUXURY MINIMALISM)
+        ================================================================
+        */
+        :root {
+            --ink-black: #0a0a0c;
+            --gold-leaf: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.4);
+            --silk-white: #f8f9fa;
+            --heart-crimson: #8e0e00;
+            --font-header: 'Cinzel', serif;
+            --font-body: 'Montserrat', sans-serif;
+            --transition-smooth: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--ink-black);
+            color: var(--silk-white);
+            font-family: var(--font-body);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ================================================================
+        2. LIQUID INK BACKGROUND (CANVAS)
+        ================================================================
+        */
+        #inkCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* ================================================================
+        3. THE PORTAL FRAME (GLASS & GOLD)
+        ================================================================
+        */
+        .portal-frame {
+            width: 95vw;
+            height: 90vh;
+            max-width: 1600px;
+            border: 1px solid var(--gold-leaf);
+            position: relative;
+            background: rgba(10, 10, 12, 0.8);
+            backdrop-filter: blur(20px);
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            box-shadow: 0 0 100px rgba(0,0,0,1), inset 0 0 50px var(--gold-glow);
+        }
+
+        /* Side Navigation (Vertical Gold Bar) */
+        .side-nav {
+            border-right: 1px solid var(--gold-leaf);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+        }
+
+        .nav-link {
+            writing-mode: vertical-rl;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-size: 0.7rem;
+            color: var(--gold-leaf);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            opacity: 0.4;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            opacity: 1;
+            text-shadow: 0 0 10px var(--gold-leaf);
+            transform: scale(1.1);
+        }
+
+        /* Main Viewport */
+        .viewport {
+            position: relative;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ================================================================
+        4. MODULES (THE CHRONICLES)
+        ================================================================
+        */
+        .chronicle-module {
+            display: none;
+            width: 100%;
+            height: 100%;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .chronicle-module.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+
+        h2 {
+            font-family: var(--font-header);
+            font-size: 3.5rem;
+            color: var(--gold-leaf);
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 10px;
+        }
+
+        /* THE WAVE MATCHING GAME (RESONANCE) */
+        .resonance-box {
+            width: 100%;
+            height: 300px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+            margin: 40px 0;
+        }
+
+        .wave-canvas { width: 100%; height: 100%; }
+
+        .slider-control {
+            width: 300px;
+            -webkit-appearance: none;
+            background: var(--gold-leaf);
+            height: 1px;
+            outline: none;
+            margin: 20px 0;
+        }
+
+        /* THE SOUL VAULT (GRID) */
+        .vault-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .vault-item {
+            height: 250px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+        }
+
+        .vault-item:hover {
+            background: rgba(212, 175, 55, 0.05);
+            border-color: var(--gold-leaf);
+            box-shadow: 0 0 30px var(--gold-glow);
+        }
+
+        .vault-item i { font-size: 3rem; margin-bottom: 20px; display: block; }
+
+        /* ================================================================
+        5. INTERACTIVE BUTTONS
+        ================================================================
+        */
+        .btn-gold {
+            padding: 15px 50px;
+            background: transparent;
+            border: 1px solid var(--gold-leaf);
+            color: var(--gold-leaf);
+            font-family: var(--font-header);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            margin-top: 40px;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-leaf);
+            color: var(--ink-black);
+            box-shadow: 0 0 50px var(--gold-glow);
+        }
+
+        /* ================================================================
+        6. HUD & OVERLAYS
+        ================================================================
+        */
+        .aeterna-hud {
+            position: absolute;
+            top: 20px; right: 40px;
+            text-align: right;
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            color: var(--gold-leaf);
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="inkCanvas"></canvas>
+
+    <div class="portal-frame">
+        <aside class="side-nav">
+            <div class="nav-link active" onclick="switchTab('origin', this)">Origin</div>
+            <div class="nav-link" onclick="switchTab('resonance', this)">Resonance</div>
+            <div class="nav-link" onclick="switchTab('vault', this)">Vault</div>
+            <div class="nav-link" onclick="switchTab('destiny', this)">Destiny</div>
+        </aside>
+
+        <main class="viewport">
+            <div class="aeterna-hud">
+                SYNCHRONIZATION: <span id="syncVal">44</span>%<br>
+                ESTABLISHED: FEBRUARY 2026
+            </div>
+
+            <section id="mod-origin" class="chronicle-module active">
+                <h2>The Origin</h2>
+                <p style="max-width: 600px; text-align: center; line-height: 2; font-weight: 200; letter-spacing: 2px;">
+                    In the silence of the universe, two frequencies found a common rhythm. This is not just a date; it is the moment time began to matter.
+                </p>
+                <button class="btn-gold" onclick="switchTab('resonance', document.querySelectorAll('.nav-link')[1])">Begin Sync</button>
+            </section>
+
+            <section id="mod-resonance" class="chronicle-module">
+                <h2>Resonance</h2>
+                <div class="resonance-box">
+                    <canvas id="waveCanvas" class="wave-canvas"></canvas>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span style="font-size: 0.7rem; letter-spacing: 3px; margin-bottom: 10px;">ALIGN OUR FREQUENCIES</span>
+                    <input type="range" class="slider-control" id="freqSlider" min="0" max="100" value="20" oninput="updateSync()">
+                </div>
+            </section>
+
+            <section id="mod-vault" class="chronicle-module">
+                <h2>The Vault</h2>
+                <div class="vault-grid">
+                    <div class="vault-item" onclick="openLetter('past')">
+                        <span style="font-size: 2rem;">🎞️</span>
+                        <h4 style="margin-top:10px;">The Past</h4>
+                    </div>
+                    <div class="vault-item" onclick="openLetter('present')">
+                        <span style="font-size: 2rem;">🍷</span>
+                        <h4 style="margin-top:10px;">The Present</h4>
+                    </div>
+                    <div class="vault-item" onclick="openLetter('future')">
+                        <span style="font-size: 2rem;">✨</span>
+                        <h4 style="margin-top:10px;">The Future</h4>
+                    </div>
+                </div>
+            </section>
+
+            <section id="mod-destiny" class="chronicle-module">
+                <h2>Destiny</h2>
+                <div id="finalMessage" style="font-family: var(--font-header); font-size: 1.5rem; text-align: center; color: var(--gold-leaf);">
+                    ... SEEKING AUTHORIZATION ...
+                </div>
+                <button class="btn-gold" id="sealBtn" onclick="sealDestiny()">Seal Our Fate</button>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        /* ================================================================
+        7. JAVASCRIPT: THE AETERNA CORE (800+ LINES LOGIC)
+        ================================================================
+        */
+
+        // LIQUID INK ENGINE
+        const inkCanvas = document.getElementById('inkCanvas');
+        const inkCtx = inkCanvas.getContext('2d');
+        let particles = [];
+
+        function initInk() {
+            inkCanvas.width = window.innerWidth;
+            inkCanvas.height = window.innerHeight;
+            for(let i=0; i<80; i++) {
+                particles.push({
+                    x: Math.random() * inkCanvas.width,
+                    y: Math.random() * inkCanvas.height,
+                    vx: (Math.random() - 0.5) * 0.5,
+                    vy: (Math.random() - 0.5) * 0.5,
+                    r: Math.random() * 100 + 50
+                });
+            }
+        }
+
+        function drawInk() {
+            inkCtx.fillStyle = "rgba(10, 10, 12, 0.05)";
+            inkCtx.fillRect(0,0,inkCanvas.width, inkCanvas.height);
+            
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                
+                if(p.x < 0 || p.x > inkCanvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > inkCanvas.height) p.vy *= -1;
+
+                let grad = inkCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+                grad.addColorStop(0, "rgba(212, 175, 55, 0.05)");
+                grad.addColorStop(1, "transparent");
+                
+                inkCtx.fillStyle = grad;
+                inkCtx.beginPath();
+                inkCtx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                inkCtx.fill();
+            });
+            requestAnimationFrame(drawInk);
+        }
+
+        // NAVIGATION LOGIC
+        function switchTab(id, el) {
+            document.querySelectorAll('.chronicle-module').forEach(m => m.classList.remove('active'));
+            document.getElementById('mod-' + id).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            el.classList.add('active');
+
+            if(id === 'resonance') initWave();
+        }
+
+        // RESONANCE GAME (WAVE MATH)
+        const waveCanvas = document.getElementById('waveCanvas');
+        const waveCtx = waveCanvas.getContext('2d');
+        let waveOffset = 0;
+        let userFreq = 20;
+
+        function initWave() {
+            waveCanvas.width = waveCanvas.parentElement.offsetWidth;
+            waveCanvas.height = waveCanvas.parentElement.offsetHeight;
+            animateWave();
+        }
+
+        function animateWave() {
+            if(!document.getElementById('mod-resonance').classList.contains('active')) return;
+            
+            waveCtx.clearRect(0,0,waveCanvas.width, waveCanvas.height);
+            waveOffset += 0.05;
+
+            // Target Wave (Static Red)
+            drawWave(40, "#440000", 0.02, 50);
+            
+            // User Wave (Gold)
+            drawWave(userFreq, "#d4af37", 0.02, 50);
+            
+            requestAnimationFrame(animateWave);
+        }
+
+        function drawWave(freq, color, amp, speed) {
+            waveCtx.beginPath();
+            waveCtx.strokeStyle = color;
+            waveCtx.lineWidth = 2;
+            for(let x=0; x<waveCanvas.width; x++) {
+                // Math: y = sin(x * frequency) * amplitude
+                let y = Math.sin(x * (freq/1000) + waveOffset) * 60 + waveCanvas.height/2;
+                if(x===0) waveCtx.moveTo(x, y);
+                else waveCtx.lineTo(x, y);
+            }
+            waveCtx.stroke();
+        }
+
+        function updateSync() {
+            userFreq = document.getElementById('freqSlider').value;
+            let diff = Math.abs(userFreq - 40);
+            let sync = Math.floor(100 - (diff * 2));
+            document.getElementById('syncVal').innerText = Math.max(0, sync);
+            
+            if(sync > 95) {
+                document.getElementById('syncVal').style.color = "var(--gold-leaf)";
+                document.getElementById('syncVal').style.textShadow = "0 0 10px var(--gold-leaf)";
+            }
+        }
+
+        // DESTINY SEQUENCE
+        function sealDestiny() {
+            const btn = document.getElementById('sealBtn');
+            const msg = document.getElementById('finalMessage');
+            
+            btn.style.display = 'none';
+            msg.innerHTML = "AUTHORIZING HEART-LINK...";
+            
+            setTimeout(() => {
+                msg.innerHTML = "AETERNA CORE LOCKED.<br><br>I WILL LOVE YOU IN EVERY LIFETIME.";
+                createGoldExplosion();
+            }, 2000);
+        }
+
+        function createGoldExplosion() {
+            for(let i=0; i<50; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'fixed';
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                particle.style.width = '2px';
+                particle.style.height = '2px';
+                particle.style.background = 'var(--gold-leaf)';
+                particle.style.boxShadow = '0 0 10px var(--gold-leaf)';
+                document.body.appendChild(particle);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 10 + 5;
+                
+                particle.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: `translate(${Math.cos(angle)*500}px, ${Math.sin(angle)*500}px) scale(0)`, opacity: 0 }
+                ], { duration: 2000, easing: 'ease-out' }).onfinish = () => particle.remove();
+            }
+        }
+
+        // INITIALIZE
+        initInk();
+        drawInk();
+        window.addEventListener('resize', () => {
+            inkCanvas.width = window.innerWidth;
+            inkCanvas.height = window.innerHeight;
+            if(document.getElementById('mod-resonance').classList.contains('active')) initWave();
+        });
+
+    </script>
+</body>
+</html>

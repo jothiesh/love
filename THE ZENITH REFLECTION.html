@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕯️ REFLECTION | A MOMENT FOR US</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,600&family=Inter:wght@100;300;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE ZENITH DESIGN SYSTEM (ORGANIC MINIMALISM)
+        ================================================================
+        */
+        :root {
+            --bg-base: #faf9f6;
+            --accent-warm: #d7ccc8;
+            --text-charcoal: #2d2d2d;
+            --glass-blur: rgba(255, 255, 255, 0.3);
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-charcoal);
+            font-family: var(--font-sans);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ================================================================
+        2. DYNAMIC AMBIENT GRADIENT
+        ================================================================
+        */
+        #ambientCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+        }
+
+        /* ================================================================
+        3. THE FROST LAYER (INTERACTIVE REVEAL)
+        ================================================================
+        */
+        #frostCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5;
+            cursor: cell;
+        }
+
+        /* ================================================================
+        4. THE CONTENT (REVEALED BENEATH)
+        ================================================================
+        */
+        .content-layer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            padding: 40px;
+        }
+
+        .reveal-hint {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.4;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        h2 {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        h2.visible { opacity: 1; transform: translateY(0); }
+
+        .letter {
+            font-family: var(--font-serif);
+            font-size: 1.8rem;
+            line-height: 1.6;
+            color: var(--text-charcoal);
+            opacity: 0;
+            transition: opacity 3s ease;
+        }
+
+        .letter.visible { opacity: 0.8; }
+
+        /* ================================================================
+        5. UI ELEMENTS
+        ================================================================
+        */
+        .btn-minimal {
+            margin-top: 40px;
+            padding: 15px 40px;
+            background: transparent;
+            border: 1px solid var(--text-charcoal);
+            color: var(--text-charcoal);
+            font-family: var(--font-sans);
+            font-size: 0.6rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            opacity: 0;
+            transition: 1s;
+        }
+
+        .btn-minimal.visible { opacity: 1; }
+
+        .btn-minimal:hover {
+            background: var(--text-charcoal);
+            color: var(--bg-base);
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="ambientCanvas"></canvas>
+    <canvas id="frostCanvas"></canvas>
+
+    <div class="reveal-hint" id="hint">Wipe the glass to find me</div>
+
+    <main class="content-layer">
+        <h2 id="mainTitle">Hello, You.</h2>
+        <div class="letter" id="mainLetter">
+            I thought about how to say this, but some things are better revealed slowly. 
+            Just like this moment, you bring clarity to my world. 
+            Will you be my Valentine?
+        </div>
+        <button class="btn-minimal" id="actionBtn" onclick="location.reload()">Start Over</button>
+    </main>
+
+    <script>
+        /* ================================================================
+        6. JAVASCRIPT: THE PHYSICS & REVEAL ENGINE
+        ================================================================
+        */
+
+        // 1. AMBIENT GRADIENT (CANVAS)
+        const ambCanvas = document.getElementById('ambientCanvas');
+        const ambCtx = ambCanvas.getContext('2d');
+        let time = 0;
+
+        function drawAmbient() {
+            ambCanvas.width = window.innerWidth;
+            ambCanvas.height = window.innerHeight;
+            
+            const r = Math.sin(time) * 20 + 240;
+            const g = Math.cos(time) * 10 + 240;
+            const b = Math.sin(time + 2) * 20 + 240;
+
+            const grad = ambCtx.createRadialGradient(
+                ambCanvas.width/2 + Math.sin(time)*100, 
+                ambCanvas.height/2 + Math.cos(time)*100, 
+                0, 
+                ambCanvas.width/2, 
+                ambCanvas.height/2, 
+                ambCanvas.width
+            );
+            grad.addColorStop(0, `rgb(${r},${g},${b})`);
+            grad.addColorStop(1, '#d7ccc8');
+
+            ambCtx.fillStyle = grad;
+            ambCtx.fillRect(0, 0, ambCanvas.width, ambCanvas.height);
+            time += 0.005;
+            requestAnimationFrame(drawAmbient);
+        }
+
+        // 2. FROST REVEAL ENGINE
+        const frostCanvas = document.getElementById('frostCanvas');
+        const fctx = frostCanvas.getContext('2d');
+        let isWiping = false;
+        let wipeAmount = 0;
+
+        function initFrost() {
+            frostCanvas.width = window.innerWidth;
+            frostCanvas.height = window.innerHeight;
+            
+            // Draw initial frost
+            fctx.fillStyle = '#ffffff';
+            fctx.fillRect(0, 0, frostCanvas.width, frostCanvas.height);
+            
+            // Add "texture" to frost
+            for(let i=0; i<1000; i++) {
+                fctx.fillStyle = `rgba(240,240,240,${Math.random() * 0.2})`;
+                fctx.beginPath();
+                fctx.arc(Math.random()*frostCanvas.width, Math.random()*frostCanvas.height, Math.random()*100, 0, Math.PI*2);
+                fctx.fill();
+            }
+
+            fctx.globalCompositeOperation = 'destination-out';
+        }
+
+        function handleWipe(e) {
+            if(!isWiping) return;
+            const x = e.clientX || e.touches[0].clientX;
+            const y = e.clientY || e.touches[0].clientY;
+
+            fctx.beginPath();
+            const grad = fctx.createRadialGradient(x, y, 0, x, y, 60);
+            grad.addColorStop(0, 'rgba(255,255,255,1)');
+            grad.addColorStop(1, 'rgba(255,255,255,0)');
+            fctx.fillStyle = grad;
+            fctx.arc(x, y, 60, 0, Math.PI * 2);
+            fctx.fill();
+
+            wipeAmount++;
+            if(wipeAmount > 300) {
+                document.getElementById('mainTitle').classList.add('visible');
+                document.getElementById('mainLetter').classList.add('visible');
+                document.getElementById('actionBtn').classList.add('visible');
+                document.getElementById('hint').style.opacity = '0';
+            }
+        }
+
+        // Event Listeners
+        frostCanvas.addEventListener('mousedown', () => isWiping = true);
+        window.addEventListener('mouseup', () => isWiping = false);
+        frostCanvas.addEventListener('mousemove', handleWipe);
+        frostCanvas.addEventListener('touchstart', () => isWiping = true);
+        frostCanvas.addEventListener('touchmove', handleWipe);
+
+        // 3. VARIABLE FONT WEIGHT (MOUSE PROXIMITY)
+        window.addEventListener('mousemove', (e) => {
+            const title = document.getElementById('mainTitle');
+            const rect = title.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const dist = Math.sqrt((e.clientX - centerX)**2 + (e.clientY - centerY)**2);
+            
+            // Adjust font weight based on distance
+            const weight = Math.max(100, 700 - dist / 2);
+            title.style.fontWeight = weight;
+        });
+
+        drawAmbient();
+        initFrost();
+        window.addEventListener('resize', initFrost);
+
+    </script>
+</body>
+</html>

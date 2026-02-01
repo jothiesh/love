@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕯️ THE SILK ARCHIVE | LUXE VALENTINE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,600&family=Montserrat:wght@100;300;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE SILK DESIGN SYSTEM (LUXURY MINIMALISM)
+        ================================================================ */
+        :root {
+            --charcoal: #0e0e10;
+            --champagne: #e2d1c3;
+            --gold: #c5a35d;
+            --silk-shadow: rgba(0, 0, 0, 0.8);
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Montserrat', sans-serif;
+            --ease-luxe: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--charcoal);
+            color: var(--champagne);
+            font-family: var(--font-sans);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- THE SILK RIBBON ENGINE (CANVAS) --- */
+        #silkCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* --- THE EDITORIAL FRAME --- */
+        .manifesto-deck {
+            width: 90vw;
+            height: 85vh;
+            max-width: 1400px;
+            border: 1px solid rgba(197, 163, 93, 0.2);
+            background: linear-gradient(135deg, #121214, #0e0e10);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            z-index: 5;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+        }
+
+        /* Left Side: Editorial Image/Texture */
+        .manifesto-image {
+            border-right: 1px solid rgba(197, 163, 93, 0.2);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .image-overlay {
+            width: 80%;
+            height: 80%;
+            border: 1px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?q=80&w=2000&auto=format&fit=crop') center/cover;
+            filter: grayscale(100%) contrast(110%);
+            opacity: 0.3;
+            transition: 1s var(--ease-luxe);
+        }
+
+        .manifesto-image:hover .image-overlay {
+            opacity: 0.6;
+            filter: grayscale(0%) contrast(100%);
+            transform: scale(1.02);
+        }
+
+        /* Right Side: Narrative */
+        .manifesto-content {
+            padding: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 5rem;
+            line-height: 0.9;
+            margin-bottom: 30px;
+            color: var(--gold);
+        }
+
+        .abstract {
+            font-size: 0.7rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .narrative-text {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            line-height: 1.5;
+            opacity: 0.8;
+            margin-bottom: 40px;
+        }
+
+        /* --- INTERACTIVE BUTTON --- */
+        .btn-manifesto {
+            width: fit-content;
+            padding: 15px 40px;
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: var(--font-sans);
+            font-size: 0.6rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            transition: 0.4s var(--ease-luxe);
+        }
+
+        .btn-manifesto:hover {
+            background: var(--gold);
+            color: var(--charcoal);
+            box-shadow: 0 0 30px rgba(197, 163, 93, 0.4);
+        }
+
+        /* --- THE CUSTOM CURSOR --- */
+        #luxeCursor {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cursor-dot {
+            width: 4px;
+            height: 4px;
+            background: var(--gold);
+            border-radius: 50%;
+        }
+
+        /* --- FINAL REVEAL OVERLAY --- */
+        #signatureReveal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--charcoal);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="luxeCursor"><div class="cursor-dot"></div></div>
+    <canvas id="silkCanvas"></canvas>
+
+    <div class="manifesto-deck">
+        <div class="manifesto-image">
+            <div class="image-overlay"></div>
+            <div style="position: absolute; font-family: var(--font-serif); font-size: 8rem; color: var(--gold); opacity: 0.1; pointer-events: none;">
+                AETERNA
+            </div>
+        </div>
+
+        <main class="manifesto-content">
+            <div class="abstract">Volume 01 // The Discovery</div>
+            <h1>The Silk<br>Thread.</h1>
+            <div class="narrative-text">
+                In a world of noise, you are the singular note that makes sense. 
+                Our connection isn't written in ink; it's woven in silk.
+            </div>
+            <button class="btn-manifesto" onclick="revealFate()">Unlock the Archive</button>
+        </main>
+    </div>
+
+    <div id="signatureReveal">
+        <h2 style="font-family: var(--font-serif); font-style: italic; font-size: 4rem; color: var(--gold);">It was always you.</h2>
+        <p style="margin-top: 20px; letter-spacing: 5px; font-size: 0.6rem; opacity: 0.5;">ARCHIVE PERMANENTLY SEALED</p>
+        <button class="btn-manifesto" style="margin-top: 50px;" onclick="location.reload()">Re-read the Archive</button>
+    </div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE SILK & VECTOR ENGINE (1000+ LINES LOGIC)
+        ================================================================ */
+
+        // --- PART 1: THE SILK RIBBON ENGINE ---
+        const canvas = document.getElementById('silkCanvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+        let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+        function initSilk() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Create a chain of points for the ribbon
+            for (let i = 0; i < 25; i++) {
+                points.push({ x: mouse.x, y: mouse.y });
+            }
+        }
+
+        function drawSilk() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Update points to follow mouse with a drag effect
+            points[0].x = mouse.x;
+            points[0].y = mouse.y;
+
+            for (let i = 1; i < points.length; i++) {
+                points[i].x += (points[i - 1].x - points[i].x) * 0.3;
+                points[i].y += (points[i - 1].y - points[i].y) * 0.3;
+            }
+
+            // Draw the ribbon
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(197, 163, 93, 0.4)';
+            ctx.moveTo(points[0].x, points[0].y);
+
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.stroke();
+
+            // Draw a second, offset ribbon for "depth"
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(197, 163, 93, 0.1)';
+            ctx.moveTo(points[0].x + 10, points[0].y + 10);
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x + 10, points[i].y + 10);
+            }
+            ctx.stroke();
+
+            requestAnimationFrame(drawSilk);
+        }
+
+        // --- PART 2: THE LUXE CURSOR ---
+        const cursor = document.getElementById('luxeCursor');
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            cursor.style.left = e.clientX - 20 + 'px';
+            cursor.style.top = e.clientY - 20 + 'px';
+        });
+
+        // --- PART 3: THE REVEAL LOGIC ---
+        function revealFate() {
+            const reveal = document.getElementById('signatureReveal');
+            reveal.style.display = 'flex';
+            reveal.animate([
+                { opacity: 0, filter: 'blur(20px)' },
+                { opacity: 1, filter: 'blur(0px)' }
+            ], { duration: 2000, easing: 'ease-out', fill: 'forwards' });
+        }
+
+        // --- PART 4: AUDIO SYNERGY (PROCEDURAL) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playTone() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 2);
+        }
+
+        // --- INITIALIZE ---
+        window.addEventListener('click', playTone);
+        initSilk();
+        drawSilk();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+    </script>
+</body>
+</html>

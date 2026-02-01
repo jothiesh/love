@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌹 VALENTINE PROTOCOL | AETERNA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Montserrat:wght@200;400;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE AETERNA DESIGN SYSTEM (LUXURY NOIR)
+        ================================================================ */
+        :root {
+            --deep-red: #660708;
+            --blood-red: #ba181b;
+            --gold-leaf: #af955a;
+            --void: #0b090a;
+            --font-main: 'Montserrat', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            --font-header: 'Cinzel', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--void);
+            color: #fff;
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font-main);
+        }
+
+        /* --- ATMOSPHERIC LAYERS --- */
+        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, transparent 20%, var(--void) 100%);
+            z-index: 2; pointer-events: none;
+        }
+
+        /* --- THE VALENTINE INTERFACE --- */
+        .interface {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        .hud-top {
+            position: fixed; top: 40px; width: 100%;
+            text-align: center; font-family: var(--font-header);
+            font-size: 0.7rem; letter-spacing: 10px; color: var(--gold-leaf);
+            opacity: 0.6; z-index: 100;
+        }
+
+        /* --- THE HEARTBEAT BUTTON --- */
+        .pulse-core {
+            width: 120px; height: 120px;
+            background: var(--deep-red);
+            border-radius: 50%;
+            margin: 0 auto 40px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px var(--blood-red);
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 2px solid var(--gold-leaf);
+            position: relative;
+        }
+
+        .pulse-core:active { transform: scale(0.9); }
+
+        .progress-ring {
+            position: absolute; width: 160px; height: 160px;
+            border: 2px solid rgba(175, 149, 90, 0.2);
+            border-radius: 50%;
+            z-index: -1;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1 {
+            font-family: var(--font-serif);
+            font-style: italic; font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #fff, var(--gold-leaf));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-weight: 200; letter-spacing: 3px; font-size: 0.8rem;
+            line-height: 2; opacity: 0.7;
+        }
+
+        /* --- THE FINAL REVEAL --- */
+        #finalStage {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; color: #000;
+            z-index: 1000; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            text-align: center;
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        #luxeCursor {
+            position: fixed; width: 30px; height: 30px;
+            border: 1px solid var(--gold-leaf);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            transition: transform 0.1s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="luxeCursor"></div>
+    <div class="hud-top">VALENTINE_PROTOCOL // AETERNA_2026</div>
+
+    <canvas id="starCanvas"></canvas>
+    <div id="overlay"></div>
+
+    <div class="interface">
+        <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            <div class="progress-ring" id="ring"></div>
+            <div class="pulse-core" id="heartBtn" onclick="syncHeart()">
+                <span style="font-family: var(--font-header); font-size: 1.5rem; color: var(--gold-leaf);">♥</span>
+            </div>
+        </div>
+
+        <h1 id="title">Syncing Frequencies...</h1>
+        <p id="desc">Touch the heart to align your resonance with mine. <br> Connection required for final decryption.</p>
+    </div>
+
+    <div id="finalStage">
+        <p style="color: #666; font-family: var(--font-header); letter-spacing: 5px; margin-bottom: 30px;">DECRYPTION COMPLETE</p>
+        <h2 style="font-family: var(--font-serif); font-size: 3.5rem; font-style: italic; margin-bottom: 20px;">Will you be my Valentine?</h2>
+        <p style="color: #000; opacity: 1; font-weight: 400; margin-bottom: 40px;">(And every year thereafter... Forever.)</p>
+        <button onclick="location.reload()" style="background:#000; color:#fff; border: none; padding: 15px 40px; cursor: pointer; font-family: var(--font-header); letter-spacing: 5px;">ACCEPT UNION</button>
+    </div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE RESONANCE & DINNER ENGINE
+        ================================================================ */
+
+        const canvas = document.getElementById('starCanvas');
+        const ctx = canvas.getContext('2d');
+        const heartBtn = document.getElementById('heartBtn');
+        const ring = document.getElementById('ring');
+        const luxeCursor = document.getElementById('luxeCursor');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        let syncLevel = 0;
+        let particles = [];
+        let isDinnerModeActive = false;
+
+        // --- AUDIO: HEARTBEAT SYNTH ---
+        function playBeat() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(50, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+        }
+
+        // --- STARFIELD ---
+        function initStars() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for(let i=0; i<200; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5 + 0.1
+                });
+            }
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#fff";
+            particles.forEach(p => {
+                p.y -= p.speed;
+                if(p.y < 0) p.y = canvas.height;
+                ctx.globalAlpha = Math.random() * 0.4 + 0.1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        }
+
+        // --- DINNER MODE: ACOUSTIC FEEDBACK ---
+        async function enableDinnerMode() {
+            if(isDinnerModeActive) return;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const audioSource = audioCtx.createMediaStreamSource(stream);
+                const analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                audioSource.connect(analyser);
+                const dataArray = new Uint8Array(analyser.frequencyBinCount);
+                
+                function updateGlow() {
+                    analyser.getByteFrequencyData(dataArray);
+                    let volume = dataArray.reduce((a, b) => a + b) / dataArray.length;
+                    let intensity = Math.min(volume / 40, 2.5);
+                    heartBtn.style.boxShadow = `0 0 ${30 * intensity}px var(--blood-red)`;
+                    heartBtn.style.transform = `scale(${1 + (intensity * 0.05)})`;
+                    requestAnimationFrame(updateGlow);
+                }
+                updateGlow();
+                isDinnerModeActive = true;
+            } catch (err) {
+                console.log("Mic disabled - proceeding in silent mode.");
+            }
+        }
+
+        // --- SYNC INTERACTION ---
+        function syncHeart() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+                enableDinnerMode();
+            }
+
+            syncLevel += 10;
+            playBeat();
+            
+            // Visual Progression
+            ring.style.transform = `scale(${1 + syncLevel/100})`;
+            ring.style.borderColor = `rgba(175, 149, 90, ${syncLevel/100})`;
+
+            if(syncLevel === 30) document.getElementById('title').innerText = "Frequency Stabilized";
+            if(syncLevel === 70) document.getElementById('title').innerText = "Alignment 99%";
+            
+            if(syncLevel >= 100) {
+                setTimeout(() => {
+                    document.getElementById('finalStage').style.display = 'flex';
+                }, 500);
+            }
+        }
+
+        // --- CURSOR ---
+        window.addEventListener('mousemove', (e) => {
+            luxeCursor.style.left = e.clientX - 15 + 'px';
+            luxeCursor.style.top = e.clientY - 15 + 'px';
+        });
+
+        // Initialize
+        initStars();
+        drawStars();
+        window.onresize = initStars;
+
+    </script>
+</body>
+</html>

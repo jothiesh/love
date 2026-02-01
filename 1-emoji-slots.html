@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 Love Slot Machine</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Fredoka One',cursive;background:linear-gradient(135deg,#ff9a9e,#fecfef,#ffecd2);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+        .machine{background:linear-gradient(145deg,#ff6b9d,#ee3a6d);padding:30px;border-radius:30px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center}
+        h1{color:#fff;font-size:1.5rem;margin-bottom:20px;text-shadow:2px 2px #c0392b}
+        .slots{display:flex;gap:10px;background:#fff;padding:15px;border-radius:15px;margin-bottom:20px}
+        .slot{width:70px;height:80px;background:#ffe4ec;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:50px;overflow:hidden;border:3px solid #ff6b9d}
+        .slot.spinning .emoji{animation:spin 0.1s linear infinite}
+        @keyframes spin{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+        .btn{padding:15px 40px;background:#fff;color:#ff6b9d;border:none;border-radius:50px;font-family:inherit;font-size:1.2rem;cursor:pointer;box-shadow:0 5px 20px rgba(0,0,0,0.2);transition:transform 0.2s}
+        .btn:hover{transform:scale(1.05)}
+        .btn:active{transform:scale(0.95)}
+        .result{margin-top:20px;color:#fff;font-size:1.3rem;min-height:40px;text-shadow:1px 1px #c0392b}
+        .jackpot{animation:jackpot 0.5s ease infinite}
+        @keyframes jackpot{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+        .coins{position:fixed;pointer-events:none}
+        .coin{position:absolute;font-size:30px;animation:fall 2s linear forwards}
+        @keyframes fall{to{transform:translateY(100vh) rotate(720deg);opacity:0}}
+        .hearts-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1}
+        .bg-heart{position:absolute;opacity:0.3;animation:float 10s linear infinite}
+        @keyframes float{0%{transform:translateY(100vh) rotate(0)}100%{transform:translateY(-100px) rotate(360deg)}}
+    </style>
+</head>
+<body>
+    <div class="hearts-bg" id="bg"></div>
+    <div class="machine">
+        <h1>🎰 LOVE JACKPOT 🎰</h1>
+        <div class="slots">
+            <div class="slot" id="slot1"><span class="emoji">❤️</span></div>
+            <div class="slot" id="slot2"><span class="emoji">💕</span></div>
+            <div class="slot" id="slot3"><span class="emoji">💖</span></div>
+        </div>
+        <button class="btn" id="spinBtn" onclick="spin()">💕 SPIN FOR LOVE 💕</button>
+        <div class="result" id="result"></div>
+    </div>
+    <div class="coins" id="coins"></div>
+    <script>
+        const emojis=['❤️','💕','💖','💗','💝','😍','🥰','😘'];
+        const winEmojis=['❤️','💕','💖'];
+        let spinning=false;
+        
+        // Create background hearts
+        for(let i=0;i<20;i++){
+            const h=document.createElement('div');
+            h.className='bg-heart';
+            h.textContent=['💕','💖','❤️'][Math.floor(Math.random()*3)];
+            h.style.left=Math.random()*100+'vw';
+            h.style.fontSize=(20+Math.random()*30)+'px';
+            h.style.animationDuration=(8+Math.random()*10)+'s';
+            h.style.animationDelay=Math.random()*10+'s';
+            document.getElementById('bg').appendChild(h);
+        }
+        
+        function spin(){
+            if(spinning)return;
+            spinning=true;
+            document.getElementById('result').textContent='';
+            document.getElementById('result').className='result';
+            document.getElementById('spinBtn').textContent='🎰 SPINNING... 🎰';
+            
+            const slots=[
+                document.getElementById('slot1'),
+                document.getElementById('slot2'),
+                document.getElementById('slot3')
+            ];
+            
+            slots.forEach(s=>s.classList.add('spinning'));
+            
+            // Spin each slot
+            let results=[];
+            slots.forEach((slot,i)=>{
+                let count=0;
+                const interval=setInterval(()=>{
+                    slot.querySelector('.emoji').textContent=emojis[Math.floor(Math.random()*emojis.length)];
+                    count++;
+                },100);
+                
+                setTimeout(()=>{
+                    clearInterval(interval);
+                    slot.classList.remove('spinning');
+                    // Always win with love emojis!
+                    const result=winEmojis[Math.floor(Math.random()*winEmojis.length)];
+                    slot.querySelector('.emoji').textContent=result;
+                    results.push(result);
+                    
+                    if(i===2)checkWin(results);
+                },(i+1)*800);
+            });
+        }
+        
+        function checkWin(results){
+            spinning=false;
+            document.getElementById('spinBtn').textContent='💕 SPIN AGAIN 💕';
+            
+            const resultEl=document.getElementById('result');
+            
+            // Always a love jackpot!
+            resultEl.innerHTML='🎉 JACKPOT! I LOVE YOU! 🎉';
+            resultEl.classList.add('jackpot');
+            
+            // Rain coins/hearts
+            for(let i=0;i<30;i++){
+                setTimeout(()=>{
+                    const c=document.createElement('div');
+                    c.className='coin';
+                    c.textContent=['💕','💖','❤️','💝','✨','🎉'][Math.floor(Math.random()*6)];
+                    c.style.left=Math.random()*100+'vw';
+                    c.style.top='-50px';
+                    document.getElementById('coins').appendChild(c);
+                    setTimeout(()=>c.remove(),2000);
+                },i*80);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Story For You 📖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --warm-cream: #fdf8f0;
+            --old-paper: #f5e6d3;
+            --golden: #c9a227;
+            --deep-brown: #4a3728;
+            --rose-gold: #b76e79;
+            --forest: #2d4a3e;
+            --sky-blue: #87ceeb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Magical particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, var(--golden) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0.3;
+            }
+            25% { transform: translateY(-30px) translateX(10px) scale(1.2); opacity: 0.8; }
+            50% { transform: translateY(-50px) translateX(-10px) scale(1); opacity: 0.5; }
+            75% { transform: translateY(-30px) translateX(15px) scale(1.3); opacity: 0.9; }
+        }
+
+        /* Book Container */
+        .book-container {
+            perspective: 2000px;
+            z-index: 1;
+        }
+
+        .book {
+            width: min(90vw, 700px);
+            height: min(85vh, 550px);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+
+        /* Book Cover */
+        .book-cover {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #8b4513 0%, #654321 50%, #4a3728 100%);
+            border-radius: 5px 15px 15px 5px;
+            box-shadow: 
+                -5px 5px 20px rgba(0,0,0,0.5),
+                inset 0 0 50px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: left center;
+            z-index: 10;
+        }
+
+        .book-cover.opened {
+            transform: rotateY(-160deg);
+        }
+
+        .cover-decoration {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border: 2px solid var(--golden);
+            border-radius: 5px;
+            opacity: 0.6;
+        }
+
+        .cover-corner {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--golden);
+        }
+
+        .cover-corner:nth-child(1) { top: 30px; left: 30px; border-right: none; border-bottom: none; }
+        .cover-corner:nth-child(2) { top: 30px; right: 30px; border-left: none; border-bottom: none; }
+        .cover-corner:nth-child(3) { bottom: 30px; left: 30px; border-right: none; border-top: none; }
+        .cover-corner:nth-child(4) { bottom: 30px; right: 30px; border-left: none; border-top: none; }
+
+        .cover-emblem {
+            width: 120px;
+            height: 120px;
+            border: 3px solid var(--golden);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin-bottom: 30px;
+            background: rgba(201, 162, 39, 0.1);
+            animation: emblemGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes emblemGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(201, 162, 39, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(201, 162, 39, 0.6); }
+        }
+
+        .cover-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            color: var(--golden);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .cover-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            color: rgba(201, 162, 39, 0.7);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .open-hint {
+            position: absolute;
+            bottom: 40px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.9rem;
+            color: rgba(201, 162, 39, 0.6);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Book Pages */
+        .book-pages {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: var(--old-paper);
+            border-radius: 3px 12px 12px 3px;
+            box-shadow: inset 5px 0 15px rgba(0,0,0,0.1);
+        }
+
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #e8dcc8 0%, var(--old-paper) 5%, var(--warm-cream) 100%);
+            border-radius: 3px 12px 12px 3px;
+            padding: 40px;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .page.active {
+            display: flex;
+            animation: pageIn 0.6s ease;
+        }
+
+        @keyframes pageIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .page-number {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.9rem;
+            color: var(--deep-brown);
+            opacity: 0.5;
+        }
+
+        .chapter-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            color: var(--deep-brown);
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .chapter-title::after {
+            content: '❧';
+            display: block;
+            font-size: 1.5rem;
+            margin-top: 10px;
+            color: var(--rose-gold);
+        }
+
+        .story-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: var(--deep-brown);
+            line-height: 2;
+            text-align: justify;
+            flex: 1;
+        }
+
+        .story-text p {
+            margin-bottom: 20px;
+            text-indent: 2em;
+        }
+
+        .story-text .highlight {
+            color: var(--rose-gold);
+            font-weight: 600;
+        }
+
+        .story-text .first-letter {
+            float: left;
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            line-height: 0.8;
+            padding-right: 10px;
+            color: var(--golden);
+        }
+
+        /* Navigation */
+        .page-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(74, 55, 40, 0.2);
+        }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid var(--deep-brown);
+            color: var(--deep-brown);
+            padding: 10px 25px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--deep-brown);
+            color: var(--warm-cream);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Interactive Elements */
+        .puzzle-container {
+            background: rgba(201, 162, 39, 0.1);
+            border: 1px dashed var(--golden);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .puzzle-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--deep-brown);
+            margin-bottom: 15px;
+        }
+
+        .heart-puzzle {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .puzzle-piece {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(145deg, #f0e6d6, #e8dcc8);
+            border: 2px solid var(--golden);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(201, 162, 39, 0.3);
+        }
+
+        .puzzle-piece.selected {
+            background: var(--golden);
+            transform: scale(1.15);
+        }
+
+        .puzzle-message {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--rose-gold);
+            margin-top: 15px;
+            min-height: 30px;
+        }
+
+        /* Love Meter */
+        .love-meter {
+            margin: 20px 0;
+        }
+
+        .meter-label {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1rem;
+            color: var(--deep-brown);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .meter-bar {
+            height: 20px;
+            background: rgba(74, 55, 40, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--deep-brown);
+        }
+
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--rose-gold), #e74c3c, var(--rose-gold));
+            border-radius: 10px;
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .meter-fill::after {
+            content: '❤️';
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+        }
+
+        /* Choices */
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .choice-btn {
+            background: linear-gradient(145deg, var(--warm-cream), var(--old-paper));
+            border: 2px solid var(--golden);
+            padding: 15px 25px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--deep-brown);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .choice-btn:hover {
+            background: var(--golden);
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .choice-btn.correct {
+            background: linear-gradient(145deg, #a8e6cf, #88d8b0);
+            border-color: var(--forest);
+        }
+
+        .choice-btn.wrong {
+            background: linear-gradient(145deg, #ffb3b3, #ff9999);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        /* Final Page - Question */
+        .final-question {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .big-heart-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+        }
+
+        .big-heart {
+            font-size: 100px;
+            animation: heartbeat 1s ease-in-out infinite;
+            filter: drop-shadow(0 10px 30px rgba(183, 110, 121, 0.5));
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+            60% { transform: scale(1); }
+        }
+
+        .question-text {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2rem, 6vw, 3rem);
+            color: var(--deep-brown);
+            margin-bottom: 30px;
+        }
+
+        .answer-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .answer-btn {
+            padding: 15px 40px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-yes {
+            background: linear-gradient(145deg, var(--rose-gold), #c97b84);
+            color: white;
+            box-shadow: 0 10px 30px rgba(183, 110, 121, 0.4);
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(183, 110, 121, 0.5);
+        }
+
+        .btn-no {
+            background: rgba(74, 55, 40, 0.1);
+            color: var(--deep-brown);
+            border: 1px solid var(--deep-brown);
+        }
+
+        /* Celebration Page */
+        .celebration {
+            text-align: center;
+        }
+
+        .celebration-emoji {
+            font-size: 80px;
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .celebration-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            color: var(--rose-gold);
+            margin: 20px 0;
+        }
+
+        .love-letter-final {
+            background: rgba(183, 110, 121, 0.1);
+            border-left: 4px solid var(--rose-gold);
+            padding: 25px;
+            margin: 20px 0;
+            text-align: left;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .love-letter-final p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            color: var(--deep-brown);
+            line-height: 1.9;
+            margin-bottom: 15px;
+        }
+
+        .signature {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2rem;
+            color: var(--rose-gold);
+            text-align: right;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -20px;
+            z-index: 1000;
+            animation: confettiFall linear forwards;
+        }
+
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .page {
+                padding: 25px 20px;
+            }
+            
+            .puzzle-piece {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .answer-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .answer-btn {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="book-container">
+        <div class="book">
+            <!-- Book Cover -->
+            <div class="book-cover" id="bookCover" onclick="openBook()">
+                <div class="cover-decoration"></div>
+                <div class="cover-corner"></div>
+                <div class="cover-corner"></div>
+                <div class="cover-corner"></div>
+                <div class="cover-corner"></div>
+                <div class="cover-emblem">📖</div>
+                <h1 class="cover-title">Our Story</h1>
+                <p class="cover-subtitle">A Tale of Two Hearts</p>
+                <p class="open-hint">~ tap to begin ~</p>
+            </div>
+
+            <!-- Book Pages -->
+            <div class="book-pages">
+                <!-- Page 1: Introduction -->
+                <div class="page" id="page1">
+                    <h2 class="chapter-title">Chapter One</h2>
+                    <div class="story-text">
+                        <p><span class="first-letter">O</span>nce upon a time, in a world full of billions of people, two souls were destined to meet. They didn't know it yet, but the universe had been conspiring to bring them together.</p>
+                        <p>One of them was <span class="highlight">you</span>—beautiful, unique, and absolutely irreplaceable. The other was me, just someone wandering through life... until I found my reason.</p>
+                        <p>This is our story. A story still being written, with the best chapters yet to come.</p>
+                    </div>
+                    <div class="page-nav">
+                        <button class="nav-btn" disabled>← Previous</button>
+                        <button class="nav-btn" onclick="nextPage(2)">Next →</button>
+                    </div>
+                    <span class="page-number">1</span>
+                </div>
+
+                <!-- Page 2: The Meeting -->
+                <div class="page" id="page2">
+                    <h2 class="chapter-title">The Day We Met</h2>
+                    <div class="story-text">
+                        <p><span class="first-letter">I</span> remember that moment clearly. When our paths crossed, something magical happened. It was as if time slowed down, and the whole world faded into background noise.</p>
+                        <p>Your smile. Your laugh. The way you made everything seem brighter. I knew right then—this wasn't ordinary. This was <span class="highlight">extraordinary</span>.</p>
+                    </div>
+                    <div class="puzzle-container">
+                        <p class="puzzle-title">✨ Arrange the pieces to reveal the magic word ✨</p>
+                        <div class="heart-puzzle" id="puzzle1">
+                            <div class="puzzle-piece" data-letter="L" onclick="selectPiece(this)">L</div>
+                            <div class="puzzle-piece" data-letter="O" onclick="selectPiece(this)">O</div>
+                            <div class="puzzle-piece" data-letter="V" onclick="selectPiece(this)">V</div>
+                            <div class="puzzle-piece" data-letter="E" onclick="selectPiece(this)">E</div>
+                        </div>
+                        <p class="puzzle-message" id="puzzleMessage1"></p>
+                    </div>
+                    <div class="page-nav">
+                        <button class="nav-btn" onclick="nextPage(1)">← Previous</button>
+                        <button class="nav-btn" onclick="nextPage(3)" id="nextBtn2" disabled>Next →</button>
+                    </div>
+                    <span class="page-number">2</span>
+                </div>
+
+                <!-- Page 3: Growing Feelings -->
+                <div class="page" id="page3">
+                    <h2 class="chapter-title">Growing Together</h2>
+                    <div class="story-text">
+                        <p><span class="first-letter">D</span>ays turned into weeks, and feelings grew deeper. Every conversation, every moment spent together added another beautiful brushstroke to our painting.</p>
+                        <p>What do you think happened to my heart? Let's see if you can guess...</p>
+                    </div>
+                    <div class="puzzle-container">
+                        <p class="puzzle-title">What happened to my heart when I met you?</p>
+                        <div class="choices-container" id="choices1">
+                            <button class="choice-btn" onclick="checkChoice(this, false)">🤔 It stayed the same</button>
+                            <button class="choice-btn" onclick="checkChoice(this, true)">💕 It started beating only for you</button>
+                            <button class="choice-btn" onclick="checkChoice(this, false)">😴 It fell asleep</button>
+                        </div>
+                    </div>
+                    <div class="love-meter">
+                        <div class="meter-label">
+                            <span>Love Meter</span>
+                            <span id="meterPercent">0%</span>
+                        </div>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="meterFill"></div>
+                        </div>
+                    </div>
+                    <div class="page-nav">
+                        <button class="nav-btn" onclick="nextPage(2)">← Previous</button>
+                        <button class="nav-btn" onclick="nextPage(4)" id="nextBtn3" disabled>Next →</button>
+                    </div>
+                    <span class="page-number">3</span>
+                </div>
+
+                <!-- Page 4: The Realization -->
+                <div class="page" id="page4">
+                    <h2 class="chapter-title">The Realization</h2>
+                    <div class="story-text">
+                        <p><span class="first-letter">T</span>here came a moment of clarity—a moment when everything made sense. The late-night thoughts, the constant smiles, the butterflies that never seemed to go away.</p>
+                        <p>I realized that you weren't just someone in my life. You had become my <span class="highlight">whole world</span>.</p>
+                        <p>Every song reminded me of you. Every dream featured you. Every plan I made... I wanted you in it.</p>
+                    </div>
+                    <div class="puzzle-container">
+                        <p class="puzzle-title">🌟 Tap the hearts in order (1 to 5) to unlock the next chapter 🌟</p>
+                        <div class="heart-puzzle" id="heartSequence">
+                            <div class="puzzle-piece" data-num="3" onclick="tapHeart(this, 3)">💖</div>
+                            <div class="puzzle-piece" data-num="1" onclick="tapHeart(this, 1)">💗</div>
+                            <div class="puzzle-piece" data-num="5" onclick="tapHeart(this, 5)">💝</div>
+                            <div class="puzzle-piece" data-num="2" onclick="tapHeart(this, 2)">💓</div>
+                            <div class="puzzle-piece" data-num="4" onclick="tapHeart(this, 4)">💕</div>
+                        </div>
+                        <p class="puzzle-message" id="puzzleMessage2">Tap heart #1 first!</p>
+                    </div>
+                    <div class="page-nav">
+                        <button class="nav-btn" onclick="nextPage(3)">← Previous</button>
+                        <button class="nav-btn" onclick="nextPage(5)" id="nextBtn4" disabled>Next →</button>
+                    </div>
+                    <span class="page-number">4</span>
+                </div>
+
+                <!-- Page 5: The Question -->
+                <div class="page" id="page5">
+                    <h2 class="chapter-title">The Question</h2>
+                    <div class="final-question">
+                        <div class="big-heart-container">
+                            <div class="big-heart">💖</div>
+                        </div>
+                        <p class="question-text">Will You Be Mine?</p>
+                        <p style="font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--deep-brown); margin-bottom: 30px; line-height: 1.8;">
+                            This isn't just a question.<br>
+                            It's a promise. A beginning. A forever.
+                        </p>
+                        <div class="answer-buttons">
+                            <button class="answer-btn btn-yes" onclick="sayYes()">Yes, I'm Yours! 💕</button>
+                            <button class="answer-btn btn-no" id="noBtn" onmouseover="moveNo()" onclick="moveNo()">Let me think...</button>
+                        </div>
+                    </div>
+                    <span class="page-number">5</span>
+                </div>
+
+                <!-- Page 6: Celebration -->
+                <div class="page" id="page6">
+                    <div class="celebration">
+                        <div class="celebration-emoji">🎉💖🎉</div>
+                        <h2 class="celebration-title">You Said Yes!</h2>
+                        <div class="love-letter-final">
+                            <p>My dearest,</p>
+                            <p>Thank you for choosing me. Thank you for believing in us. Thank you for being the most beautiful chapter in my story.</p>
+                            <p>I promise to be your best friend, your biggest supporter, your partner in every adventure, and your home whenever you need one.</p>
+                            <p>This is not the end of our story—it's just the beginning of forever.</p>
+                            <p class="signature">Forever Yours ❤️</p>
+                        </div>
+                    </div>
+                    <span class="page-number">∞</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create magical particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = (5 + Math.random() * 5) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Open book
+        function openBook() {
+            const cover = document.getElementById('bookCover');
+            cover.classList.add('opened');
+            setTimeout(() => {
+                document.getElementById('page1').classList.add('active');
+            }, 800);
+        }
+
+        // Navigate pages
+        function nextPage(pageNum) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page' + pageNum).classList.add('active');
+        }
+
+        // Puzzle 1: LOVE word
+        let selectedLetters = [];
+        function selectPiece(el) {
+            if (el.classList.contains('selected')) return;
+            
+            el.classList.add('selected');
+            selectedLetters.push(el.dataset.letter);
+            
+            if (selectedLetters.length === 4) {
+                const word = selectedLetters.join('');
+                if (word === 'LOVE') {
+                    document.getElementById('puzzleMessage1').textContent = '✨ LOVE - You got it! ✨';
+                    document.getElementById('nextBtn2').disabled = false;
+                } else {
+                    document.getElementById('puzzleMessage1').textContent = 'Try again! Click in order: L-O-V-E';
+                    setTimeout(() => {
+                        document.querySelectorAll('#puzzle1 .puzzle-piece').forEach(p => p.classList.remove('selected'));
+                        selectedLetters = [];
+                    }, 1000);
+                }
+            }
+        }
+
+        // Choices quiz
+        function checkChoice(btn, isCorrect) {
+            if (isCorrect) {
+                btn.classList.add('correct');
+                document.getElementById('meterFill').style.width = '100%';
+                document.getElementById('meterPercent').textContent = '100%';
+                document.getElementById('nextBtn3').disabled = false;
+            } else {
+                btn.classList.add('wrong');
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+        }
+
+        // Heart sequence puzzle
+        let currentHeart = 1;
+        function tapHeart(el, num) {
+            if (num === currentHeart) {
+                el.classList.add('selected');
+                currentHeart++;
+                
+                if (currentHeart > 5) {
+                    document.getElementById('puzzleMessage2').textContent = '💖 Perfect! You know the way to my heart! 💖';
+                    document.getElementById('nextBtn4').disabled = false;
+                } else {
+                    document.getElementById('puzzleMessage2').textContent = `Great! Now tap heart #${currentHeart}`;
+                }
+            } else {
+                document.getElementById('puzzleMessage2').textContent = `Oops! Look for heart #${currentHeart}`;
+                // Reset
+                currentHeart = 1;
+                document.querySelectorAll('#heartSequence .puzzle-piece').forEach(p => p.classList.remove('selected'));
+            }
+        }
+
+        // Move no button
+        let noMoves = 0;
+        const noMessages = [
+            "Are you sure? 🥺",
+            "Think again! 💕",
+            "Please? 🙏",
+            "Just say yes! 💖",
+            "I won't give up! ✨"
+        ];
+
+        function moveNo() {
+            const btn = document.getElementById('noBtn');
+            noMoves++;
+            
+            const maxX = window.innerWidth - btn.offsetWidth - 50;
+            const maxY = window.innerHeight - btn.offsetHeight - 50;
+            
+            btn.style.position = 'fixed';
+            btn.style.left = (50 + Math.random() * (maxX - 100)) + 'px';
+            btn.style.top = (50 + Math.random() * (maxY - 100)) + 'px';
+            btn.style.zIndex = '1000';
+            
+            btn.textContent = noMessages[Math.min(noMoves - 1, noMessages.length - 1)];
+        }
+
+        // Say yes - celebration
+        function sayYes() {
+            nextPage(6);
+            launchConfetti();
+        }
+
+        function launchConfetti() {
+            const colors = ['#c9a227', '#b76e79', '#4a3728', '#e74c3c', '#f39c12', '#9b59b6'];
+            const emojis = ['💖', '💕', '✨', '🌟', '💗', '🎉', '🥰'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    
+                    if (Math.random() > 0.5) {
+                        confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                        confetti.style.fontSize = '20px';
+                        confetti.style.background = 'transparent';
+                    } else {
+                        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    }
+                    
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.animationDuration = (2 + Math.random() * 3) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 30);
+            }
+
+            // Continuous celebration
+            setInterval(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                confetti.style.fontSize = '20px';
+                confetti.style.background = 'transparent';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.animationDuration = (3 + Math.random() * 2) + 's';
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }, 300);
+        }
+
+        // Initialize
+        createParticles();
+    </script>
+</body>
+</html>

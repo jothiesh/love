@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💌 THE GALLERY | PERFUME & PETALS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@100;300;600&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. LUXURY AESTHETIC SYSTEM
+        ================================================================ */
+        :root {
+            --paper: #fdfdfd;
+            --ink: #0a0a0c;
+            --gold: #af955a;
+            --petal: rgba(255, 182, 193, 0.6);
+            --font-serif: 'Playfair Display', serif;
+            --font-ancient: 'Cinzel', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: #050505;
+            color: var(--ink);
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 2000px;
+        }
+
+        /* --- THE PERFUME LAYER (PETAL ENGINE) --- */
+        #petalCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.15;
+        }
+
+        /* --- THE CARD DECK --- */
+        .card-stack {
+            position: relative;
+            width: 420px;
+            height: 580px;
+            transform-style: preserve-3d;
+        }
+
+        .love-card {
+            position: absolute;
+            width: 100%; height: 100%;
+            background: var(--paper);
+            border-radius: 4px;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.6s;
+            backface-visibility: hidden;
+            border: 1px solid rgba(175, 149, 90, 0.2);
+        }
+
+        .card-border {
+            position: absolute;
+            top: 25px; left: 25px; right: 25px; bottom: 25px;
+            border: 1px solid rgba(175, 149, 90, 0.4);
+            pointer-events: none;
+        }
+
+        h2 {
+            font-family: var(--font-ancient);
+            font-size: 1.1rem;
+            color: var(--gold);
+            letter-spacing: 6px;
+            text-align: center;
+        }
+
+        .card-content {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 2rem;
+            line-height: 1.4;
+            text-align: center;
+            color: #1a1a1a;
+        }
+
+        .card-footer {
+            font-size: 0.55rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-align: center;
+            opacity: 0.4;
+        }
+
+        /* --- SWIPE EFFECT --- */
+        .card-swiped {
+            transform: translate(150%, -30%) rotate(25deg) scale(0.8) !important;
+            opacity: 0 !important;
+            pointer-events: none;
+        }
+
+        /* --- INTERACTIVE CURSOR --- */
+        #luxeCursor {
+            position: fixed;
+            width: 30px; height: 30px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: width 0.3s, height 0.3s;
+        }
+
+        #finalReveal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="luxeCursor"></div>
+    <canvas id="bgCanvas"></canvas>
+    <canvas id="petalCanvas"></canvas>
+
+    <div class="card-stack" id="stack">
+        <div class="love-card" style="z-index: 1;">
+            <div class="card-border"></div>
+            <h2>III</h2>
+            <div class="card-content">"Like a rare scent, you linger in every thought."</div>
+            <div class="card-footer">The scent of forever</div>
+        </div>
+
+        <div class="love-card" style="z-index: 2;">
+            <div class="card-border"></div>
+            <h2>II</h2>
+            <div class="card-content">"Soft as silk, yet strong as destiny."</div>
+            <div class="card-footer">Swipe to inhale</div>
+        </div>
+
+        <div class="love-card" style="z-index: 3;">
+            <div class="card-border"></div>
+            <h2>I</h2>
+            <div class="card-content">"Some things are felt, not seen."</div>
+            <div class="card-footer">Release the fragrance</div>
+        </div>
+    </div>
+
+    <div id="finalReveal">
+        <h1 style="font-family: var(--font-ancient); font-size: 3rem; color: var(--gold); letter-spacing: 12px;">IMPERISHABLE</h1>
+        <p style="font-family: var(--font-serif); font-style: italic; color: #fff; margin-top: 20px;">My love for you is the air I breathe.</p>
+        <button onclick="location.reload()" style="background:none; border:1px solid var(--gold); color:var(--gold); padding:12px 35px; margin-top:60px; font-family:var(--font-ancient); cursor:pointer;">REAWAKEN</button>
+    </div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE PERFUME & PHYSICS ENGINE
+        ================================================================ */
+
+        const pCanvas = document.getElementById('petalCanvas');
+        const pCtx = pCanvas.getContext('2d');
+        const stack = document.getElementById('stack');
+        const cards = document.querySelectorAll('.love-card');
+        const cursor = document.getElementById('luxeCursor');
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        let petals = [];
+        let currentCard = cards.length - 1;
+        let mouse = { x: 0, y: 0 };
+
+        // --- PART 1: DIGITAL PERFUME (PETAL PHYSICS) ---
+        class Petal {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 10 + 5;
+                this.vX = (Math.random() - 0.5) * 10;
+                this.vY = (Math.random() - 1) * 5;
+                this.rotation = Math.random() * 360;
+                this.rV = (Math.random() - 0.5) * 5;
+                this.opacity = 1;
+                this.life = 1;
+            }
+
+            update() {
+                this.x += this.vX;
+                this.y += this.vY;
+                this.vY += 0.05; // Gravity
+                this.rotation += this.rV;
+                this.life -= 0.005;
+                this.opacity = this.life;
+            }
+
+            draw() {
+                pCtx.save();
+                pCtx.translate(this.x, this.y);
+                pCtx.rotate(this.rotation * Math.PI / 180);
+                pCtx.beginPath();
+                // Draw a petal shape
+                pCtx.moveTo(0, 0);
+                pCtx.bezierCurveTo(this.size, -this.size, this.size*1.5, this.size, 0, this.size);
+                pCtx.bezierCurveTo(-this.size*1.5, this.size, -this.size, -this.size, 0, 0);
+                pCtx.fillStyle = `rgba(255, 182, 193, ${this.opacity})`;
+                pCtx.fill();
+                pCtx.restore();
+            }
+        }
+
+        function releasePerfume(x, y) {
+            for(let i=0; i<30; i++) {
+                petals.push(new Petal(x, y));
+            }
+            playScentSound();
+        }
+
+        function playScentSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const noise = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            noise.type = 'triangle';
+            noise.frequency.setValueAtTime(1000, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.5);
+            noise.connect(gain);
+            gain.connect(audioCtx.destination);
+            noise.start();
+            noise.stop(audioCtx.currentTime + 1.5);
+        }
+
+        // --- PART 2: INTERACTION ENGINE ---
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            cursor.style.left = e.clientX - 15 + 'px';
+            cursor.style.top = e.clientY - 15 + 'px';
+        });
+
+        stack.addEventListener('mousedown', (e) => {
+            if(currentCard < 0) return;
+            const card = cards[currentCard];
+            card.classList.add('card-swiped');
+            releasePerfume(e.clientX, e.clientY);
+            currentCard--;
+
+            if(currentCard < 0) {
+                setTimeout(() => {
+                    document.getElementById('finalReveal').style.display = 'flex';
+                }, 1200);
+            }
+        });
+
+        // --- PART 3: ANIMATION LOOP ---
+        function animate() {
+            pCanvas.width = window.innerWidth;
+            pCanvas.height = window.innerHeight;
+            pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+            petals = petals.filter(p => p.life > 0);
+            petals.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

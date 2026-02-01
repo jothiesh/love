@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💎 AMORPHOUS AETERNA | THE LIQUID LOVE ENGINE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Montserrat:wght@100;300;600&family=Playfair+Display:ital,wght@1,400;1,900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. ARCHITECTURAL VARIABLES & ROOT 
+        ================================================================
+        */
+        :root {
+            --bg-deep: #030305;
+            --glass-core: rgba(255, 255, 255, 0.03);
+            --neon-heart: #ff0055;
+            --neon-cyan: #00f2ff;
+            --gold-leaf: #d4af37;
+            --font-display: 'Syncopate', sans-serif;
+            --font-luxury: 'Playfair Display', serif;
+            --font-data: 'Montserrat', sans-serif;
+            --blur-lvl: 40px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #fff;
+            font-family: var(--font-data);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ================================================================
+        2. DYNAMIC LIQUID BACKGROUND (CANVAS)
+        ================================================================
+        */
+        #fluidCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            filter: contrast(120%) brightness(80%);
+        }
+
+        /* ================================================================
+        3. THE AETERNA ENGINE (MAIN INTERFACE)
+        ================================================================
+        */
+        .engine-deck {
+            width: 96vw;
+            height: 94vh;
+            max-width: 1800px;
+            background: var(--glass-core);
+            backdrop-filter: blur(var(--blur-lvl)) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            display: grid;
+            grid-template-columns: 350px 1fr 350px;
+            grid-template-rows: 100px 1fr 80px;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8), inset 0 0 60px rgba(255, 255, 255, 0.02);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* UI Header */
+        header {
+            grid-column: 1 / -1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 50px;
+        }
+
+        .system-title {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            letter-spacing: 8px;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        /* ================================================================
+        4. THE LIQUID LOVE METER (3D SPHERE)
+        ================================================================
+        */
+        .center-viewport {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .glass-sphere {
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(0,0,0,0.5), inset 0 0 50px rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .liquid-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 20%; /* Controlled by JS */
+            background: linear-gradient(180deg, var(--neon-heart), #4a001a);
+            transition: height 2s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 0 50px var(--neon-heart);
+        }
+
+        .wave-svg {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 200%;
+            height: 60px;
+            fill: var(--neon-heart);
+            animation: waveFlow 4s linear infinite;
+        }
+
+        @keyframes waveFlow {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* ================================================================
+        5. DATA HUD & SIDEBARS
+        ================================================================
+        */
+        .sidebar {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .data-panel {
+            background: rgba(255,255,255,0.02);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .label {
+            font-family: var(--font-display);
+            font-size: 0.5rem;
+            color: var(--neon-cyan);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .metric-value {
+            font-family: var(--font-luxury);
+            font-size: 2rem;
+            font-style: italic;
+        }
+
+        /* ================================================================
+        6. THE INTERACTIVE "LOVE PULSE" BUTTON 
+        ================================================================
+        */
+        .pulse-trigger {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 1px solid var(--neon-heart);
+            background: transparent;
+            color: var(--neon-heart);
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            cursor: pointer;
+            transition: 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .pulse-trigger:hover {
+            background: var(--neon-heart);
+            color: #fff;
+            box-shadow: 0 0 40px var(--neon-heart);
+            transform: scale(1.1);
+        }
+
+        /* Custom Cursor */
+        #customCursor {
+            position: fixed;
+            width: 20px; height: 20px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s;
+        }
+
+        /* ================================================================
+        7. NARRATIVE LAYERS (THE REVEAL)
+        ================================================================
+        */
+        #revealOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-deep);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px;
+        }
+
+        .lux-text {
+            font-family: var(--font-luxury);
+            font-size: 4rem;
+            background: linear-gradient(to right, #fff, var(--gold-leaf));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="customCursor"></div>
+    <canvas id="fluidCanvas"></canvas>
+
+    <div class="engine-deck">
+        <header>
+            <div class="system-title">AETERNA_CORE_v3.0</div>
+            <div style="font-size: 0.7rem; letter-spacing: 2px; opacity: 0.5;">
+                LATENCY: 4ms // STATUS: INFINITE
+            </div>
+        </header>
+
+        <aside class="sidebar">
+            <div class="data-panel">
+                <span class="label">Sentiment_Analysis</span>
+                <div class="metric-value" id="percentVal">0.00%</div>
+            </div>
+
+            <div class="data-panel">
+                <span class="label">Resonance_Frequency</span>
+                <div class="metric-value" style="font-size: 1.2rem;">432.08 Hz</div>
+            </div>
+
+            <div class="data-panel" style="margin-top: auto;">
+                <span class="label">System_Log</span>
+                <div id="log" style="font-size: 0.6rem; color: #666; font-family: monospace; height: 100px; overflow: hidden;">
+                    > INITIALIZING LOVE_ENGINE...<br>
+                    > SCANNING FOR SOUL_ID...<br>
+                </div>
+            </div>
+        </aside>
+
+        <main class="center-viewport">
+            <div class="glass-sphere">
+                <div class="liquid-fill" id="liquid">
+                    <svg class="wave-svg" viewBox="0 0 100 20" preserveAspectRatio="none">
+                        <path d="M0 10 Q25 0 50 10 T100 10 V20 H0 Z" />
+                    </svg>
+                </div>
+                <div style="z-index: 10; font-family: var(--font-luxury); font-size: 5rem; font-weight: 900; opacity: 0.8;">
+                    ∞
+                </div>
+            </div>
+
+            <div style="position: absolute; bottom: 100px;">
+                <button class="pulse-trigger" onclick="boostLove()">PULSE<br>HEART</button>
+            </div>
+        </main>
+
+        <aside class="sidebar" style="border-right: none; border-left: 1px solid rgba(255, 255, 255, 0.05);">
+            <div class="data-panel">
+                <span class="label">Atmospheric_Stability</span>
+                <p style="font-size: 0.7rem; opacity: 0.6; line-height: 1.5;">The engine reacts to your proximity and interaction frequency.</p>
+            </div>
+
+            <div class="data-panel">
+                <span class="label">Neural_Uplink</span>
+                <div style="display: flex; gap: 10px;">
+                    <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan);"></div>
+                    <div style="width: 10px; height: 10px; border-radius: 50%; background: #333;"></div>
+                    <div style="width: 10px; height: 10px; border-radius: 50%; background: #333;"></div>
+                </div>
+            </div>
+        </aside>
+
+        <footer>
+            <div style="grid-column: 1 / -1; display: flex; align-items: center; padding: 0 50px; font-size: 0.6rem; letter-spacing: 2px; opacity: 0.4;">
+                STATION_COORD: 40.7128° N, 74.0060° W // DECRYPTING_ETERNITY...
+            </div>
+        </footer>
+    </div>
+
+    <div id="revealOverlay">
+        <div class="lux-text">You are the constant.</div>
+        <p style="font-family: var(--font-display); letter-spacing: 10px; font-size: 0.8rem; color: var(--gold-leaf);">
+            OUR CONNECTION SURPASSES THE ENGINE.
+        </p>
+        <button class="pulse-trigger" style="margin-top: 50px;" onclick="location.reload()">REBOOT STORY</button>
+    </div>
+
+    <script>
+        /* ================================================================
+        8. JAVASCRIPT: THE BIOLOGICAL-DATA ENGINE 
+        ================================================================
+        */
+
+        // Custom Cursor Logic
+        const cursor = document.getElementById('customCursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        });
+
+        // Fluid Background Canvas Logic
+        const canvas = document.getElementById('fluidCanvas');
+        const ctx = canvas.getContext('2d');
+        let points = [];
+
+        function initFluid() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            points = [];
+            for(let i=0; i<30; i++) {
+                points.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 300 + 100,
+                    vx: (Math.random() - 0.5) * 1,
+                    vy: (Math.random() - 0.5) * 1,
+                    color: Math.random() > 0.5 ? '#1a000d' : '#00131a'
+                });
+            }
+        }
+
+        function drawFluid() {
+            ctx.fillStyle = varColor('--bg-deep');
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            points.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                let g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+                g.addColorStop(0, p.color);
+                g.addColorStop(1, 'transparent');
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(drawFluid);
+        }
+
+        function varColor(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        // LOVE METER LOGIC
+        let loveLevel = 20;
+        const liquid = document.getElementById('liquid');
+        const percentVal = document.getElementById('percentVal');
+        const log = document.getElementById('log');
+
+        function boostLove() {
+            if(loveLevel >= 100) return;
+            
+            loveLevel += 10;
+            liquid.style.height = loveLevel + "%";
+            
+            // Generate system log
+            const logs = [
+                "HEART_SYNC_INCREASED...",
+                "NEURAL_RESONANCE_STABLE...",
+                "EMOTIONAL_BANDWIDTH_EXPANDED...",
+                "COUPLE_DATA_SYNCHRONIZED..."
+            ];
+            addLog(logs[Math.floor(Math.random()*logs.length)]);
+            
+            // Animate percentage
+            animateValue(percentVal, loveLevel - 10, loveLevel, 2000);
+
+            if(loveLevel >= 100) {
+                setTimeout(triggerFinalReveal, 2000);
+            }
+        }
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const val = (progress * (end - start) + start).toFixed(2);
+                obj.innerHTML = val + "%";
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function addLog(msg) {
+            log.innerHTML = `> ${msg}<br>` + log.innerHTML;
+        }
+
+        function triggerFinalReveal() {
+            const overlay = document.getElementById('revealOverlay');
+            overlay.style.display = 'flex';
+            overlay.style.animation = 'fadeIn 2s forwards';
+        }
+
+        // Initialize Engine
+        initFluid();
+        drawFluid();
+        window.addEventListener('resize', initFluid);
+
+        // Subtle Ambient Animation for the sphere
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+            document.querySelector('.glass-sphere').style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+    </script>
+</body>
+</html>

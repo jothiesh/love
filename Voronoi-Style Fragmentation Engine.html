@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌑 THE RELIC | ETERNAL PULSE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Quicksand:wght@300&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE RELIC AESTHETIC (ULTRA-REALISM)
+        ================================================================ */
+        :root {
+            --obsidian: #050506;
+            --core-red: #ff0033;
+            --gold-leaf: #af955a;
+            --font-ancient: 'Cinzel', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background: #000;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Quicksand', sans-serif;
+            transition: background 0.5s ease;
+        }
+
+        #relicCanvas {
+            position: fixed;
+            z-index: 5;
+            filter: drop-shadow(0 0 50px rgba(0,0,0,1));
+        }
+
+        #dustCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* --- THE CORE MESSAGE --- */
+        .relic-text {
+            position: fixed;
+            z-index: 2;
+            font-family: var(--font-ancient);
+            font-size: 1.8rem;
+            color: var(--core-red);
+            text-shadow: 0 0 30px var(--core-red);
+            text-align: center;
+            max-width: 500px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 3s ease;
+        }
+
+        .relic-text.visible { opacity: 1; }
+
+        /* --- INTERFACE HUD --- */
+        .hud {
+            position: fixed;
+            bottom: 40px;
+            font-size: 0.6rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--gold-leaf);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        #lightSource {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,50,50,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            mix-blend-mode: screen;
+        }
+
+        /* Heartbeat Glow Animation */
+        @keyframes pulseGlow {
+            0% { filter: drop-shadow(0 0 20px var(--core-red)); }
+            50% { filter: drop-shadow(0 0 60px var(--core-red)); }
+            100% { filter: drop-shadow(0 0 20px var(--core-red)); }
+        }
+        .pulsing { animation: pulseGlow 1.2s infinite ease-in-out; }
+    </style>
+</head>
+<body>
+
+    <div id="lightSource"></div>
+    <canvas id="dustCanvas"></canvas>
+    <canvas id="relicCanvas"></canvas>
+
+    <div class="relic-text" id="coreMessage">
+        UNBREAKABLE.<br>UNENDING.<br>YOURS.
+    </div>
+
+    <div class="hud" id="hint">Strike the obsidian to reveal the pulse</div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE FRACTURE & HEARTBEAT ENGINE
+        ================================================================ */
+
+        const canvas = document.getElementById('relicCanvas');
+        const ctx = canvas.getContext('2d');
+        const dCanvas = document.getElementById('dustCanvas');
+        const dctx = dCanvas.getContext('2d');
+        const light = document.getElementById('lightSource');
+
+        let clickCount = 0;
+        let isShattered = false;
+        let mouse = { x: window.innerWidth/2, y: window.innerHeight/2 };
+        let shards = [];
+        let dust = [];
+        let pulseVal = 0;
+
+        // --- AUDIO ENGINE: SUB-BASS HEARTBEAT ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playHeartbeat() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const playThump = (time, freq, dur, vol) => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + time);
+                gain.gain.setValueAtTime(vol, audioCtx.currentTime + time);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + time + dur);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + time);
+                osc.stop(audioCtx.currentTime + time + dur);
+            };
+
+            // Double beat: Thump-thump
+            playThump(0, 60, 0.4, 0.4);
+            playThump(0.3, 50, 0.5, 0.3);
+        }
+
+        function playStrikeSound(freq) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.2);
+        }
+
+        // --- DUST SYSTEM ---
+        function initDust() {
+            dCanvas.width = window.innerWidth;
+            dCanvas.height = window.innerHeight;
+            for(let i=0; i<120; i++) {
+                dust.push({x: Math.random()*dCanvas.width, y: Math.random()*dCanvas.height, s: Math.random()*2, v: Math.random()*0.3});
+            }
+        }
+
+        // --- SHARD PHYSICS ---
+        class Shard {
+            constructor(pts) {
+                this.pts = pts;
+                this.x = 0; this.y = 0;
+                this.vx = (Math.random() - 0.5) * 25;
+                this.vy = (Math.random() - 0.5) * 25;
+                this.rot = 0; this.rv = (Math.random() - 0.5) * 0.15;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                this.rot += this.rv;
+                this.vy += 0.25; // Gravity
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(canvas.width/2 + this.x, canvas.height/2 + this.y);
+                ctx.rotate(this.rot);
+                ctx.beginPath();
+                ctx.moveTo(this.pts[0].x, this.pts[0].y);
+                for(let i=1; i<this.pts.length; i++) ctx.lineTo(this.pts[i].x, this.pts[i].y);
+                ctx.closePath();
+                ctx.fillStyle = '#050506';
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function drawHeart(c, size) {
+            c.beginPath();
+            for (let t = 0; t <= Math.PI * 2; t += 0.02) {
+                let x = 16 * Math.pow(Math.sin(t), 3);
+                let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                c.lineTo(x * size, y * size);
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cx = canvas.width/2;
+            const cy = canvas.height/2;
+
+            if (!isShattered) {
+                // DRAW SOLID
+                ctx.save();
+                ctx.translate(cx, cy);
+                drawHeart(ctx, 12);
+                let grad = ctx.createRadialGradient((mouse.x - window.innerWidth/2)*0.1, (mouse.y - window.innerHeight/2)*0.1, 0, 0, 0, 200);
+                grad.addColorStop(0, '#1a1a1c');
+                grad.addColorStop(1, '#050506');
+                ctx.fillStyle = grad;
+                ctx.fill();
+                if(clickCount > 0) {
+                    ctx.strokeStyle = `rgba(255,255,255,${clickCount/10})`;
+                    ctx.setLineDash([10, 20]);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            } else {
+                // DRAW CORE & SHARDS
+                pulseVal = (Math.sin(Date.now() * 0.005) + 1) / 2;
+                
+                shards.forEach(s => { s.update(); s.draw(); });
+
+                ctx.save();
+                ctx.translate(cx, cy);
+                let coreSize = 8 + (pulseVal * 1.5);
+                let coreGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, 150 * pulseVal);
+                coreGrad.addColorStop(0, `rgba(255, 0, 51, ${0.4 + pulseVal * 0.6})`);
+                coreGrad.addColorStop(1, 'rgba(255, 0, 51, 0)');
+                ctx.fillStyle = coreGrad;
+                drawHeart(ctx, coreSize);
+                ctx.fill();
+                ctx.restore();
+
+                // Dynamic Lighting Sync
+                document.body.style.background = `radial-gradient(circle at center, rgba(40,0,0,${pulseVal*0.2}) 0%, #000 100%)`;
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function triggerShatter() {
+            isShattered = true;
+            canvas.classList.add('pulsing');
+            for(let i=0; i<25; i++) {
+                let pts = [];
+                for(let j=0; j<3; j++) pts.push({x: Math.random()*120-60, y: Math.random()*120-60});
+                shards.push(new Shard(pts));
+            }
+            document.getElementById('coreMessage').classList.add('visible');
+            document.getElementById('hint').style.opacity = '0';
+            
+            // Start Heartbeat Loop
+            setInterval(playHeartbeat, 1200);
+        }
+
+        // INTERACTIONS
+        window.addEventListener('mousedown', () => {
+            if (isShattered) return;
+            clickCount++;
+            playStrikeSound(180 - (clickCount*12));
+            if (clickCount >= 10) triggerShatter();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX; mouse.y = e.clientY;
+            light.style.left = e.clientX - 300 + 'px';
+            light.style.top = e.clientY - 300 + 'px';
+        });
+
+        canvas.width = 800; canvas.height = 800;
+        initDust();
+        animate();
+    </script>
+</body>
+</html>

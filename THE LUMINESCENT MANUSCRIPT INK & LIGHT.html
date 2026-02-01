@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 THE MANUSCRIPT | SMOKE & ASH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Montserrat:wght@100;300;600&family=Cormorant+Garamond:ital,wght@1,300;1,600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+        1. THE SMOKE MANUSCRIPT DESIGN SYSTEM
+        ================================================================ */
+        :root {
+            --parchment: #fdfaf0;
+            --char: #3b2b1a;
+            --smoke: rgba(200, 200, 200, 0.4);
+            --seal-red: #9e1b1b;
+            --font-serif: 'Cormorant Garamond', serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: #080808;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* --- THE PHYSICAL PAPER --- */
+        .manuscript-container {
+            width: 85vw;
+            height: 85vh;
+            max-width: 1000px;
+            background-color: var(--parchment);
+            background-image: url('https://www.transparenttextures.com/patterns/old-paper.png');
+            position: relative;
+            box-shadow: 0 80px 160px rgba(0,0,0,0.8);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- LAYERS --- */
+        canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        #inkLayer { z-index: 2; pointer-events: none; }
+        #thermalLayer { z-index: 3; pointer-events: none; }
+        #smokeLayer { z-index: 10; pointer-events: none; }
+        #inputLayer { z-index: 20; }
+
+        /* --- THE MESSAGE --- */
+        .poetry-wrap {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px;
+            pointer-events: none;
+        }
+
+        .line {
+            font-family: var(--font-serif);
+            font-style: italic;
+            font-size: 2.4rem;
+            color: rgba(59, 43, 26, 0.02);
+            margin-bottom: 25px;
+            transition: color 1.2s ease;
+        }
+
+        /* --- THE CANDLE LIGHT --- */
+        #lightSource {
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(240, 194, 123, 0.15) 0%, transparent 80%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: multiply;
+        }
+
+        .hud {
+            position: absolute;
+            top: 25px;
+            font-size: 0.55rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--char);
+            opacity: 0.2;
+        }
+
+        /* --- SEAL --- */
+        #sealOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .seal {
+            width: 130px; height: 130px;
+            background: var(--seal-red);
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(158, 27, 27, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 3.5rem;
+            font-family: 'Pinyon Script', cursive;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="lightSource"></div>
+
+    <div class="manuscript-container" id="frame">
+        <div class="hud">Thermal Manuscript // Protocol: Adore</div>
+        
+        <main class="poetry-wrap">
+            <div class="line" id="l1">In the embers of a cold world...</div>
+            <div class="line" id="l2">Your warmth is my only guide.</div>
+            <div class="line" id="l3">I love you, now and always.</div>
+        </main>
+
+        <canvas id="thermalLayer"></canvas>
+        <canvas id="inkLayer"></canvas>
+        <canvas id="smokeLayer"></canvas>
+        <canvas id="inputLayer"></canvas>
+    </div>
+
+    <div id="sealOverlay">
+        <div class="seal" onclick="location.reload()">M</div>
+        <p style="color: #444; margin-top: 40px; letter-spacing: 8px; font-size: 0.7rem;">END OF MANUSCRIPT</p>
+    </div>
+
+    <script>
+        /* ================================================================
+        2. JAVASCRIPT: THE PHYSICS & PARTICLE ENGINE
+        ================================================================ */
+
+        const inkCanvas = document.getElementById('inkLayer');
+        const ictx = inkCanvas.getContext('2d');
+        const thermCanvas = document.getElementById('thermalLayer');
+        const tctx = thermCanvas.getContext('2d');
+        const smokeCanvas = document.getElementById('smokeLayer');
+        const sctx = smokeCanvas.getContext('2d');
+        const inputCanvas = document.getElementById('inputLayer');
+        const light = document.getElementById('lightSource');
+
+        let width, height;
+        let isDrawing = false;
+        let lastX = 0, lastY = 0;
+        let smokeParticles = [];
+        let heatAccumulation = 0;
+
+        // --- SMOKE PARTICLE CLASS ---
+        class Smoke {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 0.8;
+                this.vy = -Math.random() * 1.5 - 0.5;
+                this.size = Math.random() * 20 + 10;
+                this.alpha = 0.4;
+                this.life = 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.005;
+                this.size += 0.5;
+                this.life -= 0.005;
+            }
+            draw() {
+                sctx.beginPath();
+                let grad = sctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                grad.addColorStop(0, `rgba(180, 180, 180, ${this.alpha})`);
+                grad.addColorStop(1, 'transparent');
+                sctx.fillStyle = grad;
+                sctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                sctx.fill();
+            }
+        }
+
+        function init() {
+            width = inputCanvas.width = inkCanvas.width = thermCanvas.width = smokeCanvas.width = document.getElementById('frame').offsetWidth;
+            height = inputCanvas.height = inkCanvas.height = thermCanvas.height = smokeCanvas.height = document.getElementById('frame').offsetHeight;
+            ictx.lineCap = 'round';
+        }
+
+        function handleInput(e) {
+            const x = e.clientX - document.getElementById('frame').offsetLeft;
+            const y = e.clientY - document.getElementById('frame').offsetTop;
+            
+            light.style.left = e.clientX + 'px';
+            light.style.top = e.clientY + 'px';
+
+            if (isDrawing) {
+                // Ink
+                ictx.beginPath();
+                ictx.lineWidth = 1.5;
+                ictx.strokeStyle = 'rgba(75, 54, 33, 0.4)';
+                ictx.moveTo(lastX, lastY);
+                ictx.lineTo(x, y);
+                ictx.stroke();
+
+                // Generate Smoke at source
+                if (Math.random() > 0.7) {
+                    smokeParticles.push(new Smoke(x, y));
+                }
+
+                // Heat/Reveal Logic
+                heatAccumulation += 0.5;
+                if(heatAccumulation > 300) {
+                    applySinge(x, y);
+                    updateTextVisibility();
+                }
+            }
+            lastX = x; lastY = y;
+        }
+
+        function applySinge(x, y) {
+            tctx.beginPath();
+            let grad = tctx.createRadialGradient(x, y, 0, x, y, 25);
+            grad.addColorStop(0, 'rgba(100, 60, 20, 0.05)');
+            grad.addColorStop(1, 'transparent');
+            tctx.fillStyle = grad;
+            tctx.arc(x, y, 25, 0, Math.PI * 2);
+            tctx.fill();
+        }
+
+        function updateTextVisibility() {
+            if(heatAccumulation > 400) document.getElementById('l1').style.color = 'rgba(59, 43, 26, 0.9)';
+            if(heatAccumulation > 800) document.getElementById('l2').style.color = 'rgba(59, 43, 26, 0.9)';
+            if(heatAccumulation > 1200) document.getElementById('l3').style.color = 'rgba(59, 43, 26, 0.9)';
+            if(heatAccumulation > 1600) {
+                setTimeout(() => document.getElementById('sealOverlay').style.display = 'flex', 1500);
+            }
+        }
+
+        function animate() {
+            sctx.clearRect(0, 0, width, height);
+            smokeParticles.forEach((p, i) => {
+                p.update();
+                p.draw();
+                if (p.life <= 0) smokeParticles.splice(i, 1);
+            });
+            requestAnimationFrame(animate);
+        }
+
+        inputCanvas.addEventListener('mousedown', () => isDrawing = true);
+        window.addEventListener('mouseup', () => isDrawing = false);
+        inputCanvas.addEventListener('mousemove', handleInput);
+
+        init();
+        animate();
+        window.addEventListener('resize', init);
+    </script>
+</body>
+</html>
