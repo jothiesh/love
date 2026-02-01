@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jothiesh | Love</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: rgba(255,255,255,0.04);
+            --accent-pink: #f43f5e;
+            --accent-purple: #c026d3;
+            --accent-gold: #f59e0b;
+            --text-main: #f1f0f0;
+            --text-dim: #6b6b78;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-deep);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Ambient background blobs */
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.18;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .bg-blob.one {
+            width: 500px; height: 500px;
+            background: var(--accent-pink);
+            top: -150px; left: -150px;
+        }
+        .bg-blob.two {
+            width: 400px; height: 400px;
+            background: var(--accent-purple);
+            bottom: -100px; right: -100px;
+        }
+        .bg-blob.three {
+            width: 300px; height: 300px;
+            background: var(--accent-gold);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.08;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 70px 20px 40px;
+        }
+
+        /* Jumping letters title */
+        .jump-title {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0px;
+            margin-bottom: 6px;
+        }
+
+        .jump-title .letter {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: 4.2rem;
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: jumpLetter 1.8s ease-in-out infinite;
+        }
+
+        @keyframes jumpLetter {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-18px); }
+        }
+
+        .jump-title .letter:nth-child(1) { animation-delay: 0s; }
+        .jump-title .letter:nth-child(2) { animation-delay: 0.1s; }
+        .jump-title .letter:nth-child(3) { animation-delay: 0.2s; }
+        .jump-title .letter:nth-child(4) { animation-delay: 0.3s; }
+        .jump-title .letter:nth-child(5) { animation-delay: 0.4s; }
+        .jump-title .letter:nth-child(6) { animation-delay: 0.5s; }
+        .jump-title .letter:nth-child(7) { animation-delay: 0.6s; }
+        .jump-title .letter:nth-child(8) { animation-delay: 0.7s; }
+
+        .divider-line {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent-pink), var(--accent-purple));
+            margin: 16px auto;
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+            font-size: 1rem;
+            color: var(--text-dim);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* ===== HEART ROW ===== */
+        .heart-row {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin: 28px 0 10px;
+        }
+
+        .heart-row span {
+            font-size: 1.1rem;
+            animation: heartPulse 1.4s ease-in-out infinite;
+        }
+        .heart-row span:nth-child(1) { animation-delay: 0s; }
+        .heart-row span:nth-child(2) { animation-delay: 0.2s; }
+        .heart-row span:nth-child(3) { animation-delay: 0.4s; }
+        .heart-row span:nth-child(4) { animation-delay: 0.6s; }
+        .heart-row span:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes heartPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+
+        /* ===== PAGE LIST ===== */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 10px 20px 80px;
+        }
+
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .list a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .list a::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent-pink), var(--accent-purple));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .list a:hover {
+            background: rgba(244, 63, 94, 0.08);
+            border-color: rgba(244, 63, 94, 0.25);
+            transform: translateX(8px);
+        }
+
+        .list a:hover::before {
+            opacity: 1;
+        }
+
+        .list a .icon {
+            font-size: 1.3rem;
+            min-width: 28px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .list a:hover .icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .list a .name {
+            flex: 1;
+            font-size: 0.92rem;
+            font-weight: 400;
+            letter-spacing: 0.3px;
+        }
+
+        .list a .arrow {
+            color: var(--text-dim);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .list a:hover .arrow {
+            color: var(--accent-pink);
+            transform: translateX(4px);
+        }
+
+        /* Category label */
+        .cat-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--accent-gold);
+            margin-top: 28px;
+            margin-bottom: 10px;
+            padding-left: 4px;
+        }
+        .cat-label:first-child {
+            margin-top: 0;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Ambient blobs -->
+<div class="bg-blob one"></div>
+<div class="bg-blob two"></div>
+<div class="bg-blob three"></div>
+
+<!-- Header -->
+<div class="header">
+    <div class="jump-title">
+        <span class="letter">J</span>
+        <span class="letter">O</span>
+        <span class="letter">T</span>
+        <span class="letter">H</span>
+        <span class="letter">I</span>
+        <span class="letter">E</span>
+        <span class="letter">S</span>
+        <span class="letter">H</span>
+    </div>
+    <div class="divider-line"></div>
+    <p class="subtitle">Love &nbsp;|&nbsp; Ours</p>
+    <div class="heart-row">
+        <span>💗</span><span>💕</span><span>💖</span><span>💕</span><span>💗</span>
+    </div>
+</div>
+
+<!-- Page List -->
+<div class="container">
+    <div class="list">
+
+        <p class="cat-label">— Games & Fun</p>
+        <a href="1-balloon-love.html" target="_blank"><span class="icon">🎈</span><span class="name">Balloon Love</span><span class="arrow">→</span></a>
+        <a href="1-emoji-slots.html" target="_blank"><span class="icon">🎰</span><span class="name">Emoji Slots</span><span class="arrow">→</span></a>
+        <a href="2-emoji-mood.html" target="_blank"><span class="icon">😊</span><span class="name">Emoji Mood</span><span class="arrow">→</span></a>
+        <a href="2-scratch-love.html" target="_blank"><span class="icon">✨</span><span class="name">Scratch Love</span><span class="arrow">→</span></a>
+        <a href="3-catch-love.html" target="_blank"><span class="icon">💝</span><span class="name">Catch Love</span><span class="arrow">→</span></a>
+        <a href="3-magic-ball.html" target="_blank"><span class="icon">🔮</span><span class="name">Magic Ball</span><span class="arrow">→</span></a>
+        <a href="4-fortune-cookie.html" target="_blank"><span class="icon">🥠</span><span class="name">Fortune Cookie</span><span class="arrow">→</span></a>
+        <a href="love-quiz.html" target="_blank"><span class="icon">❓</span><span class="name">Love Quiz</span><span class="arrow">→</span></a>
+        <a href="Valentine's Countdown.html" target="_blank"><span class="icon">⏳</span><span class="name">Valentine's Countdown</span><span class="arrow">→</span></a>
+
+        <p class="cat-label">— Proposals</p>
+        <a href="cute-doll-proposal.html" target="_blank"><span class="icon">🎎</span><span class="name">Cute Doll Proposal</span><span class="arrow">→</span></a>
+        <a href="simple-cute-proposal.html" target="_blank"><span class="icon">🌺</span><span class="name">Simple Cute Proposal</span><span class="arrow">→</span></a>
+        <a href="proposal-0ve.html" target="_blank"><span class="icon">💍</span><span class="name">Proposal 0ve</span><span class="arrow">→</span></a>
+        <a href="proposal-galaxy.html" target="_blank"><span class="icon">🌠</span><span class="name">Proposal Galaxy</span><span class="arrow">→</span></a>
+        <a href="proposal-storybook.html" target="_blank"><span class="icon">📖</span><span class="name">Proposal Storybook</span><span class="arrow">→</span></a>
+        <a href="ultimate-proposal-magic.html" target="_blank"><span class="icon">✨</span><span class="name">Ultimate Proposal Magic</span><span class="arrow">→</span></a>
+        <a href="THE ARCHITECT'S PROPOSAL.html" target="_blank"><span class="icon">🏛️</span><span class="name">The Architect's Proposal</span><span class="arrow">→</span></a>
+
+        <p class="cat-label">— Romantic Experiences</p>
+        <a href="cuddles.html" target="_blank"><span class="icon">🐻</span><span class="name">Cuddles</span><span class="arrow">→</span></a>
+        <a href="Digital Date Night.html" target="_blank"><span class="icon">🌙</span><span class="name">Digital Date Night</span><span class="arrow">→</span></a>
+        <a href="for-you.html" target="_blank"><span class="icon">🌸</span><span class="name">For You</span><span class="arrow">→</span></a>
+        <a href="Romantic Vibe.html" target="_blank"><span class="icon">🥰</span><span class="name">Romantic Vibe</span><span class="arrow">→</span></a>
+        <a href="love_candle.html" target="_blank"><span class="icon">🕯️</span><span class="name">Love Candle</span><span class="arrow">→</span></a>
+        <a href="5-love-letter.html" target="_blank"><span class="icon">💌</span><span class="name">Love Letter</span><span class="arrow">→</span></a>
+        <a href="5-love-potion.html" target="_blank"><span class="icon">🧪</span><span class="name">Love Potion</span><span class="arrow">→</span></a>
+        <a href="lovecookie.html" target="_blank"><span class="icon">🍪</span><span class="name">Love Cookie</span><span class="arrow">→</span></a>
+        <a href="the7day.html" target="_blank"><span class="icon">📅</span><span class="name">The 7 Day</span><span class="arrow">→</span></a>
+        <a href="my heart.html" target="_blank"><span class="icon">❤️</span><span class="name">My Heart</span><span class="arrow">→</span></a>
+
+        <p class="cat-label">— Mystical & Cosmic</p>
+        <a href="CONSTELLATION ARCHIVE.html" target="_blank"><span class="icon">🌌</span><span class="name">Constellation Archive</span><span class="arrow">→</span></a>
+        <a href="Interstellar Love Station.html" target="_blank"><span class="icon">🚀</span><span class="name">Interstellar Love Station</span><span class="arrow">→</span></a>
+        <a href="night star.html" target="_blank"><span class="icon">🌟</span><span class="name">Night Star</span><span class="arrow">→</span></a>
+        <a href="THE STAR-BORN SOLACE.html" target="_blank"><span class="icon">⭐</span><span class="name">The Star-Born Solace</span><span class="arrow">→</span></a>
+        <a href="Eternal Union.html" target="_blank"><span class="icon">💫</span><span class="name">Eternal Union</span><span class="arrow">→</span></a>
+        <a href="infinite con.html" target="_blank"><span class="icon">♾️</span><span class="name">Infinite Con</span><span class="arrow">→</span></a>
+        <a href="THE CHRONOS GARDEN.html" target="_blank"><span class="icon">🌿</span><span class="name">The Chronos Garden</span><span class="arrow">→</span></a>
+        <a href="VALENTINE PROTOCOL AETERNA.html" target="_blank"><span class="icon">💘</span><span class="name">Valentine Protocol Aeterna</span><span class="arrow">→</span></a>
+
+        <p class="cat-label">— Art & Design</p>
+        <a href="3D Liquid Sphere.html" target="_blank"><span class="icon">🔵</span><span class="name">3D Liquid Sphere</span><span class="arrow">→</span></a>
+        <a href="4-pixel-heart.html" target="_blank"><span class="icon">💟</span><span class="name">Pixel Heart</span><span class="arrow">→</span></a>
+        <a href="Liquid Crystal Mesh.html" target="_blank"><span class="icon">💎</span><span class="name">Liquid Crystal Mesh</span><span class="arrow">→</span></a>
+        <a href="THE PRISM VORTEX.html" target="_blank"><span class="icon">🌈</span><span class="name">The Prism Vortex</span><span class="arrow">→</span></a>
+        <a href="THE GALLERY OF ETERNITY.html" target="_blank"><span class="icon">🖼️</span><span class="name">The Gallery of Eternity</span><span class="arrow">→</span></a>
+        <a href="THE VIRTUAL GLASS TERRARIUM.html" target="_blank"><span class="icon">🪴</span><span class="name">The Virtual Glass Terrarium</span><span class="arrow">→</span></a>
+        <a href="Voronoi-Style Fragmentation Engine.html" target="_blank"><span class="icon">🔶</span><span class="name">Voronoi-Style Fragmentation Engine</span><span class="arrow">→</span></a>
+        <a href="OMNI-RESONANCE.html" target="_blank"><span class="icon">🔊</span><span class="name">Omni-Resonance</span><span class="arrow">→</span></a>
+
+        <p class="cat-label">— Special & Unique</p>
+        <a href="Legal-Grade Approval Pad.html" target="_blank"><span class="icon">📝</span><span class="name">Legal-Grade Approval Pad</span><span class="arrow">→</span></a>
+        <a href="Medical Chic.html" target="_blank"><span class="icon">💊</span><span class="name">Medical Chic</span><span class="arrow">→</span></a>
+        <a href="Physical Displacement Stamp Engine.html" target="_blank"><span class="icon">⚙️</span><span class="name">Physical Displacement Stamp Engine</span><span class="arrow">→</span></a>
+        <a href="THE OBSIDIAN HEART PHYSICAL RELIC.html" target="_blank"><span class="icon">🖤</span><span class="name">The Obsidian Heart</span><span class="arrow">→</span></a>
+        <a href="THE LUMINESCENT MANUSCRIPT INK & LIGHT.html" target="_blank"><span class="icon">✍️</span><span class="name">The Luminescent Manuscript</span><span class="arrow">→</span></a>
+        <a href="The Golden Thread.html" target="_blank"><span class="icon">🧵</span><span class="name">The Golden Thread</span><span class="arrow">→</span></a>
+        <a href="THE HEART COMMAND.html" target="_blank"><span class="icon">💓</span><span class="name">The Heart Command</span><span class="arrow">→</span></a>
+        <a href="THE LOVE CHRONICLES.html" target="_blank"><span class="icon">📚</span><span class="name">The Love Chronicles</span><span class="arrow">→</span></a>
+        <a href="THE VELVET VINE.html" target="_blank"><span class="icon">🍇</span><span class="name">The Velvet Vine</span><span class="arrow">→</span></a>
+        <a href="THE ZENITH REFLECTION.html" target="_blank"><span class="icon">🪞</span><span class="name">The Zenith Reflection</span><span class="arrow">→</span></a>
+        <a href="THE ZENITH VIGIL.html" target="_blank"><span class="icon">🕯️</span><span class="name">The Zenith Vigil</span><span class="arrow">→</span></a>
+
+    </div>
+</div>
+
+<div class="footer">Made with ❤️ by Jothiesh</div>
+
+</body>
+</html>
