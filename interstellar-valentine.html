@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 INTERSTELLAR VALENTINE | Love Transcends Time & Space</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+           INTERSTELLAR DESIGN SYSTEM
+           Inspired by: Gargantua, Wormholes, Tesseract, Time Dilation
+           ================================================================ */
+        
+        :root {
+            --void: #000000;
+            --deep-space: #030308;
+            --accretion-orange: #ff6b35;
+            --accretion-gold: #ffa500;
+            --accretion-white: #fff8e7;
+            --wormhole-blue: #4a9eff;
+            --tesseract-amber: #ffb347;
+            --ice-planet: #a8d5e5;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --font-main: 'Outfit', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            background: var(--void);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* ================================================================
+           COSMIC CANVAS LAYERS
+           ================================================================ */
+
+        .universe {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+        }
+
+        #cosmos-canvas {
+            position: absolute;
+            inset: 0;
+        }
+
+        /* ================================================================
+           CINEMATIC INTRO SEQUENCE
+           ================================================================ */
+
+        .intro-sequence {
+            position: fixed;
+            inset: 0;
+            background: var(--void);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1.5s ease, visibility 1.5s;
+        }
+
+        .intro-sequence.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .intro-text {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 200;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: introFade 3s ease forwards;
+        }
+
+        .intro-text:nth-child(1) { animation-delay: 0.5s; }
+        .intro-text:nth-child(2) { animation-delay: 2.5s; color: var(--accretion-gold); }
+        .intro-text:nth-child(3) { animation-delay: 4.5s; font-size: clamp(0.8rem, 2vw, 1rem); opacity: 0.5; }
+
+        @keyframes introFade {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .intro-date {
+            position: absolute;
+            bottom: 15%;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            letter-spacing: 0.3em;
+            color: var(--accretion-orange);
+            opacity: 0;
+            animation: introFade 2s ease forwards;
+            animation-delay: 5s;
+        }
+
+        /* ================================================================
+           MAIN EXPERIENCE CONTAINER
+           ================================================================ */
+
+        .experience {
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ================================================================
+           SECTION: GARGANTUA - THE BLACK HOLE
+           ================================================================ */
+
+        .section-gargantua {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .black-hole-container {
+            position: relative;
+            width: min(90vw, 600px);
+            height: min(90vw, 600px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Accretion Disk */
+        .accretion-disk {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0%,
+                var(--accretion-orange) 10%,
+                var(--accretion-gold) 20%,
+                var(--accretion-white) 30%,
+                var(--accretion-gold) 40%,
+                var(--accretion-orange) 50%,
+                transparent 60%,
+                var(--accretion-orange) 70%,
+                var(--accretion-gold) 80%,
+                var(--accretion-white) 90%,
+                var(--accretion-orange) 100%
+            );
+            animation: accretionSpin 30s linear infinite;
+            opacity: 0.9;
+            filter: blur(2px);
+        }
+
+        .accretion-disk::before {
+            content: '';
+            position: absolute;
+            inset: 5%;
+            border-radius: 50%;
+            background: var(--void);
+        }
+
+        @keyframes accretionSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Gravitational Lensing Ring */
+        .lensing-ring {
+            position: absolute;
+            width: 110%;
+            height: 30%;
+            border: 3px solid transparent;
+            border-top-color: var(--accretion-gold);
+            border-bottom-color: var(--accretion-orange);
+            border-radius: 50%;
+            transform: rotateX(75deg);
+            animation: lensingPulse 4s ease-in-out infinite;
+            filter: blur(1px);
+            box-shadow: 
+                0 0 30px var(--accretion-orange),
+                0 0 60px rgba(255, 107, 53, 0.5),
+                inset 0 0 30px var(--accretion-gold);
+        }
+
+        @keyframes lensingPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* Event Horizon */
+        .event-horizon {
+            position: absolute;
+            width: 45%;
+            height: 45%;
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                var(--void) 0%,
+                var(--void) 70%,
+                rgba(255, 107, 53, 0.1) 90%,
+                rgba(255, 107, 53, 0.3) 100%
+            );
+            box-shadow: 
+                0 0 100px 50px rgba(0, 0, 0, 0.9),
+                inset 0 0 50px rgba(255, 165, 0, 0.1);
+            z-index: 10;
+        }
+
+        /* Singularity Heart */
+        .singularity {
+            position: absolute;
+            width: 20%;
+            height: 20%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+        }
+
+        .singularity-heart {
+            font-size: clamp(2rem, 8vw, 4rem);
+            animation: singularityPulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px var(--accretion-orange));
+        }
+
+        @keyframes singularityPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px var(--accretion-orange)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 40px var(--accretion-gold)); }
+        }
+
+        /* Photon Sphere Particles */
+        .photon-sphere {
+            position: absolute;
+            width: 55%;
+            height: 55%;
+            border-radius: 50%;
+            overflow: visible;
+        }
+
+        .photon {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accretion-white);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accretion-gold);
+        }
+
+        /* Section Text */
+        .gargantua-text {
+            position: absolute;
+            bottom: 10%;
+            text-align: center;
+            z-index: 30;
+        }
+
+        .gargantua-title {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            font-weight: 200;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--accretion-orange), var(--accretion-gold), var(--accretion-white));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gargantua-subtitle {
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            font-weight: 300;
+            color: var(--text-secondary);
+            letter-spacing: 0.2em;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            opacity: 0.5;
+        }
+
+        .scroll-arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid var(--accretion-gold);
+            border-bottom: 2px solid var(--accretion-gold);
+            transform: rotate(45deg);
+            opacity: 0.6;
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* ================================================================
+           SECTION: WORMHOLE JOURNEY
+           ================================================================ */
+
+        .section-wormhole {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+            background: radial-gradient(ellipse at center, rgba(74, 158, 255, 0.05) 0%, transparent 70%);
+        }
+
+        .wormhole-container {
+            position: relative;
+            width: min(80vw, 500px);
+            height: min(80vw, 500px);
+            perspective: 1000px;
+        }
+
+        .wormhole-tunnel {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wormhole-ring {
+            position: absolute;
+            border: 2px solid var(--wormhole-blue);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: wormholeExpand 3s ease-in-out infinite;
+        }
+
+        .wormhole-ring:nth-child(1) { width: 100%; height: 100%; animation-delay: 0s; }
+        .wormhole-ring:nth-child(2) { width: 85%; height: 85%; animation-delay: 0.3s; }
+        .wormhole-ring:nth-child(3) { width: 70%; height: 70%; animation-delay: 0.6s; }
+        .wormhole-ring:nth-child(4) { width: 55%; height: 55%; animation-delay: 0.9s; }
+        .wormhole-ring:nth-child(5) { width: 40%; height: 40%; animation-delay: 1.2s; }
+        .wormhole-ring:nth-child(6) { width: 25%; height: 25%; animation-delay: 1.5s; }
+        .wormhole-ring:nth-child(7) { width: 10%; height: 10%; animation-delay: 1.8s; border-width: 3px; }
+
+        @keyframes wormholeExpand {
+            0% { 
+                transform: translateZ(0) scale(1); 
+                opacity: 0.8;
+                border-color: var(--wormhole-blue);
+            }
+            50% { 
+                transform: translateZ(100px) scale(1.1); 
+                opacity: 0.4;
+                border-color: var(--accretion-gold);
+            }
+            100% { 
+                transform: translateZ(0) scale(1); 
+                opacity: 0.8;
+                border-color: var(--wormhole-blue);
+            }
+        }
+
+        .wormhole-core {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, var(--accretion-white) 0%, var(--wormhole-blue) 50%, transparent 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 60px var(--wormhole-blue), 0 0 100px rgba(74, 158, 255, 0.5);
+            animation: corePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes corePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 60px var(--wormhole-blue); }
+            50% { transform: scale(1.2); box-shadow: 0 0 100px var(--wormhole-blue), 0 0 150px rgba(74, 158, 255, 0.5); }
+        }
+
+        .wormhole-text {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .wormhole-title {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: 300;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--wormhole-blue);
+            text-shadow: 0 0 30px var(--wormhole-blue);
+        }
+
+        .wormhole-message {
+            margin-top: 1.5rem;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 200;
+            line-height: 1.8;
+            max-width: 600px;
+            color: var(--text-secondary);
+        }
+
+        .wormhole-message em {
+            color: var(--accretion-gold);
+            font-style: normal;
+        }
+
+        /* ================================================================
+           SECTION: TIME DILATION MESSAGE
+           ================================================================ */
+
+        .section-time {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .time-display {
+            position: relative;
+            text-align: center;
+        }
+
+        .earth-time, .space-time {
+            padding: 2rem 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .time-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .time-value {
+            font-family: var(--font-mono);
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 700;
+        }
+
+        .earth-time .time-value {
+            color: var(--ice-planet);
+        }
+
+        .space-time .time-value {
+            color: var(--accretion-gold);
+            animation: timeFlicker 0.1s infinite;
+        }
+
+        @keyframes timeFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .time-message {
+            margin-top: 3rem;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-weight: 200;
+            line-height: 2;
+            max-width: 700px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .time-message .highlight {
+            display: block;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 400;
+            color: var(--accretion-gold);
+            margin: 2rem 0;
+            text-shadow: 0 0 30px rgba(255, 165, 0, 0.5);
+        }
+
+        /* ================================================================
+           SECTION: TESSERACT - LOVE ACROSS DIMENSIONS
+           ================================================================ */
+
+        .section-tesseract {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(255, 179, 71, 0.03) 50%, transparent 100%);
+        }
+
+        .tesseract-container {
+            position: relative;
+            width: min(90vw, 600px);
+            height: min(70vw, 400px);
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+
+        .tesseract-grid {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            transform: rotateX(15deg) rotateY(-10deg);
+            transform-style: preserve-3d;
+        }
+
+        .tesseract-cell {
+            background: rgba(255, 179, 71, 0.05);
+            border: 1px solid rgba(255, 179, 71, 0.2);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            transform-style: preserve-3d;
+            animation: cellFloat 4s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .tesseract-cell:hover {
+            background: rgba(255, 179, 71, 0.15);
+            border-color: var(--tesseract-amber);
+            transform: translateZ(30px);
+            box-shadow: 0 0 30px rgba(255, 179, 71, 0.3);
+        }
+
+        .tesseract-cell:nth-child(odd) { animation-delay: -2s; }
+        .tesseract-cell:nth-child(3n) { animation-delay: -1s; }
+        .tesseract-cell:nth-child(5n) { animation-delay: -3s; }
+
+        @keyframes cellFloat {
+            0%, 100% { transform: translateZ(0); }
+            50% { transform: translateZ(20px); }
+        }
+
+        /* Special cells with content */
+        .tesseract-cell.memory {
+            background: rgba(255, 179, 71, 0.1);
+            border-color: rgba(255, 179, 71, 0.4);
+        }
+
+        .tesseract-message {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .tesseract-title {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: 300;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--tesseract-amber);
+            text-shadow: 0 0 20px rgba(255, 179, 71, 0.5);
+        }
+
+        .tesseract-subtitle {
+            margin-top: 1.5rem;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 200;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            max-width: 600px;
+        }
+
+        /* ================================================================
+           SECTION: FINAL MESSAGE - STAY
+           ================================================================ */
+
+        .section-stay {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .stay-container {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .stay-word {
+            font-size: clamp(4rem, 20vw, 15rem);
+            font-weight: 100;
+            letter-spacing: 0.2em;
+            background: linear-gradient(180deg, var(--accretion-white) 0%, var(--accretion-gold) 50%, var(--accretion-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(0 0 50px rgba(255, 165, 0, 0.3));
+            animation: stayPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes stayPulse {
+            0%, 100% { filter: drop-shadow(0 0 50px rgba(255, 165, 0, 0.3)); }
+            50% { filter: drop-shadow(0 0 100px rgba(255, 165, 0, 0.5)); }
+        }
+
+        .morse-code {
+            margin-top: 2rem;
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            letter-spacing: 0.5em;
+            color: var(--accretion-gold);
+            opacity: 0.6;
+        }
+
+        .final-message {
+            margin-top: 4rem;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 200;
+            line-height: 2.5;
+            color: var(--text-secondary);
+        }
+
+        .final-message .love-line {
+            display: block;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: 400;
+            color: var(--accretion-gold);
+            margin: 2rem 0;
+        }
+
+        .signature {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .signature-date {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            color: var(--accretion-orange);
+            letter-spacing: 0.3em;
+        }
+
+        .signature-heart {
+            font-size: 3rem;
+            margin-top: 1rem;
+            animation: heartBeat 1s ease-in-out infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.1); }
+        }
+
+        /* ================================================================
+           AMBIENT SOUND TOGGLE
+           ================================================================ */
+
+        .sound-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .sound-toggle:hover {
+            background: rgba(255, 165, 0, 0.1);
+            border-color: var(--accretion-gold);
+        }
+
+        .sound-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-secondary);
+            transition: fill 0.3s;
+        }
+
+        .sound-toggle:hover svg {
+            fill: var(--accretion-gold);
+        }
+
+        .sound-toggle.muted svg .wave {
+            opacity: 0.2;
+        }
+
+        /* ================================================================
+           NAVIGATION DOTS
+           ================================================================ */
+
+        .nav-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-dot::before {
+            content: attr(data-label);
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s;
+            color: var(--text-secondary);
+        }
+
+        .nav-dot:hover::before {
+            opacity: 1;
+        }
+
+        .nav-dot:hover, .nav-dot.active {
+            background: var(--accretion-gold);
+            border-color: var(--accretion-gold);
+            box-shadow: 0 0 15px var(--accretion-gold);
+        }
+
+        /* ================================================================
+           DUST PARTICLES OVERLAY
+           ================================================================ */
+
+        .dust-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.3;
+        }
+
+        /* ================================================================
+           RESPONSIVE ADJUSTMENTS
+           ================================================================ */
+
+        @media (max-width: 768px) {
+            .nav-dots {
+                right: 1rem;
+            }
+            
+            .nav-dot::before {
+                display: none;
+            }
+
+            .sound-toggle {
+                bottom: 1rem;
+                right: 1rem;
+                width: 40px;
+                height: 40px;
+            }
+
+            .earth-time, .space-time {
+                padding: 1.5rem 2rem;
+            }
+        }
+
+        /* ================================================================
+           SMOOTH SCROLL BEHAVIOR
+           ================================================================ */
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        section {
+            scroll-snap-align: start;
+        }
+
+        /* Optional: Enable scroll snapping */
+        .experience {
+            scroll-snap-type: y proximity;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cinematic Intro -->
+    <div class="intro-sequence" id="intro">
+        <p class="intro-text">In another life</p>
+        <p class="intro-text">I would have found you sooner</p>
+        <p class="intro-text">But love transcends all dimensions</p>
+        <p class="intro-date">FEBRUARY 14, 2026</p>
+    </div>
+
+    <!-- Cosmic Background Canvas -->
+    <div class="universe">
+        <canvas id="cosmos-canvas"></canvas>
+    </div>
+
+    <!-- Dust Particles -->
+    <canvas class="dust-overlay" id="dust-canvas"></canvas>
+
+    <!-- Navigation Dots -->
+    <nav class="nav-dots">
+        <div class="nav-dot active" data-label="GARGANTUA" data-target="gargantua"></div>
+        <div class="nav-dot" data-label="WORMHOLE" data-target="wormhole"></div>
+        <div class="nav-dot" data-label="TIME" data-target="time"></div>
+        <div class="nav-dot" data-label="TESSERACT" data-target="tesseract"></div>
+        <div class="nav-dot" data-label="STAY" data-target="stay"></div>
+    </nav>
+
+    <!-- Sound Toggle -->
+    <button class="sound-toggle" id="soundToggle" title="Toggle ambient sound">
+        <svg viewBox="0 0 24 24">
+            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+            <path class="wave" d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+        </svg>
+    </button>
+
+    <!-- Main Experience -->
+    <main class="experience">
+        
+        <!-- Section 1: Gargantua Black Hole -->
+        <section class="section-gargantua" id="gargantua">
+            <div class="black-hole-container">
+                <div class="accretion-disk"></div>
+                <div class="lensing-ring"></div>
+                <div class="event-horizon"></div>
+                <div class="photon-sphere" id="photonSphere"></div>
+                <div class="singularity">
+                    <span class="singularity-heart">💫</span>
+                </div>
+            </div>
+            
+            <div class="gargantua-text">
+                <h1 class="gargantua-title">Gargantua</h1>
+                <p class="gargantua-subtitle">Where gravity bends light, and love bends time</p>
+            </div>
+
+            <div class="scroll-indicator">
+                <span>SCROLL TO JOURNEY</span>
+                <div class="scroll-arrow"></div>
+            </div>
+        </section>
+
+        <!-- Section 2: Wormhole -->
+        <section class="section-wormhole" id="wormhole">
+            <div class="wormhole-container">
+                <div class="wormhole-tunnel">
+                    <div class="wormhole-ring"></div>
+                    <div class="wormhole-ring"></div>
+                    <div class="wormhole-ring"></div>
+                    <div class="wormhole-ring"></div>
+                    <div class="wormhole-ring"></div>
+                    <div class="wormhole-ring"></div>
+                    <div class="wormhole-ring"></div>
+                    <div class="wormhole-core"></div>
+                </div>
+            </div>
+            
+            <div class="wormhole-text">
+                <h2 class="wormhole-title">Through the Wormhole</h2>
+                <p class="wormhole-message">
+                    Across the infinite expanse of space,<br>
+                    through tunnels that fold the fabric of reality,<br>
+                    <em>I would travel every light-year to find you.</em>
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 3: Time Dilation -->
+        <section class="section-time" id="time">
+            <div class="time-display">
+                <div class="earth-time">
+                    <div class="time-label">Time on Earth</div>
+                    <div class="time-value" id="earthTime">23:47:52</div>
+                </div>
+                <div class="space-time">
+                    <div class="time-label">Time Near Gargantua</div>
+                    <div class="time-value" id="spaceTime">00:00:07</div>
+                </div>
+            </div>
+            
+            <div class="time-message">
+                One hour near a black hole equals seven years on Earth.
+                <span class="highlight">"I'm coming back for you."</span>
+                And no matter how much time passes,<br>
+                my love for you remains constant—<br>
+                unaffected by gravity, unchanged by distance.
+            </div>
+        </section>
+
+        <!-- Section 4: Tesseract -->
+        <section class="section-tesseract" id="tesseract">
+            <div class="tesseract-container">
+                <div class="tesseract-grid">
+                    <div class="tesseract-cell">🌟</div>
+                    <div class="tesseract-cell memory">💕</div>
+                    <div class="tesseract-cell">✨</div>
+                    <div class="tesseract-cell memory">🥂</div>
+                    <div class="tesseract-cell">💫</div>
+                    <div class="tesseract-cell memory">🌙</div>
+                    <div class="tesseract-cell">⭐</div>
+                    <div class="tesseract-cell memory">💖</div>
+                    <div class="tesseract-cell">🌌</div>
+                    <div class="tesseract-cell memory">💝</div>
+                    <div class="tesseract-cell">🔮</div>
+                    <div class="tesseract-cell memory">💗</div>
+                    <div class="tesseract-cell">🌠</div>
+                    <div class="tesseract-cell memory">💘</div>
+                    <div class="tesseract-cell">✨</div>
+                </div>
+            </div>
+            
+            <div class="tesseract-message">
+                <h2 class="tesseract-title">The Tesseract</h2>
+                <p class="tesseract-subtitle">
+                    Love is the one thing that transcends time and space.<br>
+                    Every moment we've shared exists forever—<br>
+                    preserved in the infinite library of our love story.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 5: Stay -->
+        <section class="section-stay" id="stay">
+            <div class="stay-container">
+                <h2 class="stay-word">STAY</h2>
+                <p class="morse-code">... - .- -.--</p>
+                
+                <div class="final-message">
+                    Murphy heard the message through gravity.<br>
+                    <span class="love-line">Hear mine through these words:</span>
+                    In every timeline, in every dimension,<br>
+                    across every fold in space-time—<br>
+                    I choose you. I will always choose you.
+                </div>
+
+                <div class="signature">
+                    <p class="signature-date">VALENTINE'S DAY • 02.14.2026</p>
+                    <div class="signature-heart">💖</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /* ================================================================
+           INTERSTELLAR VALENTINE - ENGINE
+           ================================================================ */
+
+        // ===== CANVAS SETUP =====
+        const cosmosCanvas = document.getElementById('cosmos-canvas');
+        const cosmosCtx = cosmosCanvas.getContext('2d');
+        const dustCanvas = document.getElementById('dust-canvas');
+        const dustCtx = dustCanvas.getContext('2d');
+
+        let width, height;
+        const stars = [];
+        const dustParticles = [];
+        const photons = [];
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            cosmosCanvas.width = width;
+            cosmosCanvas.height = height;
+            dustCanvas.width = width;
+            dustCanvas.height = height;
+        }
+
+        // ===== STAR FIELD =====
+        function initStars() {
+            stars.length = 0;
+            for (let i = 0; i < 500; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 2,
+                    brightness: Math.random(),
+                    twinkleSpeed: 0.005 + Math.random() * 0.01
+                });
+            }
+        }
+
+        function drawStars(time) {
+            stars.forEach(star => {
+                const twinkle = Math.sin(time * star.twinkleSpeed + star.brightness * 10) * 0.5 + 0.5;
+                cosmosCtx.globalAlpha = 0.3 + twinkle * 0.7 * star.brightness;
+                cosmosCtx.fillStyle = '#ffffff';
+                cosmosCtx.beginPath();
+                cosmosCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                cosmosCtx.fill();
+            });
+        }
+
+        // ===== DUST PARTICLES =====
+        function initDust() {
+            dustParticles.length = 0;
+            for (let i = 0; i < 100; i++) {
+                dustParticles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 3 + 1,
+                    speedX: (Math.random() - 0.5) * 0.3,
+                    speedY: (Math.random() - 0.5) * 0.2,
+                    opacity: Math.random() * 0.3
+                });
+            }
+        }
+
+        function updateDust() {
+            dustCtx.clearRect(0, 0, width, height);
+            
+            dustParticles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+                
+                dustCtx.globalAlpha = p.opacity;
+                dustCtx.fillStyle = '#ffa500';
+                dustCtx.beginPath();
+                dustCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                dustCtx.fill();
+            });
+        }
+
+        // ===== PHOTON SPHERE =====
+        function initPhotons() {
+            const sphere = document.getElementById('photonSphere');
+            sphere.innerHTML = '';
+            
+            for (let i = 0; i < 12; i++) {
+                const photon = document.createElement('div');
+                photon.className = 'photon';
+                photon.style.cssText = `
+                    animation: photonOrbit ${3 + Math.random() * 2}s linear infinite;
+                    animation-delay: ${-Math.random() * 5}s;
+                `;
+                sphere.appendChild(photon);
+            }
+        }
+
+        // Add photon orbit animation
+        const photonStyle = document.createElement('style');
+        photonStyle.textContent = `
+            @keyframes photonOrbit {
+                from { 
+                    transform: rotate(0deg) translateX(calc(min(45vw, 270px) * 0.275)) rotate(0deg);
+                }
+                to { 
+                    transform: rotate(360deg) translateX(calc(min(45vw, 270px) * 0.275)) rotate(-360deg);
+                }
+            }
+        `;
+        document.head.appendChild(photonStyle);
+
+        // ===== TIME DISPLAY =====
+        function updateTime() {
+            const now = new Date();
+            const earthTime = now.toLocaleTimeString('en-US', { hour12: false });
+            document.getElementById('earthTime').textContent = earthTime;
+            
+            // Space time runs much slower (simulating time dilation)
+            const spaceSeconds = Math.floor(now.getTime() / 1000 / 3600 / 24 / 365 * 7);
+            const spaceHours = Math.floor(spaceSeconds / 3600) % 24;
+            const spaceMins = Math.floor(spaceSeconds / 60) % 60;
+            const spaceSecs = spaceSeconds % 60;
+            document.getElementById('spaceTime').textContent = 
+                `${String(spaceHours).padStart(2, '0')}:${String(spaceMins).padStart(2, '0')}:${String(spaceSecs).padStart(2, '0')}`;
+        }
+
+        // ===== MAIN RENDER LOOP =====
+        function render(time) {
+            cosmosCtx.fillStyle = '#000000';
+            cosmosCtx.fillRect(0, 0, width, height);
+            
+            // Draw deep space gradient
+            const gradient = cosmosCtx.createRadialGradient(
+                width / 2, height / 2, 0,
+                width / 2, height / 2, Math.max(width, height) / 2
+            );
+            gradient.addColorStop(0, 'rgba(10, 5, 20, 1)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 1)');
+            cosmosCtx.fillStyle = gradient;
+            cosmosCtx.fillRect(0, 0, width, height);
+            
+            drawStars(time);
+            updateDust();
+            
+            requestAnimationFrame(render);
+        }
+
+        // ===== NAVIGATION =====
+        const navDots = document.querySelectorAll('.nav-dot');
+        const sections = document.querySelectorAll('section');
+
+        navDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const target = document.getElementById(dot.dataset.target);
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Update active dot on scroll
+        function updateNavDots() {
+            const scrollPos = window.scrollY + window.innerHeight / 2;
+            
+            sections.forEach((section, index) => {
+                const top = section.offsetTop;
+                const bottom = top + section.offsetHeight;
+                
+                if (scrollPos >= top && scrollPos < bottom) {
+                    navDots.forEach(d => d.classList.remove('active'));
+                    navDots[index].classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateNavDots);
+
+        // ===== SOUND TOGGLE (Visual Only) =====
+        const soundToggle = document.getElementById('soundToggle');
+        let isMuted = true;
+
+        soundToggle.addEventListener('click', () => {
+            isMuted = !isMuted;
+            soundToggle.classList.toggle('muted', isMuted);
+            
+            // In a real implementation, you would toggle actual audio here
+            // For now, this is just visual feedback
+        });
+
+        // ===== INTRO SEQUENCE =====
+        setTimeout(() => {
+            document.getElementById('intro').classList.add('hidden');
+        }, 7000);
+
+        // ===== PARALLAX EFFECT ON MOUSE =====
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / width - 0.5) * 20;
+            const y = (e.clientY / height - 0.5) * 20;
+            
+            document.querySelectorAll('.black-hole-container, .wormhole-container, .tesseract-container').forEach(el => {
+                el.style.transform = `perspective(1000px) rotateY(${x * 0.5}deg) rotateX(${-y * 0.5}deg)`;
+            });
+        });
+
+        // ===== INITIALIZATION =====
+        function init() {
+            resize();
+            initStars();
+            initDust();
+            initPhotons();
+            updateTime();
+            setInterval(updateTime, 1000);
+            render(0);
+        }
+
+        window.addEventListener('resize', () => {
+            resize();
+            initStars();
+        });
+
+        window.addEventListener('load', init);
+
+        // Skip intro on click
+        document.getElementById('intro').addEventListener('click', () => {
+            document.getElementById('intro').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
