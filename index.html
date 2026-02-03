@@ -38,6 +38,7 @@
             opacity: 0.18;
             pointer-events: none;
             z-index: 0;
+            animation: blobFloat 8s ease-in-out infinite;
         }
         .bg-blob.one {
             width: 500px; height: 500px;
@@ -48,6 +49,7 @@
             width: 400px; height: 400px;
             background: var(--accent-purple);
             bottom: -100px; right: -100px;
+            animation-delay: 2s;
         }
         .bg-blob.three {
             width: 300px; height: 300px;
@@ -55,6 +57,13 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             opacity: 0.08;
+            animation-delay: 4s;
+        }
+
+        @keyframes blobFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
         }
 
         /* ===== HEADER ===== */
@@ -63,9 +72,36 @@
             z-index: 1;
             text-align: center;
             padding: 70px 20px 40px;
+            background: linear-gradient(180deg, rgba(244,63,94,0.03) 0%, transparent 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            margin-bottom: 20px;
         }
 
-        /* Jumping letters title */
+        /* Floating particles in header */
+        .header::before,
+        .header::after {
+            content: '✨';
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.4;
+            animation: floatParticle 4s ease-in-out infinite;
+        }
+        .header::before {
+            top: 40px;
+            left: 15%;
+        }
+        .header::after {
+            top: 80px;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        @keyframes floatParticle {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.4; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+
+        /* Jumping letters title with shake */
         .jump-title {
             display: flex;
             justify-content: center;
@@ -83,12 +119,15 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: jumpLetter 1.8s ease-in-out infinite;
+            animation: jumpLetterShake 1.8s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(244,63,94,0.3);
         }
 
-        @keyframes jumpLetter {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-18px); }
+        @keyframes jumpLetterShake {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-18px) rotate(-2deg); }
+            50% { transform: translateY(-18px) rotate(2deg); }
+            75% { transform: translateY(-18px) rotate(-1deg); }
         }
 
         .jump-title .letter:nth-child(1) { animation-delay: 0s; }
@@ -106,6 +145,12 @@
             background: linear-gradient(to right, var(--accent-pink), var(--accent-purple));
             margin: 16px auto;
             border-radius: 2px;
+            animation: expandShrink 2s ease-in-out infinite;
+        }
+
+        @keyframes expandShrink {
+            0%, 100% { width: 60px; }
+            50% { width: 100px; }
         }
 
         .subtitle {
@@ -115,6 +160,12 @@
             color: var(--text-dim);
             letter-spacing: 4px;
             text-transform: uppercase;
+            animation: subtitleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes subtitleGlow {
+            0%, 100% { opacity: 0.7; text-shadow: 0 0 10px rgba(245,158,11,0.2); }
+            50% { opacity: 1; text-shadow: 0 0 20px rgba(245,158,11,0.4); }
         }
 
         /* ===== HEART ROW ===== */
@@ -127,7 +178,8 @@
 
         .heart-row span {
             font-size: 1.1rem;
-            animation: heartPulse 1.4s ease-in-out infinite;
+            animation: heartPulseShake 1.4s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px rgba(244,63,94,0.4));
         }
         .heart-row span:nth-child(1) { animation-delay: 0s; }
         .heart-row span:nth-child(2) { animation-delay: 0.2s; }
@@ -135,9 +187,11 @@
         .heart-row span:nth-child(4) { animation-delay: 0.6s; }
         .heart-row span:nth-child(5) { animation-delay: 0.8s; }
 
-        @keyframes heartPulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.3); opacity: 1; }
+        @keyframes heartPulseShake {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+            25% { transform: scale(1.3) rotate(-5deg); opacity: 1; }
+            50% { transform: scale(1.3) rotate(5deg); opacity: 1; }
+            75% { transform: scale(1.3) rotate(-3deg); opacity: 1; }
         }
 
         /* ===== PAGE LIST ===== */
@@ -244,6 +298,17 @@
             position: relative;
             z-index: 1;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .jump-title .letter {
+                font-size: 3rem;
+            }
+            .header::before,
+            .header::after {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -257,13 +322,13 @@
 <div class="header">
     <div class="jump-title">
         <span class="letter">J</span>
-        <span class="letter">O</span>
-        <span class="letter">T</span>
-        <span class="letter">H</span>
-        <span class="letter">I</span>
-        <span class="letter">E</span>
-        <span class="letter">S</span>
-        <span class="letter">H</span>
+        <span class="letter">o</span>
+        <span class="letter">t</span>
+        <span class="letter">h</span>
+        <span class="letter">i</span>
+        <span class="letter">e</span>
+        <span class="letter">s</span>
+        <span class="letter">h</span>
     </div>
     <div class="divider-line"></div>
     <p class="subtitle">Love &nbsp;|&nbsp; Ours</p>
@@ -275,6 +340,10 @@
 <!-- Page List -->
 <div class="container">
     <div class="list">
+
+        <p class="cat-label">— Featured</p>
+        <a href="neon-nebula-valentine.html" target="_blank"><span class="icon">🌌</span><span class="name">Neon Nebula</span><span class="arrow">→</span></a>
+        <a href="interstellar-valentine.html" target="_blank"><span class="icon">☄️</span><span class="name">Interstellar Union</span><span class="arrow">→</span></a>
 
         <p class="cat-label">— Games & Fun</p>
         <a href="1-balloon-love.html" target="_blank"><span class="icon">🎈</span><span class="name">Balloon Love</span><span class="arrow">→</span></a>
