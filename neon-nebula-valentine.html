@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛸 NEON NEBULA | LOVE COMMAND</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================================================================
+           NEON NEBULA SYSTEM - NEXT LEVEL EDITION
+           ================================================================ */
+        
+        :root {
+            --neon-violet: #bc13fe;
+            --neon-cyan: #00fff7;
+            --neon-pink: #ff0066;
+            --neon-gold: #ffd700;
+            --deep-purple: #1a0a2e;
+            --void-black: #050208;
+            --glass: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --font-main: 'Exo 2', sans-serif;
+            --font-cyber: 'Orbitron', sans-serif;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: var(--void-black);
+            color: #fff;
+            font-family: var(--font-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='3' fill='%2300fff7' opacity='0.8'/%3E%3Ccircle cx='12' cy='12' r='8' stroke='%2300fff7' stroke-width='1' fill='none' opacity='0.4'/%3E%3C/svg%3E") 12 12, crosshair;
+        }
+
+        /* ================================================================
+           COSMIC BACKGROUND LAYERS
+           ================================================================ */
+        
+        .cosmos {
+            position: fixed;
+            inset: 0;
+            z-index: -10;
+        }
+
+        #nebula-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        #stars-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+        }
+
+        #particles-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .cosmic-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.4;
+            animation: cosmicPulse 8s ease-in-out infinite;
+        }
+
+        .glow-1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, var(--neon-violet) 0%, transparent 70%);
+            top: -200px; left: -100px;
+            animation-delay: 0s;
+        }
+
+        .glow-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, var(--neon-pink) 0%, transparent 70%);
+            bottom: -150px; right: -100px;
+            animation-delay: -4s;
+        }
+
+        .glow-3 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, var(--neon-cyan) 0%, transparent 70%);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -2s;
+        }
+
+        @keyframes cosmicPulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* ================================================================
+           HOLOGRAPHIC COMMAND DECK
+           ================================================================ */
+
+        .command-deck {
+            width: 95vw;
+            height: 92vh;
+            max-width: 1400px;
+            max-height: 900px;
+            background: linear-gradient(135deg, rgba(26, 10, 46, 0.6) 0%, rgba(5, 2, 8, 0.8) 100%);
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 0 0 1px rgba(0, 255, 247, 0.1),
+                0 25px 80px -20px rgba(188, 19, 254, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: deckMaterialize 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes deckMaterialize {
+            from { 
+                opacity: 0; 
+                transform: scale(0.9) translateY(40px);
+                filter: blur(20px);
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        /* Holographic scan line effect */
+        .command-deck::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 247, 0.015) 2px,
+                rgba(0, 255, 247, 0.015) 4px
+            );
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Animated border glow */
+        .command-deck::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 34px;
+            background: conic-gradient(
+                from var(--angle, 0deg),
+                transparent 0%,
+                var(--neon-cyan) 10%,
+                transparent 20%,
+                transparent 50%,
+                var(--neon-pink) 60%,
+                transparent 70%
+            );
+            z-index: -1;
+            opacity: 0.6;
+            animation: borderRotate 8s linear infinite;
+        }
+
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @keyframes borderRotate {
+            to { --angle: 360deg; }
+        }
+
+        /* ================================================================
+           SIDEBAR NAVIGATION
+           ================================================================ */
+
+        .sidebar {
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px 20px;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, transparent 100%);
+            position: relative;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .logo {
+            font-family: var(--font-cyber);
+            font-size: 1.1rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-violet) 50%, var(--neon-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .logo::after {
+            content: 'LOVE_OS';
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .version-tag {
+            font-size: 0.6rem;
+            color: var(--neon-cyan);
+            opacity: 0.6;
+            margin-top: 8px;
+            letter-spacing: 3px;
+        }
+
+        .nav-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .nav-item {
+            padding: 16px 20px;
+            border-radius: 12px;
+            background: transparent;
+            border: 1px solid transparent;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            font-family: var(--font-cyber);
+            font-size: 0.65rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 60%;
+            background: linear-gradient(90deg, var(--neon-cyan), transparent);
+            border-radius: 0 4px 4px 0;
+            transition: width 0.3s;
+        }
+
+        .nav-item:hover {
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-item.active {
+            color: var(--neon-cyan);
+            border-color: rgba(0, 255, 247, 0.3);
+            background: linear-gradient(90deg, rgba(0, 255, 247, 0.1) 0%, transparent 100%);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 247, 0.15),
+                inset 0 0 20px rgba(0, 255, 247, 0.05);
+            transform: translateX(8px);
+        }
+
+        .nav-item.active::before {
+            width: 4px;
+        }
+
+        .nav-code {
+            opacity: 0.4;
+            margin-right: 12px;
+        }
+
+        .nav-item.active .nav-code {
+            opacity: 1;
+            color: var(--neon-pink);
+        }
+
+        .status-panel {
+            margin-top: auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.55rem;
+            letter-spacing: 1px;
+        }
+
+        .status-row:last-child { margin-bottom: 0; }
+
+        .status-label { opacity: 0.4; }
+
+        .status-value {
+            font-family: var(--font-cyber);
+            font-weight: 500;
+        }
+
+        .status-value.online {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        .status-value.stable {
+            color: var(--neon-gold);
+        }
+
+        .heartbeat-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--neon-pink);
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: heartbeat 1s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        /* ================================================================
+           MAIN VIEWPORT
+           ================================================================ */
+
+        .viewport {
+            padding: 40px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .module {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .module.active {
+            display: flex;
+            animation: moduleEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes moduleEnter {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+                filter: blur(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        .module-title {
+            font-family: var(--font-cyber);
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 6px;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.6) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .module-subtitle {
+            font-size: 0.85rem;
+            font-weight: 300;
+            opacity: 0.5;
+            letter-spacing: 3px;
+            margin-bottom: 50px;
+        }
+
+        /* ================================================================
+           NEBULA SYNC GAME - THE RING ALIGNMENT
+           ================================================================ */
+
+        .sync-arena {
+            position: relative;
+            width: 420px;
+            height: 420px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .orbit-system {
+            position: absolute;
+            inset: 0;
+        }
+
+        .orbit-ring {
+            position: absolute;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .orbit-ring::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .orbit-1 {
+            width: 340px;
+            height: 340px;
+            border-color: rgba(188, 19, 254, 0.3);
+            border-style: dashed;
+            animation: orbitPulse1 4s ease-in-out infinite;
+        }
+
+        .orbit-1::before {
+            border: 2px solid var(--neon-violet);
+            box-shadow: 0 0 30px var(--neon-violet), inset 0 0 30px var(--neon-violet);
+        }
+
+        .orbit-2 {
+            width: 250px;
+            height: 250px;
+            border-color: rgba(0, 255, 247, 0.4);
+            animation: orbitPulse2 3s ease-in-out infinite;
+        }
+
+        .orbit-2::before {
+            border: 2px solid var(--neon-cyan);
+            box-shadow: 0 0 30px var(--neon-cyan), inset 0 0 30px var(--neon-cyan);
+        }
+
+        .orbit-3 {
+            width: 160px;
+            height: 160px;
+            border-color: rgba(255, 0, 102, 0.5);
+            border-width: 2px;
+            animation: orbitPulse3 2.5s ease-in-out infinite;
+        }
+
+        .orbit-3::before {
+            border: 3px solid var(--neon-pink);
+            box-shadow: 0 0 40px var(--neon-pink), inset 0 0 40px var(--neon-pink);
+        }
+
+        @keyframes orbitPulse1 {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes orbitPulse2 {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes orbitPulse3 {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .synced .orbit-ring::before {
+            opacity: 1;
+        }
+
+        .planet {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border-radius: 50%;
+            transform-origin: center center;
+        }
+
+        .planet-core {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .planet-1 {
+            width: 18px;
+            height: 18px;
+            margin: -9px 0 0 -9px;
+        }
+
+        .planet-1 .planet-core {
+            background: radial-gradient(circle at 30% 30%, #fff, var(--neon-violet));
+            box-shadow: 0 0 20px var(--neon-violet), 0 0 40px rgba(188, 19, 254, 0.5);
+        }
+
+        .planet-2 {
+            width: 14px;
+            height: 14px;
+            margin: -7px 0 0 -7px;
+        }
+
+        .planet-2 .planet-core {
+            background: radial-gradient(circle at 30% 30%, #fff, var(--neon-cyan));
+            box-shadow: 0 0 20px var(--neon-cyan), 0 0 40px rgba(0, 255, 247, 0.5);
+        }
+
+        .planet-3 {
+            width: 12px;
+            height: 12px;
+            margin: -6px 0 0 -6px;
+        }
+
+        .planet-3 .planet-core {
+            background: radial-gradient(circle at 30% 30%, #fff, var(--neon-pink));
+            box-shadow: 0 0 20px var(--neon-pink), 0 0 40px rgba(255, 0, 102, 0.5);
+        }
+
+        /* Trail effects */
+        .planet::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 4px;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 4px;
+            opacity: 0.3;
+        }
+
+        .planet-1::after {
+            background: linear-gradient(90deg, transparent, var(--neon-violet));
+        }
+
+        .planet-2::after {
+            background: linear-gradient(90deg, transparent, var(--neon-cyan));
+        }
+
+        .planet-3::after {
+            background: linear-gradient(90deg, transparent, var(--neon-pink));
+        }
+
+        /* Center Heart Core */
+        .heart-core {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .heart-icon {
+            font-size: 48px;
+            filter: drop-shadow(0 0 20px var(--neon-pink));
+            animation: heartFloat 3s ease-in-out infinite;
+            transition: transform 0.3s;
+        }
+
+        @keyframes heartFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
+        }
+
+        .heart-rings {
+            position: absolute;
+            inset: -20px;
+            border: 2px solid rgba(255, 0, 102, 0.2);
+            border-radius: 50%;
+            animation: heartRingPulse 2s ease-out infinite;
+        }
+
+        .heart-rings:nth-child(2) { animation-delay: 0.5s; }
+        .heart-rings:nth-child(3) { animation-delay: 1s; }
+
+        @keyframes heartRingPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* ================================================================
+           ACTION BUTTONS
+           ================================================================ */
+
+        .btn-action {
+            padding: 18px 50px;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-family: var(--font-cyber);
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            border-radius: 50px;
+            margin-top: 50px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .btn-action::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 54px;
+            background: var(--neon-cyan);
+            filter: blur(15px);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s;
+        }
+
+        .btn-action:hover {
+            background: var(--neon-cyan);
+            color: var(--void-black);
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(0, 255, 247, 0.4);
+        }
+
+        .btn-action:hover::before {
+            transform: translateX(100%);
+        }
+
+        .btn-action:hover::after {
+            opacity: 0.3;
+        }
+
+        .btn-action:active {
+            transform: scale(0.98);
+        }
+
+        .btn-pink {
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+        }
+
+        .btn-pink:hover {
+            background: var(--neon-pink);
+        }
+
+        .btn-pink::after {
+            background: var(--neon-pink);
+        }
+
+        /* ================================================================
+           STATUS DISPLAY (Bottom Right)
+           ================================================================ */
+
+        .hud-display {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            text-align: right;
+            z-index: 10;
+        }
+
+        .hud-line {
+            font-family: var(--font-cyber);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin-bottom: 6px;
+            opacity: 0.8;
+        }
+
+        .hud-line:first-child {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        .sync-percentage {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--neon-pink);
+            text-shadow: 0 0 20px var(--neon-pink);
+            transition: all 0.3s;
+        }
+
+        .sync-percentage.complete {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 30px var(--neon-cyan);
+            animation: syncComplete 0.5s ease;
+        }
+
+        @keyframes syncComplete {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* ================================================================
+           MESSAGE DECODER MODULE
+           ================================================================ */
+
+        .decoder-terminal {
+            width: 100%;
+            max-width: 700px;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+            border: 1px solid rgba(0, 255, 247, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 
+                0 0 40px rgba(0, 255, 247, 0.1),
+                inset 0 0 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .terminal-header {
+            padding: 16px 24px;
+            background: rgba(0, 255, 247, 0.05);
+            border-bottom: 1px solid rgba(0, 255, 247, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27ca40; }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-family: var(--font-cyber);
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            opacity: 0.6;
+        }
+
+        .terminal-body {
+            padding: 30px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 2;
+            color: var(--neon-cyan);
+            min-height: 300px;
+            position: relative;
+        }
+
+        .terminal-line {
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: lineReveal 0.5s forwards;
+        }
+
+        @keyframes lineReveal {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: var(--neon-cyan);
+            animation: cursorBlink 0.8s step-end infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .highlight-pink { color: var(--neon-pink); }
+        .highlight-gold { color: var(--neon-gold); }
+        .highlight-violet { color: var(--neon-violet); }
+
+        /* ================================================================
+           ETERNAL VAULT MODULE
+           ================================================================ */
+
+        .vault-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .vault-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vault-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, var(--neon-pink) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .vault-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--neon-pink);
+            box-shadow: 0 20px 40px rgba(255, 0, 102, 0.2);
+        }
+
+        .vault-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .vault-icon {
+            font-size: 48px;
+            filter: drop-shadow(0 0 10px currentColor);
+            transition: transform 0.3s;
+        }
+
+        .vault-card:hover .vault-icon {
+            transform: scale(1.2);
+        }
+
+        .vault-label {
+            font-family: var(--font-cyber);
+            font-size: 0.6rem;
+            letter-spacing: 2px;
+            opacity: 0.6;
+        }
+
+        .vault-card:nth-child(1) { animation-delay: 0.1s; }
+        .vault-card:nth-child(2) { animation-delay: 0.2s; }
+        .vault-card:nth-child(3) { animation-delay: 0.3s; }
+
+        /* ================================================================
+           SYNC FEEDBACK EFFECTS
+           ================================================================ */
+
+        .sync-flash {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.1s;
+        }
+
+        .sync-flash.success {
+            background: radial-gradient(circle at center, rgba(0, 255, 247, 0.3) 0%, transparent 70%);
+            animation: flashSuccess 0.3s ease-out;
+        }
+
+        .sync-flash.fail {
+            background: radial-gradient(circle at center, rgba(255, 0, 102, 0.2) 0%, transparent 70%);
+            animation: flashFail 0.3s ease-out;
+        }
+
+        @keyframes flashSuccess {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes flashFail {
+            0%, 20%, 40% { opacity: 0.5; }
+            10%, 30% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        /* ================================================================
+           RESPONSIVE DESIGN
+           ================================================================ */
+
+        @media (max-width: 900px) {
+            .command-deck {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+
+            .sidebar {
+                flex-direction: row;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                padding: 16px;
+                gap: 8px;
+                overflow-x: auto;
+            }
+
+            .logo-container {
+                display: none;
+            }
+
+            .nav-section {
+                flex-direction: row;
+            }
+
+            .nav-item {
+                padding: 12px 16px;
+                white-space: nowrap;
+            }
+
+            .nav-item.active {
+                transform: translateY(-4px);
+            }
+
+            .status-panel {
+                display: none;
+            }
+
+            .sync-arena {
+                width: 300px;
+                height: 300px;
+            }
+
+            .orbit-1 { width: 260px; height: 260px; }
+            .orbit-2 { width: 190px; height: 190px; }
+            .orbit-3 { width: 120px; height: 120px; }
+
+            .vault-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+        }
+
+        /* ================================================================
+           LOADING SCREEN
+           ================================================================ */
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--void-black);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.8s, visibility 0.8s;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-text {
+            font-family: var(--font-cyber);
+            font-size: 0.8rem;
+            letter-spacing: 8px;
+            color: var(--neon-cyan);
+            margin-top: 30px;
+            animation: loadingPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loadingPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .loading-ring {
+            width: 80px;
+            height: 80px;
+            border: 2px solid transparent;
+            border-top-color: var(--neon-cyan);
+            border-radius: 50%;
+            animation: loadingSpin 1s linear infinite;
+        }
+
+        .loading-ring::before {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border: 2px solid transparent;
+            border-top-color: var(--neon-pink);
+            border-radius: 50%;
+            animation: loadingSpin 0.8s linear reverse infinite;
+        }
+
+        @keyframes loadingSpin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-ring" style="position: relative;"></div>
+        <div class="loading-text">INITIALIZING</div>
+    </div>
+
+    <!-- Sync Flash Effect -->
+    <div class="sync-flash" id="syncFlash"></div>
+
+    <!-- Cosmic Background -->
+    <div class="cosmos">
+        <canvas id="nebula-canvas"></canvas>
+        <canvas id="stars-canvas"></canvas>
+        <canvas id="particles-canvas"></canvas>
+        <div class="cosmic-glow glow-1"></div>
+        <div class="cosmic-glow glow-2"></div>
+        <div class="cosmic-glow glow-3"></div>
+    </div>
+
+    <!-- Main Interface -->
+    <div class="command-deck">
+        <aside class="sidebar">
+            <div class="logo-container">
+                <h1 class="logo">LOVE_OS</h1>
+                <p class="version-tag">v2.026</p>
+            </div>
+            
+            <nav class="nav-section">
+                <button class="nav-item active" onclick="switchModule('sync', this)">
+                    <span class="nav-code">01</span>NEBULA SYNC
+                </button>
+                <button class="nav-item" onclick="switchModule('decrypt', this)">
+                    <span class="nav-code">02</span>DECODER
+                </button>
+                <button class="nav-item" onclick="switchModule('vault', this)">
+                    <span class="nav-code">03</span>VAULT
+                </button>
+            </nav>
+
+            <div class="status-panel">
+                <div class="status-row">
+                    <span class="status-label">LINK STATUS</span>
+                    <span class="status-value online">● ONLINE</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">ENCRYPTION</span>
+                    <span class="status-value stable">QUANTUM</span>
+                </div>
+                <div class="status-row">
+                    <span class="status-label">HEART RATE</span>
+                    <span class="status-value">
+                        <span class="heartbeat-indicator"></span>ELEVATED
+                    </span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="viewport">
+            
+            <!-- Module 1: Nebula Sync -->
+            <section id="mod-sync" class="module active">
+                <h2 class="module-title">NEBULA SYNC</h2>
+                <p class="module-subtitle">Align the orbits to unlock our connection</p>
+                
+                <div class="sync-arena">
+                    <div class="orbit-system" id="orbitSystem">
+                        <div class="orbit-ring orbit-1"></div>
+                        <div class="orbit-ring orbit-2"></div>
+                        <div class="orbit-ring orbit-3"></div>
+                        
+                        <div class="planet planet-1" id="planet1">
+                            <div class="planet-core"></div>
+                        </div>
+                        <div class="planet planet-2" id="planet2">
+                            <div class="planet-core"></div>
+                        </div>
+                        <div class="planet planet-3" id="planet3">
+                            <div class="planet-core"></div>
+                        </div>
+                    </div>
+
+                    <div class="heart-core">
+                        <div class="heart-rings"></div>
+                        <div class="heart-rings"></div>
+                        <div class="heart-rings"></div>
+                        <span class="heart-icon">💖</span>
+                    </div>
+                </div>
+
+                <button class="btn-action" id="syncBtn">INITIATE SYNC</button>
+            </section>
+
+            <!-- Module 2: Message Decoder -->
+            <section id="mod-decrypt" class="module">
+                <h2 class="module-title">MESSAGE DECODER</h2>
+                <p class="module-subtitle">Decrypt the encrypted love transmission</p>
+                
+                <div class="decoder-terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dot dot-red"></div>
+                        <div class="terminal-dot dot-yellow"></div>
+                        <div class="terminal-dot dot-green"></div>
+                        <span class="terminal-title">SECURE_TRANSMISSION_CHANNEL</span>
+                    </div>
+                    <div class="terminal-body" id="terminalBody">
+                        <div>[SYSTEM READY]</div>
+                        <div>Awaiting orbital synchronization...</div>
+                        <span class="terminal-cursor"></span>
+                    </div>
+                </div>
+
+                <button class="btn-action btn-pink" onclick="startDecryption()">DECODE MESSAGE</button>
+            </section>
+
+            <!-- Module 3: Eternal Vault -->
+            <section id="mod-vault" class="module">
+                <h2 class="module-title">ETERNAL VAULT</h2>
+                <p class="module-subtitle">Our future, safely stored in the cosmos</p>
+                
+                <div class="vault-grid">
+                    <div class="vault-card" onclick="showVaultItem('ring')">
+                        <span class="vault-icon">💍</span>
+                        <span class="vault-label">PROMISE</span>
+                    </div>
+                    <div class="vault-card" onclick="showVaultItem('toast')">
+                        <span class="vault-icon">🥂</span>
+                        <span class="vault-label">CELEBRATE</span>
+                    </div>
+                    <div class="vault-card" onclick="showVaultItem('home')">
+                        <span class="vault-icon">🏡</span>
+                        <span class="vault-label">FOREVER</span>
+                    </div>
+                </div>
+
+                <button class="btn-action" onclick="showTimeline()">VIEW TIMELINE</button>
+            </section>
+
+            <!-- HUD Display -->
+            <div class="hud-display">
+                <div class="hud-line">STATION_VALENTINE_2026</div>
+                <div class="hud-line">SYNC LEVEL</div>
+                <div class="sync-percentage" id="syncPercentage">0%</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        /* ================================================================
+           NEON NEBULA - NEXT LEVEL JAVASCRIPT ENGINE
+           ================================================================ */
+
+        // ===== GLOBAL STATE =====
+        const state = {
+            syncLevel: 0,
+            angles: [0, 0, 0],
+            speeds: [0.015, 0.025, 0.04],
+            radii: [170, 125, 80],
+            isDecrypted: false,
+            particles: [],
+            stars: [],
+            mouseX: 0,
+            mouseY: 0
+        };
+
+        // ===== CANVAS SETUP =====
+        const nebulaCanvas = document.getElementById('nebula-canvas');
+        const starsCanvas = document.getElementById('stars-canvas');
+        const particlesCanvas = document.getElementById('particles-canvas');
+        const nebulaCtx = nebulaCanvas.getContext('2d');
+        const starsCtx = starsCanvas.getContext('2d');
+        const particlesCtx = particlesCanvas.getContext('2d');
+
+        function resizeCanvases() {
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            [nebulaCanvas, starsCanvas, particlesCanvas].forEach(c => {
+                c.width = w;
+                c.height = h;
+            });
+        }
+
+        // ===== NEBULA BACKGROUND =====
+        function drawNebula() {
+            const w = nebulaCanvas.width;
+            const h = nebulaCanvas.height;
+            const time = Date.now() * 0.0001;
+            
+            nebulaCtx.fillStyle = '#050208';
+            nebulaCtx.fillRect(0, 0, w, h);
+            
+            // Animated nebula clouds
+            const gradient1 = nebulaCtx.createRadialGradient(
+                w * 0.3 + Math.sin(time) * 50,
+                h * 0.4 + Math.cos(time * 0.7) * 30,
+                0,
+                w * 0.3,
+                h * 0.4,
+                w * 0.5
+            );
+            gradient1.addColorStop(0, 'rgba(188, 19, 254, 0.15)');
+            gradient1.addColorStop(0.5, 'rgba(188, 19, 254, 0.05)');
+            gradient1.addColorStop(1, 'transparent');
+            nebulaCtx.fillStyle = gradient1;
+            nebulaCtx.fillRect(0, 0, w, h);
+            
+            const gradient2 = nebulaCtx.createRadialGradient(
+                w * 0.7 + Math.cos(time * 0.8) * 40,
+                h * 0.6 + Math.sin(time * 0.6) * 40,
+                0,
+                w * 0.7,
+                h * 0.6,
+                w * 0.4
+            );
+            gradient2.addColorStop(0, 'rgba(255, 0, 102, 0.12)');
+            gradient2.addColorStop(0.5, 'rgba(255, 0, 102, 0.04)');
+            gradient2.addColorStop(1, 'transparent');
+            nebulaCtx.fillStyle = gradient2;
+            nebulaCtx.fillRect(0, 0, w, h);
+            
+            const gradient3 = nebulaCtx.createRadialGradient(
+                w * 0.5 + Math.sin(time * 1.2) * 60,
+                h * 0.3 + Math.cos(time) * 50,
+                0,
+                w * 0.5,
+                h * 0.3,
+                w * 0.3
+            );
+            gradient3.addColorStop(0, 'rgba(0, 255, 247, 0.08)');
+            gradient3.addColorStop(0.5, 'rgba(0, 255, 247, 0.02)');
+            gradient3.addColorStop(1, 'transparent');
+            nebulaCtx.fillStyle = gradient3;
+            nebulaCtx.fillRect(0, 0, w, h);
+        }
+
+        // ===== STARFIELD =====
+        function initStars() {
+            state.stars = [];
+            for (let i = 0; i < 300; i++) {
+                state.stars.push({
+                    x: Math.random() * starsCanvas.width,
+                    y: Math.random() * starsCanvas.height,
+                    size: Math.random() * 2 + 0.5,
+                    twinkleSpeed: Math.random() * 0.02 + 0.01,
+                    twinkleOffset: Math.random() * Math.PI * 2,
+                    color: Math.random() > 0.9 ? 
+                           (Math.random() > 0.5 ? '#00fff7' : '#ff0066') : 
+                           '#ffffff'
+                });
+            }
+        }
+
+        function drawStars() {
+            starsCtx.clearRect(0, 0, starsCanvas.width, starsCanvas.height);
+            const time = Date.now();
+            
+            state.stars.forEach(star => {
+                const twinkle = Math.sin(time * star.twinkleSpeed + star.twinkleOffset) * 0.5 + 0.5;
+                starsCtx.globalAlpha = 0.3 + twinkle * 0.7;
+                starsCtx.fillStyle = star.color;
+                starsCtx.beginPath();
+                starsCtx.arc(star.x, star.y, star.size * (0.8 + twinkle * 0.4), 0, Math.PI * 2);
+                starsCtx.fill();
+                
+                // Star glow
+                if (star.size > 1.5 && star.color !== '#ffffff') {
+                    starsCtx.globalAlpha = twinkle * 0.3;
+                    starsCtx.beginPath();
+                    starsCtx.arc(star.x, star.y, star.size * 3, 0, Math.PI * 2);
+                    starsCtx.fill();
+                }
+            });
+            starsCtx.globalAlpha = 1;
+        }
+
+        // ===== PARTICLE SYSTEM =====
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 3;
+                this.speedY = (Math.random() - 0.5) * 3;
+                this.life = 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= this.decay;
+                this.size *= 0.99;
+            }
+            
+            draw(ctx) {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Glow
+                ctx.globalAlpha = this.life * 0.3;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function spawnParticles(x, y, color, count = 20) {
+            for (let i = 0; i < count; i++) {
+                state.particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function updateParticles() {
+            particlesCtx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            
+            state.particles = state.particles.filter(p => p.life > 0);
+            state.particles.forEach(p => {
+                p.update();
+                p.draw(particlesCtx);
+            });
+            particlesCtx.globalAlpha = 1;
+        }
+
+        // ===== ORBITAL MECHANICS =====
+        const planets = [
+            document.getElementById('planet1'),
+            document.getElementById('planet2'),
+            document.getElementById('planet3')
+        ];
+
+        function updateOrbits() {
+            for (let i = 0; i < 3; i++) {
+                state.angles[i] += state.speeds[i];
+                const x = Math.cos(state.angles[i]) * state.radii[i];
+                const y = Math.sin(state.angles[i]) * state.radii[i];
+                planets[i].style.transform = `translate(${x}px, ${y}px) rotate(${state.angles[i]}rad)`;
+            }
+        }
+
+        // ===== SYNC MECHANICS =====
+        function attemptSync() {
+            const normalizedAngles = state.angles.map(a => a % (Math.PI * 2));
+            const diff1 = Math.abs(normalizedAngles[0] - normalizedAngles[1]);
+            const diff2 = Math.abs(normalizedAngles[1] - normalizedAngles[2]);
+            
+            const flash = document.getElementById('syncFlash');
+            const orbitSystem = document.getElementById('orbitSystem');
+            
+            if (diff1 < 0.6 && diff2 < 0.6) {
+                // Success!
+                state.syncLevel = Math.min(100, state.syncLevel + 20);
+                flash.className = 'sync-flash success';
+                
+                // Particle burst at center
+                const rect = orbitSystem.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                spawnParticles(centerX, centerY, '#00fff7', 30);
+                
+                // Visual feedback
+                orbitSystem.classList.add('synced');
+                setTimeout(() => orbitSystem.classList.remove('synced'), 500);
+                
+                // Sound-like visual pulse
+                document.querySelector('.heart-icon').style.transform = 'scale(1.3)';
+                setTimeout(() => {
+                    document.querySelector('.heart-icon').style.transform = '';
+                }, 200);
+                
+            } else {
+                // Fail
+                state.syncLevel = Math.max(0, state.syncLevel - 5);
+                flash.className = 'sync-flash fail';
+            }
+            
+            setTimeout(() => flash.className = 'sync-flash', 300);
+            
+            // Update display
+            const pctEl = document.getElementById('syncPercentage');
+            pctEl.textContent = state.syncLevel + '%';
+            
+            if (state.syncLevel >= 100) {
+                pctEl.classList.add('complete');
+                celebrateSync();
+            } else {
+                pctEl.classList.remove('complete');
+            }
+        }
+
+        function celebrateSync() {
+            // Big celebration
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    spawnParticles(centerX + (Math.random() - 0.5) * 200, 
+                                  centerY + (Math.random() - 0.5) * 200, 
+                                  ['#00fff7', '#ff0066', '#bc13fe'][i % 3], 
+                                  40);
+                }, i * 100);
+            }
+            
+            // Auto-navigate to decoder
+            setTimeout(() => {
+                const decoderBtn = document.querySelectorAll('.nav-item')[1];
+                switchModule('decrypt', decoderBtn);
+            }, 1500);
+        }
+
+        // ===== MODULE NAVIGATION =====
+        function switchModule(id, btn) {
+            document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+            document.getElementById('mod-' + id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // ===== MESSAGE DECODER =====
+        const loveMessages = [
+            { text: "> ESTABLISHING HEART-LINK PROTOCOL...", delay: 0 },
+            { text: "> BYPASSING EMOTIONAL FIREWALLS...", delay: 800 },
+            { text: "> QUANTUM ENTANGLEMENT: <span class='highlight-gold'>CONFIRMED</span>", delay: 1600 },
+            { text: "> ", delay: 2400 },
+            { text: "> ACCESS GRANTED: <span class='highlight-pink'>[MY FOREVER PERSON]</span>", delay: 2600 },
+            { text: "> ", delay: 3400 },
+            { text: "> DECRYPTING MESSAGE...", delay: 3600 },
+            { text: "> ", delay: 4400 },
+            { text: "> <span class='highlight-pink'>\"I love you more than all the stars</span>", delay: 4600 },
+            { text: ">  <span class='highlight-pink'>in this infinite nebula.\"</span>", delay: 5200 },
+            { text: "> ", delay: 5800 },
+            { text: "> SIDE EFFECTS: Extreme happiness, forever-hugs,", delay: 6000 },
+            { text: ">              and an eternal bond.", delay: 6600 },
+            { text: "> ", delay: 7200 },
+            { text: "> VALENTINE STATUS: <span class='highlight-violet'>LOCKED FOREVER</span> 💖", delay: 7400 }
+        ];
+
+        function startDecryption() {
+            if (state.syncLevel < 100) {
+                // Show error in terminal
+                const terminal = document.getElementById('terminalBody');
+                terminal.innerHTML = `
+                    <div style="color: #ff0066;">[ERROR] Connection insufficient.</div>
+                    <div style="color: #ff0066;">Current sync: ${state.syncLevel}% | Required: 100%</div>
+                    <div>Return to NEBULA SYNC to establish connection.</div>
+                    <span class="terminal-cursor"></span>
+                `;
+                return;
+            }
+            
+            if (state.isDecrypted) return;
+            state.isDecrypted = true;
+            
+            const terminal = document.getElementById('terminalBody');
+            terminal.innerHTML = '';
+            
+            loveMessages.forEach((msg, index) => {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = 'terminal-line';
+                    line.innerHTML = msg.text;
+                    line.style.animationDelay = '0s';
+                    
+                    // Remove old cursor
+                    const oldCursor = terminal.querySelector('.terminal-cursor');
+                    if (oldCursor) oldCursor.remove();
+                    
+                    terminal.appendChild(line);
+                    
+                    // Add cursor to last line
+                    if (index === loveMessages.length - 1) {
+                        setTimeout(() => {
+                            const cursor = document.createElement('span');
+                            cursor.className = 'terminal-cursor';
+                            terminal.appendChild(cursor);
+                        }, 500);
+                    }
+                    
+                    terminal.scrollTop = terminal.scrollHeight;
+                }, msg.delay);
+            });
+        }
+
+        // ===== VAULT INTERACTIONS =====
+        function showVaultItem(type) {
+            const messages = {
+                ring: "💍 A promise to love you through every dimension.",
+                toast: "🥂 To countless celebrations together, across all timelines.",
+                home: "🏡 Building our forever home in this universe."
+            };
+            
+            // Create modal effect
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                inset: 0;
+                background: rgba(5, 2, 8, 0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                animation: fadeIn 0.3s ease;
+                cursor: pointer;
+            `;
+            modal.innerHTML = `
+                <div style="
+                    text-align: center;
+                    animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                ">
+                    <div style="font-size: 80px; margin-bottom: 20px; filter: drop-shadow(0 0 30px currentColor);">
+                        ${messages[type].split(' ')[0]}
+                    </div>
+                    <p style="
+                        font-family: 'Exo 2', sans-serif;
+                        font-size: 1.2rem;
+                        font-weight: 300;
+                        color: var(--neon-cyan);
+                        max-width: 400px;
+                        line-height: 1.8;
+                    ">${messages[type].slice(3)}</p>
+                </div>
+            `;
+            
+            modal.onclick = () => {
+                modal.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => modal.remove(), 300);
+            };
+            
+            document.body.appendChild(modal);
+            
+            // Add keyframes if not exists
+            if (!document.getElementById('modal-keyframes')) {
+                const style = document.createElement('style');
+                style.id = 'modal-keyframes';
+                style.textContent = `
+                    @keyframes scaleIn {
+                        from { transform: scale(0.8); opacity: 0; }
+                        to { transform: scale(1); opacity: 1; }
+                    }
+                    @keyframes fadeOut {
+                        to { opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        function showTimeline() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                inset: 0;
+                background: rgba(5, 2, 8, 0.95);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+                animation: fadeIn 0.3s ease;
+                cursor: pointer;
+            `;
+            modal.innerHTML = `
+                <div style="text-align: center; max-width: 600px;">
+                    <h2 style="
+                        font-family: 'Orbitron', sans-serif;
+                        font-size: 1.5rem;
+                        color: var(--neon-cyan);
+                        margin-bottom: 40px;
+                        letter-spacing: 4px;
+                    ">OUR TIMELINE</h2>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="display: flex; align-items: center; gap: 20px; opacity: 0.6;">
+                            <span style="font-size: 24px;">✨</span>
+                            <span>The Day We Met</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 20px; opacity: 0.7;">
+                            <span style="font-size: 24px;">💕</span>
+                            <span>Our First "I Love You"</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 20px; opacity: 0.8;">
+                            <span style="font-size: 24px;">💖</span>
+                            <span style="color: var(--neon-pink);">Valentine's 2026 - NOW</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 20px; opacity: 0.9;">
+                            <span style="font-size: 24px;">💍</span>
+                            <span style="color: var(--neon-cyan);">Forever After...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.onclick = () => {
+                modal.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => modal.remove(), 300);
+            };
+            
+            document.body.appendChild(modal);
+        }
+
+        // ===== MOUSE TRACKING =====
+        document.addEventListener('mousemove', (e) => {
+            state.mouseX = e.clientX;
+            state.mouseY = e.clientY;
+            
+            // Occasional mouse trail particles
+            if (Math.random() < 0.1) {
+                spawnParticles(e.clientX, e.clientY, 'rgba(0, 255, 247, 0.5)', 1);
+            }
+        });
+
+        // ===== MAIN ANIMATION LOOP =====
+        function animate() {
+            drawNebula();
+            drawStars();
+            updateParticles();
+            updateOrbits();
+            requestAnimationFrame(animate);
+        }
+
+        // ===== INITIALIZATION =====
+        function init() {
+            resizeCanvases();
+            initStars();
+            
+            // Bind sync button
+            document.getElementById('syncBtn').addEventListener('mousedown', attemptSync);
+            
+            // Window resize
+            window.addEventListener('resize', () => {
+                resizeCanvases();
+                initStars();
+            });
+            
+            // Start animation
+            animate();
+            
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1500);
+        }
+
+        // Start when DOM is ready
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
