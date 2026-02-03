@@ -8,7 +8,7 @@
     
     <style>
         /* ================================================================
-        1. THE APOTHECARY DESIGN SYSTEM (1000+ LINE ARCHITECTURE)
+        1. THE APOTHECARY DESIGN SYSTEM
         ================================================================ */
         :root {
             --medical-white: #ffffff;
@@ -27,15 +27,14 @@
             background-color: var(--medical-gray);
             color: var(--text-dark);
             font-family: var(--font-sans);
-            height: 100vh;
+            min-height: 100vh;
             width: 100vw;
-            overflow: hidden;
+            overflow-x: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* --- BACKGROUND GRID --- */
         .lab-grid {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -59,7 +58,6 @@
             border: 1px solid #e5e5ea;
         }
 
-        /* Sidebar Left: Prescription */
         .rx-sidebar {
             background: #fafafa;
             border-right: 1px solid #efefef;
@@ -91,10 +89,8 @@
         }
 
         .tablet-selector:hover { border-color: var(--heart-red); transform: scale(1.02); }
-
         .pill-shape { width: 35px; height: 18px; border-radius: 10px; }
 
-        /* Center Viewport */
         .vial-view {
             position: relative;
             background: #fff;
@@ -112,7 +108,6 @@
             box-shadow: inset 0 0 40px rgba(0,0,0,0.02);
         }
 
-        /* Sidebar Right: Side Effects Printer */
         .effect-sidebar {
             background: #fdfdfd;
             border-left: 1px solid #efefef;
@@ -132,21 +127,8 @@
             font-size: 0.75rem;
             line-height: 1.6;
             color: var(--thermal-ink);
-            animation: printEffect 0.5s ease;
         }
 
-        @keyframes printEffect {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .warning-icon {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        /* --- MODAL REVEAL --- */
         .reveal-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -157,11 +139,10 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 100px;
+            padding: 20px;
         }
 
         .reveal-modal.active { display: flex; animation: curtainUp 1s cubic-bezier(0.19, 1, 0.22, 1); }
-
         @keyframes curtainUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
         .btn-reset {
@@ -177,8 +158,28 @@
             transition: 0.3s;
         }
 
-        .btn-reset:hover { background: var(--heart-red); transform: translateY(-5px); }
-
+        /* ================================================================
+        MOBILE RESPONSIVE LOGIC
+        ================================================================ */
+        @media (max-width: 1024px) {
+            body { height: auto; overflow-y: auto; padding: 20px 0; }
+            .apothecary-hub {
+                grid-template-columns: 1fr;
+                height: auto;
+                width: 90vw;
+                border-radius: 25px;
+            }
+            .rx-sidebar { border-right: none; border-bottom: 1px solid #efefef; padding: 30px; }
+            .vial-view { padding: 50px 10px; }
+            #vialCanvas {
+                width: 100% !important;
+                max-width: 320px;
+                height: auto !important;
+                aspect-ratio: 420/550;
+            }
+            .effect-sidebar { border-left: none; border-top: 1px solid #efefef; }
+            .reveal-modal h1 { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
@@ -193,7 +194,6 @@
             </div>
 
             <p class="rx-label">Dispense Tablets</p>
-            
             <div class="tablet-selector" onclick="dispense('red')">
                 <div class="pill-shape" style="background: var(--heart-red);"></div>
                 <div>
@@ -212,45 +212,38 @@
 
             <div style="margin-top: auto; padding: 25px; background: #f2f2f7; border-radius: 20px;">
                 <p class="rx-label" style="color: var(--heart-red);">Instructions</p>
-                <p style="font-size: 0.75rem; font-style: italic; line-height: 1.5;">"Add tablets and agitate the container to achieve 100% molecular resonance."</p>
+                <p style="font-size: 0.75rem; font-style: italic; line-height: 1.5;">"Add tablets and agitate the container to achieve resonance."</p>
             </div>
         </aside>
 
         <main class="vial-view">
             <canvas id="vialCanvas"></canvas>
-            
             <div style="position: absolute; bottom: 50px; text-align: center;">
                 <p class="rx-label">Resonance Level</p>
                 <h2 id="resonanceHud" style="font-weight: 900; font-size: 2rem;">0%</h2>
             </div>
-        </aside>
+        </main>
 
         <aside class="effect-sidebar">
             <p class="rx-label">Clinical Observations</p>
             <div class="label-printer" id="printer">
                 <span class="warning-icon">⚠️</span>
-                <p id="effectText">SYSTEM READY...<br>AWAITING DATA INPUT.</p>
-            </div>
-            
-            <div style="margin-top: 30px; font-family: var(--font-mono); font-size: 0.6rem; opacity: 0.4;">
-                BATCH_ID: 2026-VAL-01<br>
-                ENCRYPTION: AES-256
+                <p id="effectText">SYSTEM READY...</p>
             </div>
         </aside>
     </div>
 
     <div id="finalModal" class="reveal-modal">
         <p class="rx-label" style="color: var(--heart-red); margin-bottom: 30px;">Prescription Validated</p>
-        <h1 style="font-size: 4rem; font-weight: 900; letter-spacing: -3px; margin-bottom: 20px;">You are my only cure.</h1>
-        <p style="max-width: 600px; line-height: 1.8; color: #8e8e93;">Every tablet, every thought, and every moment leads back to you. There is no other treatment needed.</p>
+        <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; margin-bottom: 20px;">You are my only cure.</h1>
+        <p style="max-width: 600px; line-height: 1.8; color: #8e8e93;">Every tablet, every thought, and every moment leads back to you.</p>
         <div class="btn-reset" onclick="location.reload()">RE-ISSUE RX</div>
     </div>
 
     <script>
         /* ================================================================
-        2. JAVASCRIPT: THE PHARMACEUTICAL PHYSICS & LOGIC
+        2. JAVASCRIPT: THE PHARMACEUTICAL PHYSICS
         ================================================================ */
-
         const canvas = document.getElementById('vialCanvas');
         const ctx = canvas.getContext('2d');
         const resonanceHud = document.getElementById('resonanceHud');
@@ -262,127 +255,93 @@
         let isComplete = false;
 
         const sideEffects = [
-            "May cause sudden, uncontrollable poetry writing.",
-            "Warning: Patient likely to stare at phone waiting for texts.",
-            "Side effect: Occasional butterflies in the abdominal region.",
-            "Symptoms include persistent smiling and daydreaming.",
-            "Caution: Highly addictive connection detected.",
-            "Risk of permanent heart-link established.",
-            "May result in 'forever together' syndrome.",
-            "Side effect: Extreme happiness when near the subject."
+            "Sudden, uncontrollable poetry writing.",
+            "Staring at phone waiting for texts.",
+            "Butterflies in the abdominal region.",
+            "Persistent smiling and daydreaming.",
+            "Highly addictive connection detected.",
+            "Permanent heart-link established."
         ];
 
-        // --- AUDIO ENGINE (GLASS CLINK) ---
         function playClink() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            osc.type = 'sine';
             osc.frequency.setValueAtTime(900 + Math.random() * 500, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.1);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        // --- PILL CLASS (PHYSICS) ---
         class Pill {
             constructor(color) {
                 this.x = 150 + Math.random() * 100;
                 this.y = 20;
-                this.w = 36;
-                this.h = 18;
+                this.w = 36; this.h = 18;
                 this.color = color === 'red' ? '#ff3b30' : '#007aff';
                 this.rotation = Math.random() * Math.PI;
                 this.vx = (Math.random() - 0.5) * 15;
                 this.vy = 5;
-                this.bounce = 0.6;
-                this.gravity = 0.4;
             }
-
             update() {
-                this.vy += this.gravity;
-                this.x += this.vx;
-                this.y += this.vy;
+                this.vy += 0.4; // gravity
+                this.x += this.vx; this.y += this.vy;
                 this.rotation += this.vx * 0.05;
-
-                // Wall Collision
-                if (this.x < 10 || this.x > canvas.width - 46) {
-                    this.vx *= -this.bounce;
-                    this.x = this.x < 10 ? 10 : canvas.width - 46;
-                    playClink();
-                }
-
-                // Floor Collision
-                if (this.y > canvas.height - 30) {
-                    this.vy *= -this.bounce;
-                    this.y = canvas.height - 30;
-                    resonance = Math.min(resonance + 2, 100);
-                    updatePrinter();
+                if (this.x < 10 || this.x > canvas.width - 46) { this.vx *= -0.6; playClink(); }
+                if (this.y > canvas.height - 30) { 
+                    this.vy *= -0.5; this.y = canvas.height - 30; 
+                    resonance = Math.min(resonance + 2, 100); updatePrinter(); 
                 }
             }
-
             draw() {
-                ctx.save();
-                ctx.translate(this.x + 18, this.y + 9);
-                ctx.rotate(this.rotation);
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.roundRect(-18, -9, 36, 18, 9);
-                ctx.fill();
+                ctx.save(); ctx.translate(this.x + 18, this.y + 9);
+                ctx.rotate(this.rotation); ctx.fillStyle = this.color;
+                ctx.beginPath(); ctx.roundRect(-18, -9, 36, 18, 9); ctx.fill();
                 ctx.restore();
             }
         }
 
-        function dispense(type) {
-            if(isComplete) return;
-            pills.push(new Pill(type));
-            playClink();
-        }
+        function dispense(type) { if(!isComplete) pills.push(new Pill(type)); playClink(); }
 
         function updatePrinter() {
             resonanceHud.innerText = resonance + "%";
             if(resonance % 20 === 0 && resonance > 0) {
-                const effect = sideEffects[Math.floor(Math.random() * sideEffects.length)];
-                printerText.innerHTML = `<span style="color:var(--heart-red)">[OBSERVATION]</span><br>${effect}`;
+                printerText.innerHTML = `[OBSERVATION]<br>${sideEffects[Math.floor(Math.random()*sideEffects.length)]}`;
             }
             if(resonance >= 100 && !isComplete) {
                 isComplete = true;
-                setTimeout(() => document.getElementById('finalModal').classList.add('active'), 1500);
+                setTimeout(() => document.getElementById('finalModal').classList.add('active'), 1200);
             }
         }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            pills.forEach(p => {
-                p.update();
-                p.draw();
-            });
+            pills.forEach(p => { p.update(); p.draw(); });
             requestAnimationFrame(animate);
         }
 
-        // Mouse Agitation
+        // --- MERGED AGITATION LOGIC ---
+        function agitate(x, y) {
+            pills.forEach(p => {
+                const dx = x - p.x; const dy = y - p.y;
+                if(Math.sqrt(dx*dx + dy*dy) < 100) { p.vx += (Math.random()-0.5)*15; p.vy -= 8; }
+            });
+        }
+
         window.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
-            const mx = e.clientX - rect.left;
-            const my = e.clientY - rect.top;
-            pills.forEach(p => {
-                const dx = mx - p.x;
-                const dy = my - p.y;
-                if(Math.sqrt(dx*dx + dy*dy) < 80) {
-                    p.vx += (Math.random() - 0.5) * 10;
-                    p.vy -= 5;
-                }
-            });
+            agitate(e.clientX - rect.left, e.clientY - rect.top);
         });
 
-        // Initialize
+        window.addEventListener('touchmove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            agitate(touch.clientX - rect.left, touch.clientY - rect.top);
+        }, { passive: false });
+
         canvas.width = 420;
         canvas.height = 550;
         animate();
-
     </script>
 </body>
 </html>
