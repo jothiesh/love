@@ -12,6 +12,7 @@
             --accent-pink: #f43f5e;
             --accent-purple: #c026d3;
             --accent-gold: #f59e0b;
+            --accent-neon: #10b981;
             --text-main: #f1f0f0;
             --text-dim: #6b6b78;
         }
@@ -260,6 +261,36 @@
             font-size: 0.92rem;
             font-weight: 400;
             letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* NEW badge styling */
+        .new-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--accent-neon), #059669);
+            color: white;
+            border-radius: 6px;
+            animation: newBadgePulse 2s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        @keyframes newBadgePulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+            }
+            50% { 
+                transform: scale(1.05);
+                box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+            }
         }
 
         .list a .arrow {
@@ -344,6 +375,19 @@
         <p class="cat-label">— Featured</p>
         <a href="neon-nebula-valentine.html" target="_blank"><span class="icon">🌌</span><span class="name">Neon Nebula</span><span class="arrow">→</span></a>
         <a href="interstellar-valentine.html" target="_blank"><span class="icon">☄️</span><span class="name">Interstellar Union</span><span class="arrow">→</span></a>
+
+        <p class="cat-label">— Latest Additions</p>
+        <a href="valentines-couples.html" target="_blank"><span class="icon">💑</span><span class="name">Valentine's Couples <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines-cuddle-enhanced.html" target="_blank"><span class="icon">🤗</span><span class="name">Valentine's Cuddle Enhanced <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines-escape.html" target="_blank"><span class="icon">🚪</span><span class="name">Valentine's Escape <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines-game.html" target="_blank"><span class="icon">🎮</span><span class="name">Valentine's Game <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines-lovemeter.html" target="_blank"><span class="icon">💗</span><span class="name">Valentine's Lovemeter <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines-potion.html" target="_blank"><span class="icon">🧪</span><span class="name">Valentine's Potion <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines-seduction.html" target="_blank"><span class="icon">😘</span><span class="name">Valentine's Seduction <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines-story.html" target="_blank"><span class="icon">📜</span><span class="name">Valentine's Story <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines-suite.html" target="_blank"><span class="icon">🏩</span><span class="name">Valentine's Suite <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines-timeline.html" target="_blank"><span class="icon">⌛</span><span class="name">Valentine's Timeline <span class="new-badge">New</span></span><span class="arrow">→</span></a>
+        <a href="valentines.html" target="_blank"><span class="icon">💝</span><span class="name">Valentines <span class="new-badge">New</span></span><span class="arrow">→</span></a>
 
         <p class="cat-label">— Games & Fun</p>
         <a href="1-balloon-love.html" target="_blank"><span class="icon">🎈</span><span class="name">Balloon Love</span><span class="arrow">→</span></a>
