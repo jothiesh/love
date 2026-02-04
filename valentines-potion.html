@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💜 Love Potion Laboratory 💜</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&family=Fredericka+the+Great&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --magic-purple: #8b5cf6;
+            --deep-purple: #6d28d9;
+            --pink-magic: #ec4899;
+            --cyan-glow: #06b6d4;
+            --lime-glow: #84cc16;
+            --orange-fire: #f97316;
+            --dark-bg: #1e1b4b;
+            --darker: #0f172a;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f172a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            color: white;
+        }
+
+        /* Magic particles */
+        .magic-particle {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: magicFloat 8s infinite;
+            filter: blur(1px);
+            z-index: 1;
+        }
+
+        @keyframes magicFloat {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100px) translateX(50px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Glowing orbs background */
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: orbPulse 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        .lab-container {
+            position: relative;
+            z-index: 10;
+            width: 95vw;
+            max-width: 1400px;
+            min-height: 95vh;
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 4px solid rgba(139, 92, 246, 0.5);
+            border-radius: 30px;
+            box-shadow: 
+                0 0 60px rgba(139, 92, 246, 0.4),
+                inset 0 0 60px rgba(139, 92, 246, 0.1);
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 30px;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-family: 'Fredericka the Great', cursive;
+            font-size: 64px;
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #c084fc;
+            letter-spacing: 2px;
+        }
+
+        /* Left Panel - Ingredients */
+        .ingredients-panel {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(109, 40, 217, 0.2) 100%);
+            border: 2px solid rgba(139, 92, 246, 0.4);
+            border-radius: 20px;
+            padding: 25px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .panel-title {
+            font-size: 24px;
+            color: #ec4899;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .ingredient {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            border: 2px solid rgba(236, 72, 153, 0.4);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ingredient:hover {
+            transform: translateY(-5px) scale(1.05);
+            border-color: #ec4899;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .ingredient:active {
+            cursor: grabbing;
+        }
+
+        .ingredient-icon {
+            font-size: 40px;
+            text-align: center;
+            display: block;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        .ingredient-name {
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+            color: #fbbf24;
+        }
+
+        .ingredient-effect {
+            text-align: center;
+            font-size: 12px;
+            color: #c084fc;
+            margin-top: 5px;
+        }
+
+        /* Center Panel - Cauldron */
+        .cauldron-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .cauldron-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+
+        .cauldron {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 60%, rgba(139, 92, 246, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 5px solid #6d28d9;
+            border-radius: 50% 50% 45% 45%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 20px 50px rgba(139, 92, 246, 0.5),
+                inset 0 -50px 80px rgba(139, 92, 246, 0.3);
+        }
+
+        .cauldron::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 30px;
+            background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 50%, #6d28d9 100%);
+            border-radius: 50%;
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.6);
+        }
+
+        .potion-liquid {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(180deg, transparent 0%, var(--magic-purple) 100%);
+            transition: all 0.8s ease;
+            border-radius: 0 0 45% 45%;
+        }
+
+        .potion-liquid.brewing {
+            animation: bubbling 2s ease-in-out infinite;
+        }
+
+        @keyframes bubbling {
+            0%, 100% { height: 60%; }
+            50% { height: 65%; }
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8), transparent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: bubble-rise 3s infinite;
+        }
+
+        @keyframes bubble-rise {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-400px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .dropped-ingredients {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 80%;
+            z-index: 10;
+        }
+
+        .dropped-ingredient {
+            font-size: 50px;
+            animation: ingredientDrop 0.8s ease-out;
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+
+        @keyframes ingredientDrop {
+            0% {
+                transform: translateY(-200px) rotate(0deg) scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: translateY(10px) rotate(180deg) scale(1.2);
+            }
+            100% {
+                transform: translateY(0) rotate(360deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .brew-button {
+            background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            border: 3px solid #fbbf24;
+            color: white;
+            padding: 20px 60px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brew-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .brew-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(236, 72, 153, 0.7);
+        }
+
+        .brew-button:hover::before {
+            left: 100%;
+        }
+
+        .brew-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .clear-button {
+            background: rgba(239, 68, 68, 0.3);
+            border: 2px solid #ef4444;
+            color: #fca5a5;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .clear-button:hover {
+            background: rgba(239, 68, 68, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* Right Panel - Recipe Book */
+        .recipe-panel {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            border: 2px solid rgba(6, 182, 212, 0.4);
+            border-radius: 20px;
+            padding: 25px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .recipe {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            border: 2px solid rgba(6, 182, 212, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .recipe-name {
+            font-size: 18px;
+            color: #fbbf24;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .recipe-ingredients {
+            font-size: 14px;
+            color: #c084fc;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .recipe-effect {
+            font-size: 13px;
+            color: #06b6d4;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Result Modal */
+        .result-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-modal.show {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-content {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.9) 0%, rgba(236, 72, 153, 0.9) 100%);
+            border: 4px solid #fbbf24;
+            border-radius: 30px;
+            padding: 60px;
+            text-align: center;
+            max-width: 600px;
+            box-shadow: 0 0 80px rgba(139, 92, 246, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-content::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: shimmerResult 4s ease-in-out infinite;
+        }
+
+        @keyframes shimmerResult {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10%, 10%); }
+        }
+
+        .result-icon {
+            font-size: 120px;
+            margin-bottom: 20px;
+            animation: resultPop 0.6s ease-out;
+            filter: drop-shadow(0 0 30px currentColor);
+        }
+
+        @keyframes resultPop {
+            0% {
+                transform: scale(0) rotate(0deg);
+            }
+            60% {
+                transform: scale(1.2) rotate(180deg);
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+            }
+        }
+
+        .result-title {
+            font-size: 42px;
+            font-weight: 800;
+            color: #fbbf24;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .result-description {
+            font-size: 22px;
+            color: white;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .result-close {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border: none;
+            color: #1e1b4b;
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .result-close:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.5);
+        }
+
+        @media (max-width: 1200px) {
+            .lab-container {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .cauldron-container {
+                width: 300px;
+                height: 300px;
+            }
+
+            .title {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="magicParticles"></div>
+
+    <!-- Background orbs -->
+    <div class="glow-orb" style="width: 300px; height: 300px; background: #ec4899; top: 10%; left: 10%;"></div>
+    <div class="glow-orb" style="width: 400px; height: 400px; background: #8b5cf6; bottom: 10%; right: 10%; animation-delay: -3s;"></div>
+    <div class="glow-orb" style="width: 250px; height: 250px; background: #06b6d4; top: 50%; left: 50%; animation-delay: -1.5s;"></div>
+
+    <div class="lab-container">
+        <div class="header">
+            <h1 class="title">💜 Love Potion Laboratory 💜</h1>
+            <p class="subtitle">Mix magical ingredients to brew romantic spells</p>
+        </div>
+
+        <!-- Left Panel: Ingredients -->
+        <div class="ingredients-panel">
+            <div class="panel-title">✨ Magical Ingredients</div>
+            
+            <div class="ingredient" draggable="true" data-ingredient="rose">
+                <span class="ingredient-icon">🌹</span>
+                <div class="ingredient-name">Enchanted Rose</div>
+                <div class="ingredient-effect">Romance</div>
+            </div>
+
+            <div class="ingredient" draggable="true" data-ingredient="heart">
+                <span class="ingredient-icon">💝</span>
+                <div class="ingredient-name">Heart Crystal</div>
+                <div class="ingredient-effect">Passion</div>
+            </div>
+
+            <div class="ingredient" draggable="true" data-ingredient="star">
+                <span class="ingredient-icon">⭐</span>
+                <div class="ingredient-name">Stardust</div>
+                <div class="ingredient-effect">Dreams</div>
+            </div>
+
+            <div class="ingredient" draggable="true" data-ingredient="moon">
+                <span class="ingredient-icon">🌙</span>
+                <div class="ingredient-name">Moonlight</div>
+                <div class="ingredient-effect">Mystery</div>
+            </div>
+
+            <div class="ingredient" draggable="true" data-ingredient="fire">
+                <span class="ingredient-icon">🔥</span>
+                <div class="ingredient-name">Desire Flame</div>
+                <div class="ingredient-effect">Intensity</div>
+            </div>
+
+            <div class="ingredient" draggable="true" data-ingredient="butterfly">
+                <span class="ingredient-icon">🦋</span>
+                <div class="ingredient-name">Butterfly Wings</div>
+                <div class="ingredient-effect">Excitement</div>
+            </div>
+
+            <div class="ingredient" draggable="true" data-ingredient="diamond">
+                <span class="ingredient-icon">💎</span>
+                <div class="ingredient-name">Love Diamond</div>
+                <div class="ingredient-effect">Forever</div>
+            </div>
+
+            <div class="ingredient" draggable="true" data-ingredient="cupid">
+                <span class="ingredient-icon">💘</span>
+                <div class="ingredient-name">Cupid's Arrow</div>
+                <div class="ingredient-effect">Connection</div>
+            </div>
+
+            <div class="ingredient" draggable="true" data-ingredient="kiss">
+                <span class="ingredient-icon">💋</span>
+                <div class="ingredient-name">Kiss Essence</div>
+                <div class="ingredient-effect">Desire</div>
+            </div>
+
+            <div class="ingredient" draggable="true" data-ingredient="sparkle">
+                <span class="ingredient-icon">✨</span>
+                <div class="ingredient-name">Magic Sparkles</div>
+                <div class="ingredient-effect">Wonder</div>
+            </div>
+        </div>
+
+        <!-- Center Panel: Cauldron -->
+        <div class="cauldron-panel">
+            <div class="cauldron-container">
+                <div class="cauldron" id="cauldron">
+                    <div class="potion-liquid" id="potionLiquid">
+                        <div id="bubbles"></div>
+                    </div>
+                    <div class="dropped-ingredients" id="droppedIngredients"></div>
+                </div>
+            </div>
+
+            <button class="brew-button" id="brewButton" onclick="brewPotion()">
+                🧪 Brew Potion! 🧪
+            </button>
+
+            <button class="clear-button" onclick="clearCauldron()">
+                Clear Cauldron
+            </button>
+        </div>
+
+        <!-- Right Panel: Recipe Book -->
+        <div class="recipe-panel">
+            <div class="panel-title">📖 Recipe Book</div>
+
+            <div class="recipe">
+                <div class="recipe-name">💕 Eternal Love Potion</div>
+                <div class="recipe-ingredients">🌹 Rose + 💎 Diamond + 💝 Heart</div>
+                <div class="recipe-effect">Creates an unbreakable bond of eternal love</div>
+            </div>
+
+            <div class="recipe">
+                <div class="recipe-name">🔥 Passion Elixir</div>
+                <div class="recipe-ingredients">🔥 Flame + 💋 Kiss + 💝 Heart</div>
+                <div class="recipe-effect">Ignites intense desire and attraction</div>
+            </div>
+
+            <div class="recipe">
+                <div class="recipe-name">🌙 Midnight Romance</div>
+                <div class="recipe-ingredients">🌙 Moon + ⭐ Stardust + 🌹 Rose</div>
+                <div class="recipe-effect">Enhances romantic dreams and fantasies</div>
+            </div>
+
+            <div class="recipe">
+                <div class="recipe-name">🦋 Butterfly Effect</div>
+                <div class="recipe-ingredients">🦋 Wings + ✨ Sparkles + 💘 Arrow</div>
+                <div class="recipe-effect">Creates exciting new beginnings</div>
+            </div>
+
+            <div class="recipe">
+                <div class="recipe-name">💖 True Connection</div>
+                <div class="recipe-ingredients">💘 Arrow + 💝 Heart + ✨ Sparkles</div>
+                <div class="recipe-effect">Deepens emotional and physical connection</div>
+            </div>
+
+            <div class="recipe">
+                <div class="recipe-name">⭐ Dreamy Desire</div>
+                <div class="recipe-ingredients">⭐ Stardust + 💋 Kiss + 🌙 Moon</div>
+                <div class="recipe-effect">Brings romantic fantasies to life</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <div class="result-icon" id="resultIcon">🧪</div>
+            <div class="result-title" id="resultTitle">Potion Created!</div>
+            <div class="result-description" id="resultDescription">Your magical potion is ready!</div>
+            <button class="result-close" onclick="closeResult()">Brew Another!</button>
+        </div>
+    </div>
+
+    <script>
+        // Create magic particles
+        function createMagicParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'magic-particle';
+            const colors = ['#ec4899', '#8b5cf6', '#06b6d4', '#fbbf24', '#84cc16'];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            document.getElementById('magicParticles').appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 10000);
+        }
+
+        setInterval(createMagicParticle, 300);
+
+        // Create bubbles
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            const size = Math.random() * 30 + 10;
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.left = Math.random() * 80 + 10 + '%';
+            bubble.style.animationDelay = Math.random() * 2 + 's';
+            bubble.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.getElementById('bubbles').appendChild(bubble);
+            
+            setTimeout(() => bubble.remove(), 5000);
+        }
+
+        setInterval(createBubble, 500);
+
+        // Drag and drop functionality
+        const ingredients = document.querySelectorAll('.ingredient');
+        const cauldron = document.getElementById('cauldron');
+        const droppedIngredients = document.getElementById('droppedIngredients');
+        const potionLiquid = document.getElementById('potionLiquid');
+        let selectedIngredients = [];
+
+        ingredients.forEach(ingredient => {
+            ingredient.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('ingredient', e.target.dataset.ingredient);
+                e.target.style.opacity = '0.5';
+            });
+
+            ingredient.addEventListener('dragend', (e) => {
+                e.target.style.opacity = '1';
+            });
+        });
+
+        cauldron.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            cauldron.style.borderColor = '#ec4899';
+            cauldron.style.boxShadow = '0 20px 50px rgba(236, 72, 153, 0.8)';
+        });
+
+        cauldron.addEventListener('dragleave', () => {
+            cauldron.style.borderColor = '#6d28d9';
+            cauldron.style.boxShadow = '0 20px 50px rgba(139, 92, 246, 0.5)';
+        });
+
+        cauldron.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const ingredientType = e.dataTransfer.getData('ingredient');
+            
+            if (selectedIngredients.length < 5) {
+                selectedIngredients.push(ingredientType);
+                addIngredientToCauldron(ingredientType);
+                updatePotionColor();
+            }
+
+            cauldron.style.borderColor = '#6d28d9';
+            cauldron.style.boxShadow = '0 20px 50px rgba(139, 92, 246, 0.5)';
+        });
+
+        function addIngredientToCauldron(type) {
+            const icons = {
+                rose: '🌹', heart: '💝', star: '⭐', moon: '🌙',
+                fire: '🔥', butterfly: '🦋', diamond: '💎', cupid: '💘',
+                kiss: '💋', sparkle: '✨'
+            };
+
+            const ingredientEl = document.createElement('div');
+            ingredientEl.className = 'dropped-ingredient';
+            ingredientEl.textContent = icons[type];
+            droppedIngredients.appendChild(ingredientEl);
+        }
+
+        function updatePotionColor() {
+            const colors = ['#ec4899', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            potionLiquid.style.background = `linear-gradient(180deg, transparent 0%, ${randomColor} 100%)`;
+            potionLiquid.classList.add('brewing');
+        }
+
+        function clearCauldron() {
+            selectedIngredients = [];
+            droppedIngredients.innerHTML = '';
+            potionLiquid.style.background = 'linear-gradient(180deg, transparent 0%, #8b5cf6 100%)';
+            potionLiquid.classList.remove('brewing');
+        }
+
+        // Potion recipes
+        const recipes = {
+            'rose-diamond-heart': {
+                icon: '💕',
+                name: 'Eternal Love Potion',
+                description: 'You\'ve created the ultimate love spell! This potion creates an unbreakable bond of eternal love, devotion, and deep romantic connection. Your hearts will be forever intertwined.'
+            },
+            'fire-kiss-heart': {
+                icon: '🔥',
+                name: 'Passion Elixir',
+                description: 'Wow! This powerful elixir ignites intense desire and raw attraction. The flames of passion will burn bright between you, creating irresistible chemistry and magnetic pull.'
+            },
+            'moon-star-rose': {
+                icon: '🌙',
+                name: 'Midnight Romance',
+                description: 'A mystical brew! This enchanted potion enhances romantic dreams and secret fantasies. Under the moonlight, your deepest desires come alive with magical intensity.'
+            },
+            'butterfly-sparkle-cupid': {
+                icon: '🦋',
+                name: 'Butterfly Effect',
+                description: 'Exciting! This potion creates thrilling new beginnings and butterflies in your stomach. Every touch, every glance becomes electrifying with possibility.'
+            },
+            'cupid-heart-sparkle': {
+                icon: '💖',
+                name: 'True Connection',
+                description: 'Beautiful! This magical blend deepens both emotional and physical connection. You\'ll feel closer than ever, understanding each other on every level.'
+            },
+            'star-kiss-moon': {
+                icon: '⭐',
+                name: 'Dreamy Desire',
+                description: 'Enchanting! This celestial potion brings romantic fantasies to life. Your wildest dreams become reality as stardust and desire combine perfectly.'
+            }
+        };
+
+        function brewPotion() {
+            if (selectedIngredients.length === 0) {
+                alert('Add some ingredients first! 💜');
+                return;
+            }
+
+            // Check for recipe matches
+            const sortedIngredients = [...selectedIngredients].sort().join('-');
+            let result = null;
+
+            // Check exact matches
+            for (let recipe in recipes) {
+                const recipeIngredients = recipe.split('-').sort().join('-');
+                if (sortedIngredients === recipeIngredients) {
+                    result = recipes[recipe];
+                    break;
+                }
+            }
+
+            // Random potion if no match
+            if (!result) {
+                const randomResults = [
+                    { icon: '💫', name: 'Mystery Potion', description: 'An unexpected mix! This unique brew creates surprising romantic moments and spontaneous passion. Who knows what magic will unfold?' },
+                    { icon: '🌟', name: 'Sparkle Love', description: 'Interesting combination! This potion adds extra sparkle to your romance, making ordinary moments feel extraordinary and special.' },
+                    { icon: '💞', name: 'Sweet Affection', description: 'Lovely! This gentle potion enhances tender moments, sweet gestures, and heartfelt connections between you both.' },
+                    { icon: '🎇', name: 'Fireworks Brew', description: 'Explosive! This potion creates exciting sparks and thrilling chemistry that lights up every interaction with passion.' }
+                ];
+                result = randomResults[Math.floor(Math.random() * randomResults.length)];
+            }
+
+            showResult(result);
+        }
+
+        function showResult(result) {
+            document.getElementById('resultIcon').textContent = result.icon;
+            document.getElementById('resultTitle').textContent = result.name;
+            document.getElementById('resultDescription').textContent = result.description;
+            document.getElementById('resultModal').classList.add('show');
+
+            // Create explosion effect
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => createMagicParticle(), i * 50);
+            }
+        }
+
+        function closeResult() {
+            document.getElementById('resultModal').classList.remove('show');
+            clearCauldron();
+        }
+    </script>
+</body>
+</html>

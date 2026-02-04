@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖 Love Meter Analyzer 3000</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bungee&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --neon-red: #ff003c;
+            --neon-blue: #00d9ff;
+            --neon-pink: #ff00ff;
+            --neon-green: #39ff14;
+            --neon-yellow: #ffff00;
+            --neon-purple: #bf00ff;
+            --dark-bg: #0a0118;
+            --machine-red: #8b0000;
+            --machine-gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: radial-gradient(circle at center, #1a0033 0%, #0a0118 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Animated grid background */
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 217, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 217, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+        }
+
+        /* Neon stars */
+        .neon-star {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--neon-blue);
+            animation: starTwinkle 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Arcade machine */
+        .arcade-machine {
+            width: 90vw;
+            max-width: 900px;
+            background: linear-gradient(135deg, var(--machine-red) 0%, #4a0000 100%);
+            border: 10px solid var(--machine-gold);
+            border-radius: 40px 40px 20px 20px;
+            box-shadow: 
+                0 0 30px rgba(255, 215, 0, 0.5),
+                inset 0 0 50px rgba(0, 0, 0, 0.5),
+                0 30px 80px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+            padding: 30px;
+        }
+
+        .arcade-machine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.1) 2px,
+                rgba(0, 0, 0, 0.1) 4px
+            );
+            pointer-events: none;
+        }
+
+        /* Machine top decoration */
+        .machine-top {
+            background: linear-gradient(90deg, var(--neon-red) 0%, var(--neon-pink) 50%, var(--neon-red) 100%);
+            height: 20px;
+            border-radius: 10px;
+            margin: -20px -20px 20px -20px;
+            box-shadow: 0 0 20px var(--neon-red);
+            animation: colorShift 3s ease-in-out infinite;
+        }
+
+        @keyframes colorShift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(30deg); }
+        }
+
+        /* Screen */
+        .screen {
+            background: linear-gradient(135deg, #001a33 0%, #000a1a 100%);
+            border: 8px solid #333;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 
+                inset 0 0 50px rgba(0, 217, 255, 0.2),
+                0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.1), transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .screen-title {
+            font-family: 'Bungee', cursive;
+            font-size: 48px;
+            text-align: center;
+            background: linear-gradient(90deg, var(--neon-red) 0%, var(--neon-pink) 50%, var(--neon-blue) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+        }
+
+        .screen-subtitle {
+            text-align: center;
+            color: var(--neon-green);
+            font-size: 18px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* Input section */
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            background: rgba(0, 26, 51, 0.6);
+            border: 3px solid var(--neon-blue);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .input-label {
+            color: var(--neon-yellow);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--neon-yellow);
+            display: block;
+        }
+
+        .name-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--neon-pink);
+            border-radius: 10px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 20px;
+            text-align: center;
+            box-shadow: inset 0 0 15px rgba(255, 0, 255, 0.3);
+        }
+
+        .name-input:focus {
+            outline: none;
+            border-color: var(--neon-red);
+            box-shadow: 
+                inset 0 0 15px rgba(255, 0, 255, 0.3),
+                0 0 20px var(--neon-red);
+        }
+
+        /* Traits selection */
+        .traits-section {
+            margin-bottom: 30px;
+        }
+
+        .traits-title {
+            color: var(--neon-purple);
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            text-shadow: 0 0 15px var(--neon-purple);
+        }
+
+        .traits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .trait-button {
+            background: linear-gradient(135deg, rgba(255, 0, 60, 0.3) 0%, rgba(191, 0, 255, 0.3) 100%);
+            border: 3px solid var(--neon-pink);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trait-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .trait-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--neon-pink);
+        }
+
+        .trait-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .trait-button.selected {
+            background: linear-gradient(135deg, var(--neon-red) 0%, var(--neon-purple) 100%);
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 30px var(--neon-yellow);
+        }
+
+        /* Analyze button */
+        .analyze-button {
+            width: 100%;
+            padding: 25px;
+            background: linear-gradient(135deg, var(--neon-red) 0%, var(--neon-pink) 100%);
+            border: 5px solid var(--neon-yellow);
+            border-radius: 20px;
+            color: white;
+            font-family: 'Bungee', cursive;
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: 0 10px 30px rgba(255, 0, 60, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analyze-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .analyze-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 0, 60, 0.7);
+        }
+
+        .analyze-button:hover::before {
+            left: 100%;
+        }
+
+        .analyze-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Results section */
+        .results-section {
+            display: none;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .meter-container {
+            background: rgba(0, 0, 0, 0.6);
+            border: 4px solid var(--neon-blue);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.4);
+        }
+
+        .meter-label {
+            color: var(--neon-yellow);
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--neon-yellow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .meter-value {
+            color: var(--neon-green);
+            font-size: 28px;
+            text-shadow: 0 0 15px var(--neon-green);
+        }
+
+        .meter-bar {
+            width: 100%;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 3px solid var(--neon-purple);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(191, 0, 255, 0.3);
+        }
+
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--neon-red) 0%, var(--neon-pink) 50%, var(--neon-blue) 100%);
+            border-radius: 20px;
+            transition: width 2s ease-out;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meter-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .overall-result {
+            background: linear-gradient(135deg, rgba(255, 0, 60, 0.3) 0%, rgba(191, 0, 255, 0.3) 100%);
+            border: 5px solid var(--neon-yellow);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(255, 255, 0, 0.5);
+        }
+
+        .result-emoji {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .result-title {
+            font-family: 'Bungee', cursive;
+            font-size: 42px;
+            color: var(--neon-red);
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--neon-red);
+        }
+
+        .result-message {
+            font-size: 20px;
+            color: white;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .reset-button {
+            background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+            border: 3px solid white;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .screen-title {
+                font-size: 32px;
+            }
+
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+
+            .traits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .analyze-button {
+                font-size: 24px;
+                padding: 20px;
+            }
+
+            .result-title {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-background"></div>
+
+    <div class="arcade-machine">
+        <div class="machine-top"></div>
+        
+        <div class="screen">
+            <h1 class="screen-title">LOVE METER 3000</h1>
+            <p class="screen-subtitle">► ADVANCED COMPATIBILITY ANALYZER ◄</p>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <label class="input-label">Player 1 Name</label>
+                    <input type="text" class="name-input" id="name1" placeholder="Enter name..." maxlength="15">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Player 2 Name</label>
+                    <input type="text" class="name-input" id="name2" placeholder="Enter name..." maxlength="15">
+                </div>
+            </div>
+
+            <div class="traits-section">
+                <div class="traits-title">► SELECT YOUR VIBE ◄</div>
+                <div class="traits-grid">
+                    <button class="trait-button" data-trait="romantic" onclick="toggleTrait(this)">💕 Romantic</button>
+                    <button class="trait-button" data-trait="adventurous" onclick="toggleTrait(this)">🎢 Adventurous</button>
+                    <button class="trait-button" data-trait="intellectual" onclick="toggleTrait(this)">🧠 Intellectual</button>
+                    <button class="trait-button" data-trait="playful" onclick="toggleTrait(this)">🎮 Playful</button>
+                    <button class="trait-button" data-trait="passionate" onclick="toggleTrait(this)">🔥 Passionate</button>
+                    <button class="trait-button" data-trait="caring" onclick="toggleTrait(this)">🤗 Caring</button>
+                    <button class="trait-button" data-trait="spontaneous" onclick="toggleTrait(this)">⚡ Spontaneous</button>
+                    <button class="trait-button" data-trait="chill" onclick="toggleTrait(this)">😎 Chill</button>
+                </div>
+            </div>
+
+            <button class="analyze-button" onclick="analyzeCompatibility()">
+                🔥 ANALYZE 🔥
+            </button>
+
+            <div class="results-section" id="results">
+                <div class="meter-container">
+                    <div class="meter-label">
+                        <span>CHEMISTRY</span>
+                        <span class="meter-value" id="chemistryValue">0%</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="chemistryBar"></div>
+                    </div>
+                </div>
+
+                <div class="meter-container">
+                    <div class="meter-label">
+                        <span>PASSION</span>
+                        <span class="meter-value" id="passionValue">0%</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="passionBar"></div>
+                    </div>
+                </div>
+
+                <div class="meter-container">
+                    <div class="meter-label">
+                        <span>ROMANCE</span>
+                        <span class="meter-value" id="romanceValue">0%</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="romanceBar"></div>
+                    </div>
+                </div>
+
+                <div class="meter-container">
+                    <div class="meter-label">
+                        <span>LONG-TERM</span>
+                        <span class="meter-value" id="longtermValue">0%</span>
+                    </div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="longtermBar"></div>
+                    </div>
+                </div>
+
+                <div class="overall-result">
+                    <div class="result-emoji" id="resultEmoji">💖</div>
+                    <div class="result-title" id="resultTitle">PERFECT MATCH!</div>
+                    <div class="result-message" id="resultMessage">You two are destined for each other!</div>
+                    <button class="reset-button" onclick="resetAnalyzer()">► TRY AGAIN ◄</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create neon stars
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'neon-star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            document.body.appendChild(star);
+        }
+
+        let selectedTraits = new Set();
+
+        function toggleTrait(button) {
+            const trait = button.dataset.trait;
+            
+            if (selectedTraits.has(trait)) {
+                selectedTraits.delete(trait);
+                button.classList.remove('selected');
+            } else {
+                if (selectedTraits.size < 3) {
+                    selectedTraits.add(trait);
+                    button.classList.add('selected');
+                } else {
+                    // Flash effect when trying to select more than 3
+                    button.style.animation = 'none';
+                    setTimeout(() => {
+                        button.style.animation = '';
+                    }, 10);
+                }
+            }
+        }
+
+        function analyzeCompatibility() {
+            const name1 = document.getElementById('name1').value.trim();
+            const name2 = document.getElementById('name2').value.trim();
+
+            if (!name1 || !name2) {
+                alert('Please enter both names! 💕');
+                return;
+            }
+
+            if (selectedTraits.size === 0) {
+                alert('Select at least one trait! ✨');
+                return;
+            }
+
+            // Calculate scores based on traits
+            const traitMultipliers = {
+                romantic: { chemistry: 1.2, passion: 1.1, romance: 1.5, longterm: 1.3 },
+                adventurous: { chemistry: 1.3, passion: 1.4, romance: 1.1, longterm: 1.2 },
+                intellectual: { chemistry: 1.1, passion: 0.9, romance: 1.0, longterm: 1.4 },
+                playful: { chemistry: 1.4, passion: 1.2, romance: 1.2, longterm: 1.1 },
+                passionate: { chemistry: 1.5, passion: 1.5, romance: 1.3, longterm: 1.2 },
+                caring: { chemistry: 1.2, passion: 1.0, romance: 1.3, longterm: 1.5 },
+                spontaneous: { chemistry: 1.3, passion: 1.3, romance: 1.2, longterm: 1.0 },
+                chill: { chemistry: 1.1, passion: 0.9, romance: 1.1, longterm: 1.3 }
+            };
+
+            let scores = {
+                chemistry: 70 + Math.random() * 20,
+                passion: 70 + Math.random() * 20,
+                romance: 70 + Math.random() * 20,
+                longterm: 70 + Math.random() * 20
+            };
+
+            // Apply trait multipliers
+            selectedTraits.forEach(trait => {
+                const multiplier = traitMultipliers[trait];
+                scores.chemistry *= multiplier.chemistry;
+                scores.passion *= multiplier.passion;
+                scores.romance *= multiplier.romance;
+                scores.longterm *= multiplier.longterm;
+            });
+
+            // Normalize to 60-98 range
+            Object.keys(scores).forEach(key => {
+                scores[key] = Math.min(98, Math.max(60, scores[key]));
+            });
+
+            const average = (scores.chemistry + scores.passion + scores.romance + scores.longterm) / 4;
+
+            // Show results with animation
+            document.getElementById('results').classList.add('show');
+            
+            setTimeout(() => {
+                animateMeter('chemistry', scores.chemistry);
+            }, 200);
+            setTimeout(() => {
+                animateMeter('passion', scores.passion);
+            }, 600);
+            setTimeout(() => {
+                animateMeter('romance', scores.romance);
+            }, 1000);
+            setTimeout(() => {
+                animateMeter('longterm', scores.longterm);
+            }, 1400);
+
+            setTimeout(() => {
+                showOverallResult(average, name1, name2);
+            }, 2000);
+
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function animateMeter(type, value) {
+            const bar = document.getElementById(type + 'Bar');
+            const valueDisplay = document.getElementById(type + 'Value');
+            
+            bar.style.width = value + '%';
+            
+            let current = 0;
+            const increment = value / 50;
+            const interval = setInterval(() => {
+                current += increment;
+                if (current >= value) {
+                    current = value;
+                    clearInterval(interval);
+                }
+                valueDisplay.textContent = Math.round(current) + '%';
+            }, 20);
+        }
+
+        function showOverallResult(average, name1, name2) {
+            let emoji, title, message;
+
+            if (average >= 90) {
+                emoji = '🔥💖🔥';
+                title = 'LEGENDARY MATCH!';
+                message = `${name1} & ${name2} are absolutely PERFECT together! The chemistry is off the charts! This is a once-in-a-lifetime connection that's pure magic! 🌟`;
+            } else if (average >= 80) {
+                emoji = '💕✨💕';
+                title = 'AMAZING CHEMISTRY!';
+                message = `${name1} & ${name2} have incredible compatibility! You two complement each other beautifully and share amazing energy together! 💫`;
+            } else if (average >= 70) {
+                emoji = '💖💗💖';
+                title = 'GREAT MATCH!';
+                message = `${name1} & ${name2} have wonderful potential! There's genuine connection and chemistry that can grow into something beautiful! 🌹`;
+            } else {
+                emoji = '💝💕💝';
+                title = 'GOOD VIBES!';
+                message = `${name1} & ${name2} have positive energy together! With communication and care, this can develop into something special! 💫`;
+            }
+
+            document.getElementById('resultEmoji').textContent = emoji;
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('resultMessage').textContent = message;
+        }
+
+        function resetAnalyzer() {
+            document.getElementById('name1').value = '';
+            document.getElementById('name2').value = '';
+            selectedTraits.clear();
+            document.querySelectorAll('.trait-button').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById('results').classList.remove('show');
+            
+            // Reset all meters
+            ['chemistry', 'passion', 'romance', 'longterm'].forEach(type => {
+                document.getElementById(type + 'Bar').style.width = '0%';
+                document.getElementById(type + 'Value').textContent = '0%';
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

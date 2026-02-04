@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Love Letter • Feb 14</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --ink: #2a1810;
+            --aged-paper: #f4ebe1;
+            --sepia: #d4b896;
+            --wax-red: #c41e3a;
+            --gold: #d4af37;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, #f4ebe1 0%, #e8dcc8 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="8" fill="%23c41e3a" opacity="0.3"/></svg>'), auto;
+        }
+
+        /* Ambient paper texture */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(42, 24, 16, 0.02) 2px, rgba(42, 24, 16, 0.02) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(42, 24, 16, 0.02) 2px, rgba(42, 24, 16, 0.02) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Floating rose petals */
+        .petal {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(ellipse at center, #c41e3a 0%, #8b1628 100%);
+            border-radius: 50% 0 50% 0;
+            opacity: 0;
+            animation: fall 12s infinite;
+            z-index: 2;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .envelope-container {
+            position: relative;
+            z-index: 10;
+            perspective: 1000px;
+        }
+
+        .envelope {
+            width: 500px;
+            height: 300px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s ease;
+        }
+
+        .envelope.opening {
+            transform: rotateX(-15deg);
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #d4b896 0%, #c4a876 100%);
+            border: 3px solid var(--ink);
+            box-shadow: 0 10px 40px rgba(42, 24, 16, 0.3);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(180deg, #c4a876 0%, #d4b896 100%);
+            border-left: 3px solid var(--ink);
+            border-right: 3px solid var(--ink);
+            border-top: 3px solid var(--ink);
+            transform-origin: top center;
+            transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 5;
+        }
+
+        .envelope.opening .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, var(--wax-red) 0%, #8b1628 100%);
+            border-radius: 50%;
+            border: 2px solid var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: var(--gold);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 6;
+            box-shadow: 0 4px 15px rgba(139, 22, 40, 0.5);
+        }
+
+        .wax-seal:hover {
+            transform: translateX(-50%) scale(1.1);
+            box-shadow: 0 6px 20px rgba(139, 22, 40, 0.7);
+        }
+
+        .envelope.opening .wax-seal {
+            animation: breakSeal 0.5s ease forwards;
+        }
+
+        @keyframes breakSeal {
+            0% {
+                transform: translateX(-50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateX(-50%) scale(1.3) rotate(15deg);
+            }
+            100% {
+                transform: translateX(-50%) scale(0) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+        .letter {
+            position: absolute;
+            width: 450px;
+            height: 600px;
+            background: linear-gradient(to bottom, var(--aged-paper) 0%, #ede3d3 100%);
+            border: 2px solid var(--ink);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 20px 60px rgba(42, 24, 16, 0.4);
+            padding: 50px 40px;
+            overflow-y: auto;
+            z-index: 1;
+        }
+
+        .envelope.opening .letter {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+            transition-delay: 0.8s;
+            z-index: 20;
+        }
+
+        .letter-content {
+            font-size: 20px;
+            line-height: 1.8;
+            color: var(--ink);
+            text-align: center;
+        }
+
+        .letter-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-style: italic;
+            margin-bottom: 30px;
+            color: var(--wax-red);
+            text-shadow: 1px 1px 2px rgba(42, 24, 16, 0.1);
+        }
+
+        .letter-date {
+            font-size: 16px;
+            font-style: italic;
+            color: #6b5843;
+            margin-bottom: 40px;
+        }
+
+        .letter-body {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .letter-body p {
+            margin-bottom: 20px;
+            text-indent: 40px;
+        }
+
+        .encoded-text {
+            background: linear-gradient(90deg, transparent 0%, rgba(196, 30, 58, 0.1) 50%, transparent 100%);
+            padding: 2px 6px;
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .encoded-text:hover {
+            background: rgba(196, 30, 58, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .encoded-text.revealed {
+            background: rgba(212, 175, 55, 0.3);
+            font-weight: 600;
+        }
+
+        .signature {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-style: italic;
+            margin-top: 40px;
+            text-align: right;
+            color: var(--wax-red);
+        }
+
+        .decode-hint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(42, 24, 16, 0.9);
+            color: var(--aged-paper);
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 20;
+            border: 2px solid var(--gold);
+        }
+
+        .decode-hint.show {
+            opacity: 1;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            background: rgba(42, 24, 16, 0.2);
+            border: 2px solid var(--ink);
+            border-radius: 20px;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 20;
+        }
+
+        .progress-bar.show {
+            opacity: 1;
+        }
+
+        .progress-fill {
+            height: 30px;
+            background: linear-gradient(90deg, var(--wax-red) 0%, var(--gold) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .completion-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(42, 24, 16, 0.95);
+            color: var(--gold);
+            padding: 60px;
+            border-radius: 20px;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 100;
+            border: 3px solid var(--gold);
+            box-shadow: 0 0 60px rgba(212, 175, 55, 0.5);
+            pointer-events: none;
+        }
+
+        .completion-message.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .completion-message .heart-burst {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: heartPulse 1s ease infinite;
+        }
+
+        @keyframes heartPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @media (max-width: 600px) {
+            .envelope {
+                width: 90vw;
+                height: 200px;
+            }
+
+            .letter {
+                width: 90vw;
+                height: 80vh;
+                padding: 30px 20px;
+            }
+
+            .letter-title {
+                font-size: 32px;
+            }
+
+            .letter-content {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="petalsContainer"></div>
+
+    <div class="envelope-container">
+        <div class="envelope" id="envelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-flap"></div>
+            <div class="wax-seal" id="sealButton">♥</div>
+
+            <div class="letter" id="letter">
+                <div class="letter-content">
+                    <div class="letter-title">A Letter of Love</div>
+                    <div class="letter-date">February 14th, 2026</div>
+                    
+                    <div class="letter-body">
+                        <p>My Dearest,</p>
+                        
+                        <p>In this world of fleeting moments, I write to you with words encoded in the language only hearts understand. To reveal the truth, you must <span class="encoded-text" data-word="listen">✧ trust ✧</span> carefully and <span class="encoded-text" data-word="decode">✧ discover ✧</span> what lies beneath.</p>
+                        
+                        <p>Love is not measured in <span class="encoded-text" data-word="grand">✧ magnificent ✧</span> gestures alone, but in the quiet <span class="encoded-text" data-word="moments">✧ instances ✧</span> we share. It lives in the <span class="encoded-text" data-word="laughter">✧ joy ✧</span> that echoes through our days and the <span class="encoded-text" data-word="comfort">✧ peace ✧</span> we find in silence.</p>
+                        
+                        <p>Today, on this day of hearts, I want you to know that you are my <span class="encoded-text" data-word="treasure">✧ fortune ✧</span>, my <span class="encoded-text" data-word="inspiration">✧ muse ✧</span>, and my greatest <span class="encoded-text" data-word="adventure">✧ journey ✧</span>. With you, every day feels like a new <span class="encoded-text" data-word="beginning">✧ dawn ✧</span>.</p>
+                        
+                        <p>So here's my secret, written in symbols only you can unlock: You make my world <span class="encoded-text" data-word="complete">✧ whole ✧</span>. You are the <span class="encoded-text" data-word="rhythm">✧ beat ✧</span> in my heart and the <span class="encoded-text" data-word="light">✧ glow ✧</span> in my soul.</p>
+                        
+                        <p>Happy Valentine's Day, my love.</p>
+                    </div>
+                    
+                    <div class="signature">Forever Yours ♥</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="decode-hint" id="decodeHint">
+        ✨ Click the encoded words to reveal the hidden message ✨
+    </div>
+
+    <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill">0/12</div>
+    </div>
+
+    <div class="completion-message" id="completionMessage">
+        <div class="heart-burst">💖</div>
+        <div>You've decoded the entire love letter!</div>
+        <div style="font-size: 20px; margin-top: 20px; font-family: 'Crimson Text', serif; color: var(--aged-paper);">
+            Love reveals itself to those who seek it with an open heart.
+        </div>
+    </div>
+
+    <script>
+        // Create falling petals
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.animationDelay = Math.random() * 5 + 's';
+            petal.style.animationDuration = (Math.random() * 6 + 8) + 's';
+            document.getElementById('petalsContainer').appendChild(petal);
+            
+            setTimeout(() => petal.remove(), 14000);
+        }
+
+        // Generate petals periodically
+        setInterval(createPetal, 800);
+        for (let i = 0; i < 8; i++) {
+            setTimeout(createPetal, i * 400);
+        }
+
+        // Envelope opening logic
+        const envelope = document.getElementById('envelope');
+        const sealButton = document.getElementById('sealButton');
+        const decodeHint = document.getElementById('decodeHint');
+        const progressBar = document.getElementById('progressBar');
+
+        sealButton.addEventListener('click', () => {
+            envelope.classList.add('opening');
+            setTimeout(() => {
+                decodeHint.classList.add('show');
+                progressBar.classList.add('show');
+            }, 2000);
+        });
+
+        // Decode mechanic
+        const encodedWords = document.querySelectorAll('.encoded-text');
+        let revealedCount = 0;
+        const totalWords = encodedWords.length;
+
+        encodedWords.forEach(word => {
+            word.addEventListener('click', function() {
+                if (!this.classList.contains('revealed')) {
+                    this.classList.add('revealed');
+                    const actualWord = this.getAttribute('data-word');
+                    this.textContent = actualWord;
+                    revealedCount++;
+                    
+                    // Update progress
+                    const progressFill = document.getElementById('progressFill');
+                    const percentage = (revealedCount / totalWords) * 100;
+                    progressFill.style.width = percentage + '%';
+                    progressFill.textContent = `${revealedCount}/${totalWords}`;
+                    
+                    // Check completion
+                    if (revealedCount === totalWords) {
+                        setTimeout(() => {
+                            document.getElementById('completionMessage').classList.add('show');
+                            createHeartBurst();
+                        }, 500);
+                    }
+                }
+            });
+        });
+
+        // Heart burst effect on completion
+        function createHeartBurst() {
+            const hearts = ['❤️', '💕', '💖', '💗', '💝', '💓'];
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.style.position = 'fixed';
+                    heart.style.left = '50%';
+                    heart.style.top = '50%';
+                    heart.style.fontSize = '30px';
+                    heart.style.zIndex = '200';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.pointerEvents = 'none';
+                    
+                    const angle = (Math.PI * 2 * i) / 30;
+                    const distance = 200;
+                    const endX = Math.cos(angle) * distance;
+                    const endY = Math.sin(angle) * distance;
+                    
+                    document.body.appendChild(heart);
+                    
+                    heart.animate([
+                        { transform: 'translate(-50%, -50%) scale(0)', opacity: 0 },
+                        { transform: `translate(calc(-50% + ${endX}px), calc(-50% + ${endY}px)) scale(1)`, opacity: 1 },
+                        { transform: `translate(calc(-50% + ${endX * 1.5}px), calc(-50% + ${endY * 1.5}px)) scale(0)`, opacity: 0 }
+                    ], {
+                        duration: 2000,
+                        easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+                    }).onfinish = () => heart.remove();
+                }, i * 50);
+            }
+        }
+    </script>
+</body>
+</html>

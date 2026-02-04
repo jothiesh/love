@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💑 Cuddle Quest - Romantic Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;600;700&family=Dancing+Script:wght@400;700&family=Satisfy&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --soft-pink: #ffc1e3;
+            --lavender: #c7b3e5;
+            --peach: #ffcba4;
+            --mint: #b8e6d5;
+            --cream: #fff5f5;
+            --deep-rose: #e91e63;
+            --purple: #9c27b0;
+            --warm-orange: #ff6b6b;
+            --gold: #ffd700;
+        }
+
+        body {
+            font-family: 'Comfortaa', cursive;
+            background: linear-gradient(135deg, #ffc1e3 0%, #c7b3e5 50%, #b8e6d5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Romantic particles */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            animation: particleFloat 12s infinite;
+            opacity: 0;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Soft clouds */
+        .cloud {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 100px;
+            filter: blur(40px);
+            opacity: 0.5;
+            animation: cloudFloat 25s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes cloudFloat {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(80px) translateY(-30px); }
+        }
+
+        .game-container {
+            width: 95vw;
+            max-width: 1200px;
+            min-height: 90vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            box-shadow: 
+                0 30px 80px rgba(233, 30, 99, 0.4),
+                inset 0 0 80px rgba(255, 193, 227, 0.3);
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 193, 227, 0.3) 0%, transparent 70%);
+            animation: shimmer 10s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(5%, 5%) rotate(5deg); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 72px;
+            background: linear-gradient(135deg, var(--deep-rose) 0%, var(--purple) 50%, var(--warm-orange) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            font-weight: 700;
+            animation: titlePulse 3s ease-in-out infinite;
+            text-shadow: 2px 2px 4px rgba(233, 30, 99, 0.3);
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: var(--purple);
+            font-weight: 600;
+            font-family: 'Satisfy', cursive;
+        }
+
+        /* Progress tracker */
+        .progress-tracker {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .progress-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(233, 30, 99, 0.3);
+            border: 3px solid var(--soft-pink);
+            transition: all 0.5s ease;
+        }
+
+        .progress-dot.completed {
+            background: var(--deep-rose);
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(233, 30, 99, 0.8);
+            transform: scale(1.3);
+        }
+
+        .progress-dot.current {
+            background: var(--warm-orange);
+            border-color: var(--gold);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 107, 107, 0.5); }
+            50% { transform: scale(1.4); box-shadow: 0 0 25px rgba(255, 107, 107, 0.8); }
+        }
+
+        /* Intimacy meter */
+        .intimacy-meter {
+            background: linear-gradient(135deg, rgba(184, 230, 213, 0.5) 0%, rgba(255, 203, 164, 0.5) 100%);
+            border: 4px solid var(--mint);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 15px 40px rgba(184, 230, 213, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+
+        .meter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .meter-title {
+            font-size: 24px;
+            color: var(--purple);
+            font-weight: 700;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .meter-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .meter-level {
+            font-size: 26px;
+            color: var(--deep-rose);
+            font-weight: 700;
+            background: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--soft-pink);
+        }
+
+        .meter-points {
+            font-size: 20px;
+            color: var(--warm-orange);
+            font-weight: 700;
+        }
+
+        .meter-bar-container {
+            width: 100%;
+            height: 40px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid var(--soft-pink);
+            box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .meter-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--soft-pink) 0%, var(--deep-rose) 50%, var(--warm-orange) 100%);
+            transition: width 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border-radius: 20px;
+            box-shadow: 0 0 25px rgba(233, 30, 99, 0.7);
+            position: relative;
+        }
+
+        .meter-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+            animation: meterShine 2s infinite;
+        }
+
+        @keyframes meterShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .hearts-display {
+            text-align: center;
+            font-size: 36px;
+            margin-top: 15px;
+            animation: heartsGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes heartsGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(233, 30, 99, 0.5)); }
+            50% { filter: drop-shadow(0 0 15px rgba(233, 30, 99, 0.8)); }
+        }
+
+        /* Story screen */
+        .story-screen {
+            position: relative;
+            z-index: 10;
+        }
+
+        .scene-image {
+            width: 100%;
+            max-width: 650px;
+            height: 380px;
+            margin: 0 auto 35px;
+            background: linear-gradient(135deg, var(--soft-pink) 0%, var(--lavender) 50%, var(--peach) 100%);
+            border-radius: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 140px;
+            box-shadow: 0 25px 60px rgba(233, 30, 99, 0.4);
+            border: 6px solid white;
+            position: relative;
+            overflow: hidden;
+            animation: scenePulse 4s ease-in-out infinite;
+        }
+
+        @keyframes scenePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .scene-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: shine 4s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .story-text {
+            background: linear-gradient(135deg, rgba(255, 193, 227, 0.4) 0%, rgba(199, 179, 229, 0.4) 100%);
+            border: 4px solid var(--soft-pink);
+            border-radius: 30px;
+            padding: 45px;
+            margin-bottom: 35px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(233, 30, 99, 0.3);
+        }
+
+        .story-text p {
+            font-size: 26px;
+            line-height: 1.9;
+            color: var(--purple);
+            margin-bottom: 25px;
+        }
+
+        .story-text .romantic-highlight {
+            color: var(--deep-rose);
+            font-weight: 700;
+            font-style: italic;
+            font-size: 28px;
+            font-family: 'Satisfy', cursive;
+        }
+
+        /* Choices */
+        .choices-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .choice-card {
+            background: white;
+            border: 5px solid var(--soft-pink);
+            border-radius: 30px;
+            padding: 35px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(255, 193, 227, 0.4);
+        }
+
+        .choice-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--soft-pink) 0%, var(--lavender) 100%);
+            transform: translate(-50%, -50%);
+            transition: width 0.7s, height 0.7s;
+            opacity: 0.4;
+        }
+
+        .choice-card:hover {
+            transform: translateY(-15px) scale(1.08);
+            border-color: var(--deep-rose);
+            box-shadow: 0 25px 60px rgba(233, 30, 99, 0.6);
+        }
+
+        .choice-card:hover::before {
+            width: 600px;
+            height: 600px;
+        }
+
+        .choice-emoji {
+            font-size: 70px;
+            display: block;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            animation: emojiFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes emojiFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .choice-title {
+            font-size: 24px;
+            color: var(--deep-rose);
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .choice-description {
+            font-size: 17px;
+            color: var(--purple);
+            text-align: center;
+            line-height: 1.7;
+            position: relative;
+            z-index: 2;
+        }
+
+        .choice-points {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--warm-orange) 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            z-index: 3;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Achievement popup */
+        .achievement {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--deep-rose) 0%, var(--purple) 100%);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(233, 30, 99, 0.7);
+            transform: translateX(500px);
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 2000;
+            border: 4px solid white;
+            max-width: 350px;
+        }
+
+        .achievement.show {
+            transform: translateX(0);
+        }
+
+        .achievement-icon {
+            font-size: 50px;
+            margin-bottom: 12px;
+            animation: achievementPop 0.6s ease-out;
+        }
+
+        @keyframes achievementPop {
+            0% { transform: scale(0) rotate(0deg); }
+            50% { transform: scale(1.3) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .achievement-text {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Ending screen */
+        .ending-screen {
+            display: none;
+            text-align: center;
+            animation: fadeInScale 1s ease;
+        }
+
+        .ending-screen.show {
+            display: block;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .ending-image {
+            font-size: 180px;
+            margin-bottom: 35px;
+            animation: heartBeat 1.8s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(233, 30, 99, 0.6));
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .ending-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 64px;
+            background: linear-gradient(135deg, var(--deep-rose) 0%, var(--warm-orange) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .ending-message {
+            font-size: 26px;
+            color: var(--purple);
+            line-height: 2;
+            margin-bottom: 45px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .ending-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, rgba(255, 193, 227, 0.4) 0%, rgba(199, 179, 229, 0.4) 100%);
+            border: 3px solid var(--soft-pink);
+            padding: 25px 35px;
+            border-radius: 20px;
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: var(--purple);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            color: var(--deep-rose);
+            font-weight: 700;
+        }
+
+        .restart-button {
+            background: linear-gradient(135deg, var(--deep-rose) 0%, var(--warm-orange) 100%);
+            color: white;
+            border: 5px solid white;
+            padding: 25px 60px;
+            font-family: 'Comfortaa', cursive;
+            font-size: 24px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 20px 50px rgba(233, 30, 99, 0.5);
+        }
+
+        .restart-button:hover {
+            transform: scale(1.15);
+            box-shadow: 0 25px 60px rgba(233, 30, 99, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 30px 20px;
+            }
+
+            .title {
+                font-size: 52px;
+            }
+
+            .subtitle {
+                font-size: 20px;
+            }
+
+            .scene-image {
+                height: 280px;
+                font-size: 100px;
+            }
+
+            .story-text p {
+                font-size: 22px;
+            }
+
+            .choices-container {
+                grid-template-columns: 1fr;
+            }
+
+            .ending-image {
+                font-size: 120px;
+            }
+
+            .ending-title {
+                font-size: 48px;
+            }
+
+            .ending-message {
+                font-size: 22px;
+            }
+
+            .meter-stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative elements -->
+    <div class="cloud" style="width: 250px; height: 120px; top: 8%; left: 3%;"></div>
+    <div class="cloud" style="width: 300px; height: 140px; top: 55%; right: 5%; animation-delay: -10s;"></div>
+    <div class="cloud" style="width: 220px; height: 100px; bottom: 12%; left: 12%; animation-delay: -20s;"></div>
+
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">Cuddle Quest</h1>
+            <p class="subtitle">An Intimate Romantic Adventure 💕</p>
+        </div>
+
+        <div class="progress-tracker" id="progressTracker">
+            <div class="progress-dot completed"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+            <div class="progress-dot"></div>
+        </div>
+
+        <div class="intimacy-meter">
+            <div class="meter-header">
+                <span class="meter-title">Intimacy Connection</span>
+                <div class="meter-stats">
+                    <span class="meter-level" id="intimacyLevel">Level 1</span>
+                    <span class="meter-points" id="intimacyPoints">0 pts</span>
+                </div>
+            </div>
+            <div class="meter-bar-container">
+                <div class="meter-bar" id="intimacyBar"></div>
+            </div>
+            <div class="hearts-display" id="heartsDisplay">💕</div>
+        </div>
+
+        <div class="story-screen" id="storyScreen">
+            <div class="scene-image" id="sceneImage">🏠</div>
+            
+            <div class="story-text" id="storyText">
+                <p>It's a cozy evening at home. The lights are dim, soft music plays in the background, and you're both settling in for a romantic night together.</p>
+                <p class="romantic-highlight">How do you want to begin this intimate evening?</p>
+            </div>
+
+            <div class="choices-container" id="choicesContainer"></div>
+        </div>
+
+        <div class="ending-screen" id="endingScreen">
+            <div class="ending-image" id="endingImage">💑</div>
+            <div class="ending-title" id="endingTitle">Perfect Evening!</div>
+            <div class="ending-message" id="endingMessage">
+                You've created the most romantic and intimate evening together.
+            </div>
+            <div class="ending-stats">
+                <div class="stat-box">
+                    <div class="stat-label">Total Intimacy</div>
+                    <div class="stat-value" id="finalPoints">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Connection Level</div>
+                    <div class="stat-value" id="finalLevel">5</div>
+                </div>
+            </div>
+            <button class="restart-button" onclick="restartGame()">Start New Adventure</button>
+        </div>
+    </div>
+
+    <div class="achievement" id="achievement">
+        <div class="achievement-icon">🎉</div>
+        <div class="achievement-text">Achievement Unlocked!</div>
+    </div>
+
+    <script>
+        // Create romantic particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            const symbols = ['💕', '💖', '💗', '💝', '💓', '💞', '✨', '⭐', '🌟'];
+            particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            particle.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDelay = Math.random() * 5 + 's';
+            particle.style.animationDuration = (Math.random() * 5 + 10) + 's';
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 15000);
+        }
+
+        setInterval(createParticle, 1200);
+
+        // Game state
+        let intimacyPoints = 0;
+        let currentScene = 0;
+
+        const scenes = [
+            {
+                image: '🏠',
+                text: [
+                    "It's a cozy evening at home. The lights are dim, candles flicker softly, and gentle music fills the air. You're both relaxed and ready for an intimate night together.",
+                    "How do you want to begin this special evening?"
+                ],
+                choices: [
+                    { emoji: '🛋️', title: 'Couch Cuddles', description: 'Snuggle close on the couch with soft blankets wrapped around you both', points: 15 },
+                    { emoji: '🍷', title: 'Wine & Conversation', description: 'Share a glass of wine and talk about your feelings', points: 20 },
+                    { emoji: '🕯️', title: 'Candlelit Atmosphere', description: 'Dim all the lights and create a dreamy ambiance with candles everywhere', points: 25 }
+                ]
+            },
+            {
+                image: '💑',
+                text: [
+                    "You're nestled comfortably together, feeling each other's warmth. The connection between you is growing stronger with every passing moment.",
+                    "What intimate gesture do you share next?"
+                ],
+                choices: [
+                    { emoji: '💋', title: 'Tender Kisses', description: 'Share slow, gentle kisses on the lips, forehead, and cheeks', points: 25 },
+                    { emoji: '💭', title: 'Whispered Confessions', description: 'Whisper what you love most about each other in intimate detail', points: 20 },
+                    { emoji: '🎵', title: 'Slow Dance', description: 'Hold each other close and sway to your favorite romantic song', points: 30 }
+                ]
+            },
+            {
+                image: '🌙',
+                text: [
+                    "The evening deepens and you're both completely lost in each other. Every touch feels electric, every glance meaningful.",
+                    "How do you deepen this beautiful connection?"
+                ],
+                choices: [
+                    { emoji: '💆', title: 'Sensual Massage', description: 'Give each other slow, gentle massages with warm oil', points: 35 },
+                    { emoji: '🌹', title: 'Love Letters', description: 'Read romantic love letters you\'ve written for each other', points: 30 },
+                    { emoji: '🌟', title: 'Starlit Window', description: 'Cuddle by the window watching stars, sharing dreams together', points: 40 }
+                ]
+            },
+            {
+                image: '💖',
+                text: [
+                    "Your hearts are beating in perfect sync. The intimacy between you has reached new heights. This moment feels absolutely magical.",
+                    "What passionate expression do you share?"
+                ],
+                choices: [
+                    { emoji: '💝', title: 'Deep Confession', description: 'Tell them exactly how deeply and passionately you love them', points: 40 },
+                    { emoji: '🔥', title: 'Passionate Kiss', description: 'Share a long, deep, passionate kiss that takes your breath away', points: 45 },
+                    { emoji: '🤗', title: 'Soul Embrace', description: 'Hold each other in a long, tight embrace, feeling completely one', points: 35 }
+                ]
+            },
+            {
+                image: '✨',
+                text: [
+                    "The night has been pure magic. Every moment has brought you closer, every touch has deepened your bond.",
+                    "How do you want to cherish these final moments?"
+                ],
+                choices: [
+                    { emoji: '💌', title: 'Love Vows', description: 'Make sweet promises about your future together', points: 40 },
+                    { emoji: '🎁', title: 'Surprise Gift', description: 'Exchange small meaningful gifts that represent your love', points: 35 },
+                    { emoji: '🌺', title: 'Romantic Bath', description: 'Share a warm, candlelit bubble bath together', points: 50 }
+                ]
+            },
+            {
+                image: '💞',
+                text: [
+                    "The perfect evening is reaching its beautiful conclusion. You've never felt closer to each other than you do right now.",
+                    "How do you end this unforgettable night?"
+                ],
+                choices: [
+                    { emoji: '😴', title: 'Cuddle to Sleep', description: 'Fall asleep wrapped in each other\'s arms, whispering "I love you"', points: 50 },
+                    { emoji: '💬', title: 'Dream Planning', description: 'Talk about all your romantic plans and dreams for the future', points: 40 },
+                    { emoji: '💋', title: 'Goodnight Kiss', description: 'Share one final, tender, meaningful goodnight kiss', points: 45 }
+                ]
+            }
+        ];
+
+        function updateProgressTracker() {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('completed', 'current');
+                if (index < currentScene) {
+                    dot.classList.add('completed');
+                } else if (index === currentScene) {
+                    dot.classList.add('current');
+                }
+            });
+        }
+
+        function showScene() {
+            if (currentScene >= scenes.length) {
+                showEnding();
+                return;
+            }
+
+            const scene = scenes[currentScene];
+            document.getElementById('sceneImage').textContent = scene.image;
+            
+            let textHTML = '';
+            scene.text.forEach((paragraph, index) => {
+                const className = index === scene.text.length - 1 ? 'romantic-highlight' : '';
+                textHTML += `<p class="${className}">${paragraph}</p>`;
+            });
+            document.getElementById('storyText').innerHTML = textHTML;
+
+            const choicesContainer = document.getElementById('choicesContainer');
+            choicesContainer.innerHTML = '';
+
+            scene.choices.forEach((choice, index) => {
+                const card = document.createElement('div');
+                card.className = 'choice-card';
+                card.innerHTML = `
+                    <div class="choice-points">+${choice.points} pts</div>
+                    <div class="choice-emoji">${choice.emoji}</div>
+                    <div class="choice-title">${choice.title}</div>
+                    <div class="choice-description">${choice.description}</div>
+                `;
+                card.onclick = () => makeChoice(choice, index);
+                choicesContainer.appendChild(card);
+            });
+
+            updateProgressTracker();
+        }
+
+        function makeChoice(choice, index) {
+            intimacyPoints += choice.points;
+            updateIntimacyMeter();
+
+            // Show achievement for high-value choices
+            if (choice.points >= 35) {
+                showAchievement(choice.title);
+            }
+
+            // Add animation
+            const cards = document.querySelectorAll('.choice-card');
+            cards[index].style.transform = 'scale(1.15) rotate(2deg)';
+            cards[index].style.borderColor = 'var(--gold)';
+            cards[index].style.boxShadow = '0 30px 70px rgba(255, 215, 0, 0.6)';
+
+            // Create celebration particles
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createParticle, i * 100);
+            }
+
+            setTimeout(() => {
+                currentScene++;
+                showScene();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 1000);
+        }
+
+        function updateIntimacyMeter() {
+            const maxPoints = 300;
+            const percentage = Math.min((intimacyPoints / maxPoints) * 100, 100);
+            document.getElementById('intimacyBar').style.width = percentage + '%';
+
+            let level = Math.floor(intimacyPoints / 50) + 1;
+            level = Math.min(level, 6);
+            document.getElementById('intimacyLevel').textContent = `Level ${level}`;
+            document.getElementById('intimacyPoints').textContent = intimacyPoints + ' pts';
+
+            let hearts = '';
+            for (let i = 0; i < level; i++) {
+                hearts += '💖';
+            }
+            document.getElementById('heartsDisplay').textContent = hearts;
+        }
+
+        function showAchievement(text) {
+            const achievement = document.getElementById('achievement');
+            achievement.querySelector('.achievement-text').textContent = text + ' Unlocked!';
+            achievement.classList.add('show');
+
+            setTimeout(() => {
+                achievement.classList.remove('show');
+            }, 3500);
+        }
+
+        function showEnding() {
+            document.getElementById('storyScreen').style.display = 'none';
+            const endingScreen = document.getElementById('endingScreen');
+            endingScreen.classList.add('show');
+
+            let emoji, title, message;
+
+            if (intimacyPoints >= 220) {
+                emoji = '💑💖✨';
+                title = 'Soul Connection!';
+                message = 'You\'ve created the most deeply intimate and romantic evening imaginable! Every choice brought you closer together, creating an unbreakable bond of love and passion. Your connection is truly extraordinary and beautiful beyond words. This night will be remembered forever! 💕💫';
+            } else if (intimacyPoints >= 170) {
+                emoji = '💕💝💕';
+                title = 'Deeply Romantic!';
+                message = 'What an incredibly intimate and passionate evening! You\'ve shared beautiful moments of tenderness, love, and deep connection. The bond between you has grown so much stronger tonight. This is the kind of romance dreams are made of! ✨🌹';
+            } else if (intimacyPoints >= 120) {
+                emoji = '💖💗💖';
+                title = 'Beautifully Close!';
+                message = 'You\'ve shared a wonderfully romantic evening filled with tender moments and sweet affection. Every cuddle, every kiss has brought warmth and joy to both your hearts. The love between you shines so brightly! 🌟💫';
+            } else {
+                emoji = '💝💕💝';
+                title = 'Sweet Connection!';
+                message = 'A lovely evening of closeness and affection! You\'ve shared gentle moments that have strengthened your bond and created beautiful memories together. Your love continues to grow! 💖✨';
+            }
+
+            const level = Math.floor(intimacyPoints / 50) + 1;
+            document.getElementById('endingImage').textContent = emoji;
+            document.getElementById('endingTitle').textContent = title;
+            document.getElementById('endingMessage').textContent = message;
+            document.getElementById('finalPoints').textContent = intimacyPoints;
+            document.getElementById('finalLevel').textContent = Math.min(level, 6);
+
+            // Create massive celebration
+            for (let i = 0; i < 30; i++) {
+                setTimeout(createParticle, i * 150);
+            }
+        }
+
+        function restartGame() {
+            intimacyPoints = 0;
+            currentScene = 0;
+            document.getElementById('storyScreen').style.display = 'block';
+            document.getElementById('endingScreen').classList.remove('show');
+            updateIntimacyMeter();
+            showScene();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Start game
+        showScene();
+    </script>
+</body>
+</html>

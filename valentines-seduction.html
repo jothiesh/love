@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌹 The Art of Seduction - Valentine's Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=Allura&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --deep-burgundy: #6b1e3c;
+            --silk-red: #c41e3a;
+            --rose-gold: #e8b4b8;
+            --champagne: #f7e7ce;
+            --midnight: #1a0f1f;
+            --velvet: #2d1b2e;
+            --gold: #d4af37;
+            --blush: #ff9aa2;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(135deg, #1a0f1f 0%, #2d1b2e 50%, #3a1f3f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            color: var(--champagne);
+            padding: 20px;
+        }
+
+        /* Ambient candlelight effect */
+        .candlelight {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.2;
+            animation: flicker 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.35; transform: scale(1.1); }
+        }
+
+        /* Silk drape effect */
+        .silk-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 40%, rgba(196, 30, 58, 0.1) 0%, transparent 60%);
+            pointer-events: none;
+            animation: silkShimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes silkShimmer {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Rose petals */
+        .petal {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(ellipse at center, #c41e3a 0%, #8b1628 100%);
+            border-radius: 50% 0 50% 0;
+            opacity: 0;
+            animation: petalFall 15s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes petalFall {
+            0% {
+                transform: translateY(-20px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .app-container {
+            width: 95vw;
+            max-width: 1300px;
+            min-height: 92vh;
+            background: rgba(26, 15, 31, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 30px;
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.8),
+                inset 0 0 80px rgba(196, 30, 58, 0.1);
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(212, 175, 55, 0.03) 2px,
+                    rgba(212, 175, 55, 0.03) 4px
+                );
+            pointer-events: none;
+        }
+
+        /* Warning screen */
+        .warning-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .warning-screen.hidden {
+            display: none;
+        }
+
+        .warning-icon {
+            font-size: 100px;
+            margin-bottom: 30px;
+            animation: warningPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .warning-title {
+            font-family: 'Allura', cursive;
+            font-size: 64px;
+            color: var(--silk-red);
+            margin-bottom: 20px;
+        }
+
+        .warning-text {
+            font-size: 24px;
+            color: var(--rose-gold);
+            max-width: 700px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .warning-notice {
+            background: rgba(196, 30, 58, 0.2);
+            border: 2px solid var(--silk-red);
+            padding: 25px 40px;
+            border-radius: 20px;
+            font-size: 20px;
+            color: var(--champagne);
+            margin-bottom: 40px;
+            max-width: 600px;
+        }
+
+        .enter-button {
+            background: linear-gradient(135deg, var(--silk-red) 0%, var(--deep-burgundy) 100%);
+            border: 3px solid var(--gold);
+            color: white;
+            padding: 25px 70px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 40px rgba(196, 30, 58, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .enter-button:hover {
+            transform: scale(1.08);
+            box-shadow: 0 20px 50px rgba(196, 30, 58, 0.7);
+        }
+
+        /* Main header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-title {
+            font-family: 'Allura', cursive;
+            font-size: 82px;
+            background: linear-gradient(135deg, var(--silk-red) 0%, var(--rose-gold) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            animation: titleShine 3s ease-in-out infinite;
+        }
+
+        @keyframes titleShine {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        .subtitle {
+            font-size: 26px;
+            color: var(--rose-gold);
+            font-style: italic;
+            letter-spacing: 3px;
+        }
+
+        /* Category cards */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.15) 0%, rgba(107, 30, 60, 0.15) 100%);
+            border: 3px solid rgba(212, 175, 55, 0.3);
+            border-radius: 25px;
+            padding: 40px;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(196, 30, 58, 0.3) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.8s, height 0.8s;
+        }
+
+        .category-card:hover {
+            transform: translateY(-15px);
+            border-color: var(--gold);
+            box-shadow: 0 20px 60px rgba(196, 30, 58, 0.6);
+        }
+
+        .category-card:hover::before {
+            width: 500px;
+            height: 500px;
+        }
+
+        .category-icon {
+            font-size: 80px;
+            text-align: center;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px currentColor);
+            position: relative;
+            z-index: 2;
+        }
+
+        .category-title {
+            font-family: 'Allura', cursive;
+            font-size: 38px;
+            color: var(--silk-red);
+            text-align: center;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .category-description {
+            font-size: 19px;
+            color: var(--rose-gold);
+            text-align: center;
+            line-height: 1.7;
+            font-style: italic;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+            animation: modalFadeIn 0.5s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(26, 15, 31, 0.98) 0%, rgba(45, 27, 46, 0.98) 100%);
+            border: 3px solid var(--gold);
+            border-radius: 30px;
+            padding: 60px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(196, 30, 58, 0.3);
+            border: 2px solid var(--silk-red);
+            color: var(--champagne);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--silk-red);
+            transform: rotate(90deg);
+        }
+
+        .modal-title {
+            font-family: 'Allura', cursive;
+            font-size: 56px;
+            color: var(--silk-red);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .ideas-list {
+            display: grid;
+            gap: 25px;
+        }
+
+        .idea-card {
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.1) 0%, rgba(107, 30, 60, 0.1) 100%);
+            border: 2px solid rgba(232, 180, 184, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .idea-card:hover {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, rgba(196, 30, 58, 0.2) 0%, rgba(107, 30, 60, 0.2) 100%);
+            transform: translateX(10px);
+        }
+
+        .idea-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .idea-title {
+            font-size: 28px;
+            color: var(--rose-gold);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .idea-description {
+            font-size: 20px;
+            color: var(--champagne);
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+
+        .spice-level {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 6px 15px;
+            background: rgba(196, 30, 58, 0.3);
+            border: 1px solid var(--silk-red);
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--blush);
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 30px 20px;
+            }
+
+            .main-title {
+                font-size: 56px;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 40px 25px;
+            }
+
+            .modal-title {
+                font-size: 42px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Ambient effects -->
+    <div class="candlelight" style="width: 400px; height: 400px; background: #c41e3a; top: 10%; left: 15%;"></div>
+    <div class="candlelight" style="width: 350px; height: 350px; background: #8b1628; bottom: 15%; right: 20%; animation-delay: -2s;"></div>
+    <div class="candlelight" style="width: 300px; height: 300px; background: #d4af37; top: 50%; left: 50%; animation-delay: -1s;"></div>
+    <div class="silk-overlay"></div>
+
+    <div class="app-container">
+        <!-- Age Warning -->
+        <div class="warning-screen" id="warningScreen">
+            <div class="warning-icon">🌹</div>
+            <h1 class="warning-title">The Art of Seduction</h1>
+            <p class="warning-text">
+                A mature, intimate experience designed exclusively for couples in committed relationships.
+                This content is romantic, passionate, and contains sensual themes.
+            </p>
+            <div class="warning-notice">
+                🔞 This experience is intended for adults (18+) only.<br>
+                Please ensure you're in a private, comfortable setting.
+            </div>
+            <button class="enter-button" onclick="enterExperience()">Enter Experience</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="header">
+            <h1 class="main-title">The Art of Seduction</h1>
+            <p class="subtitle">Intimate Ideas for Passionate Couples</p>
+        </div>
+
+        <div class="categories-grid">
+            <div class="category-card" onclick="openCategory('sensual')">
+                <div class="category-icon">🔥</div>
+                <div class="category-title">Sensual Touch</div>
+                <div class="category-description">
+                    Explore the power of intimate physical connection through gentle caresses, passionate embraces, and tender moments
+                </div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('romance')">
+                <div class="category-icon">🌹</div>
+                <div class="category-title">Deep Romance</div>
+                <div class="category-description">
+                    Create unforgettable romantic moments filled with desire, longing, and emotional intimacy
+                </div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('passion')">
+                <div class="category-icon">💋</div>
+                <div class="category-title">Passionate Play</div>
+                <div class="category-description">
+                    Ignite intense chemistry with flirty games, seductive surprises, and playful teasing
+                </div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('intimate')">
+                <div class="category-icon">💕</div>
+                <div class="category-title">Intimate Bonding</div>
+                <div class="category-description">
+                    Deepen your emotional and physical connection through vulnerable sharing and tender closeness
+                </div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('seductive')">
+                <div class="category-icon">✨</div>
+                <div class="category-title">Seductive Atmosphere</div>
+                <div class="category-description">
+                    Set the perfect mood with ambiance, anticipation, and carefully crafted romantic settings
+                </div>
+            </div>
+
+            <div class="category-card" onclick="openCategory('connection')">
+                <div class="category-icon">💖</div>
+                <div class="category-title">Soul Connection</div>
+                <div class="category-description">
+                    Experience profound intimacy that connects mind, body, and spirit in beautiful harmony
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for ideas -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-close" onclick="closeModal()">✕</div>
+            <h2 class="modal-title" id="modalTitle">Category</h2>
+            <div class="ideas-list" id="ideasList"></div>
+        </div>
+    </div>
+
+    <script>
+        // Create rose petals
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.animationDelay = Math.random() * 5 + 's';
+            petal.style.animationDuration = (Math.random() * 5 + 10) + 's';
+            document.body.appendChild(petal);
+            
+            setTimeout(() => petal.remove(), 15000);
+        }
+
+        setInterval(createPetal, 800);
+
+        function enterExperience() {
+            document.getElementById('warningScreen').classList.add('hidden');
+        }
+
+        const categories = {
+            sensual: {
+                title: 'Sensual Touch',
+                icon: '🔥',
+                ideas: [
+                    {
+                        icon: '💆',
+                        title: 'Candlelit Massage',
+                        description: 'Warm massage oil between your hands and give each other slow, sensual full-body massages by candlelight. Focus on every curve, every muscle, taking your time to explore.',
+                        spice: 'Sensual'
+                    },
+                    {
+                        icon: '🌹',
+                        title: 'Rose Petal Trail',
+                        description: 'Create a path of rose petals from the door to the bedroom. Each petal represents a reason you desire them. Share those reasons as you follow the trail together.',
+                        spice: 'Romantic'
+                    },
+                    {
+                        icon: '🛁',
+                        title: 'Shared Bath Ritual',
+                        description: 'Draw a warm bath with essential oils and flower petals. Light candles around the tub. Take turns washing each other\'s hair and body, savoring every touch.',
+                        spice: 'Intimate'
+                    },
+                    {
+                        icon: '🕯️',
+                        title: 'Blindfold Sensation',
+                        description: 'Take turns being blindfolded while the other traces patterns on skin with feathers, silk, ice cubes, or fingertips. Focus entirely on sensation and anticipation.',
+                        spice: 'Adventurous'
+                    },
+                    {
+                        icon: '💋',
+                        title: 'Kiss Map',
+                        description: 'Take turns kissing every part of your partner\'s body they allow, discovering which spots make them shiver with pleasure. Mark each location with lipstick.',
+                        spice: 'Passionate'
+                    },
+                    {
+                        icon: '🎵',
+                        title: 'Slow Dance Seduction',
+                        description: 'Put on sensual music and dance closely together. Let your bodies move as one, hands exploring, breath mingling, building tension slowly.',
+                        spice: 'Sensual'
+                    }
+                ]
+            },
+            romance: {
+                title: 'Deep Romance',
+                icon: '🌹',
+                ideas: [
+                    {
+                        icon: '💌',
+                        title: 'Love Letter Exchange',
+                        description: 'Write detailed letters describing your deepest desires for your partner - physical, emotional, and romantic. Read them aloud while holding each other.',
+                        spice: 'Intimate'
+                    },
+                    {
+                        icon: '🌙',
+                        title: 'Moonlit Confession',
+                        description: 'Under the stars or moon, share your most secret romantic fantasies. Be vulnerable about what you crave, what makes you feel desired, what ignites your passion.',
+                        spice: 'Vulnerable'
+                    },
+                    {
+                        icon: '🍷',
+                        title: 'Wine & Whispers',
+                        description: 'Share wine while whispering in each other\'s ears exactly what you find irresistible about them. Get specific, sensual, and detailed with your compliments.',
+                        spice: 'Flirty'
+                    },
+                    {
+                        icon: '🎭',
+                        title: 'Roleplay Romance',
+                        description: 'Recreate your first date or meeting, but with the sexual tension you feel now. Pretend you\'re meeting for the first time, but unable to resist each other.',
+                        spice: 'Playful'
+                    },
+                    {
+                        icon: '📖',
+                        title: 'Erotic Poetry Night',
+                        description: 'Read sensual poetry or romantic literature to each other. Take turns choosing passages that express desire, longing, and passion.',
+                        spice: 'Romantic'
+                    },
+                    {
+                        icon: '💝',
+                        title: 'Fantasy Sharing',
+                        description: 'In a safe, loving space, share your romantic and physical fantasies with complete honesty. Listen without judgment and find ways to bring some to life.',
+                        spice: 'Intimate'
+                    }
+                ]
+            },
+            passion: {
+                title: 'Passionate Play',
+                icon: '💋',
+                ideas: [
+                    {
+                        icon: '🎲',
+                        title: 'Desire Dice',
+                        description: 'Write different intimate acts on paper. Take turns drawing and performing them for each other. Start mild and gradually increase intensity.',
+                        spice: 'Adventurous'
+                    },
+                    {
+                        icon: '🎁',
+                        title: 'Strip Tease',
+                        description: 'Take turns slowly removing each other\'s clothing piece by piece, kissing every newly exposed area. Make it a sensual performance.',
+                        spice: 'Seductive'
+                    },
+                    {
+                        icon: '🔥',
+                        title: 'Truth or Dare - Intimate Edition',
+                        description: 'Ask each other questions about desires, turn-ons, and fantasies. Dares should involve kisses, touches, or performing requested acts.',
+                        spice: 'Flirty'
+                    },
+                    {
+                        icon: '💄',
+                        title: 'Lipstick Art',
+                        description: 'Using lipstick, write or draw on each other\'s bodies - messages of desire, marking favorite spots, creating temporary tattoos of your passion.',
+                        spice: 'Playful'
+                    },
+                    {
+                        icon: '🌶️',
+                        title: 'Sensory Challenge',
+                        description: 'Feed each other different flavored foods and drinks, then immediately kiss to taste it on each other. Include sweet, spicy, cold, and warm sensations.',
+                        spice: 'Sensual'
+                    },
+                    {
+                        icon: '🎪',
+                        title: 'Private Performance',
+                        description: 'Take turns putting on a private show for each other - dancing, modeling, or acting out fantasies. Make your partner feel like the only audience that matters.',
+                        spice: 'Bold'
+                    }
+                ]
+            },
+            intimate: {
+                title: 'Intimate Bonding',
+                icon: '💕',
+                ideas: [
+                    {
+                        icon: '👁️',
+                        title: 'Soul Gazing',
+                        description: 'Sit facing each other, naked or minimally clothed. Gaze into each other\'s eyes for 5 minutes without speaking. Feel the vulnerability and connection deepen.',
+                        spice: 'Vulnerable'
+                    },
+                    {
+                        icon: '💭',
+                        title: 'Desire Dialogue',
+                        description: 'Have an honest conversation about your deepest physical and emotional needs. What makes you feel most desired? What do you crave more of?',
+                        spice: 'Honest'
+                    },
+                    {
+                        icon: '🤲',
+                        title: 'Synchronized Breathing',
+                        description: 'Lie together, skin to skin. Match your breathing rhythms while running hands over each other\'s bodies. Feel how connected your very heartbeats become.',
+                        spice: 'Intimate'
+                    },
+                    {
+                        icon: '💫',
+                        title: 'Tantric Connection',
+                        description: 'Practice tantric exercises: synchronized breathing, prolonged eye contact, and slow, intentional touch. Focus on building energy between you rather than release.',
+                        spice: 'Spiritual'
+                    },
+                    {
+                        icon: '🌊',
+                        title: 'Mutual Exploration',
+                        description: 'Spend an hour taking turns exploring each other\'s bodies as if for the first time. Ask what feels good, show what you like, discover new sensitive spots.',
+                        spice: 'Exploratory'
+                    },
+                    {
+                        icon: '💗',
+                        title: 'Vulnerability Night',
+                        description: 'Share your insecurities, fears, and desires around intimacy. Create a judgment-free space where both can express needs and boundaries with complete honesty.',
+                        spice: 'Deep'
+                    }
+                ]
+            },
+            seductive: {
+                title: 'Seductive Atmosphere',
+                icon: '✨',
+                ideas: [
+                    {
+                        icon: '🕯️',
+                        title: 'Candlelit Sanctuary',
+                        description: 'Transform your bedroom into a sanctuary with dozens of candles, silk sheets, rose petals, and sensual music. Dress in your sexiest attire and take your time.',
+                        spice: 'Romantic'
+                    },
+                    {
+                        icon: '🎭',
+                        title: 'Mysterious Stranger',
+                        description: 'Meet at a bar or restaurant pretending to be strangers. Flirt, seduce, build tension. Then "take each other home" as if for the first time.',
+                        spice: 'Adventurous'
+                    },
+                    {
+                        icon: '💌',
+                        title: 'Anticipation Build-Up',
+                        description: 'Send increasingly flirty and suggestive messages throughout the day describing what you want to do tonight. Build anticipation until you reunite.',
+                        spice: 'Teasing'
+                    },
+                    {
+                        icon: '🌹',
+                        title: 'Seduction Trail',
+                        description: 'Leave a trail of clues around the house, each with a sensual task or item of clothing to remove. The final clue leads to you, waiting.',
+                        spice: 'Playful'
+                    },
+                    {
+                        icon: '🍓',
+                        title: 'Aphrodisiac Feast',
+                        description: 'Prepare foods known for aphrodisiac properties: oysters, chocolate, strawberries, honey. Feed each other sensually, taking your time with each bite.',
+                        spice: 'Sensual'
+                    },
+                    {
+                        icon: '🎵',
+                        title: 'Playlist Seduction',
+                        description: 'Create a playlist of songs that make you think of your partner. Explain why each song reminds you of them while slowly getting closer.',
+                        spice: 'Intimate'
+                    }
+                ]
+            },
+            connection: {
+                title: 'Soul Connection',
+                icon: '💖',
+                ideas: [
+                    {
+                        icon: '🌙',
+                        title: 'Midnight Confessions',
+                        description: 'In the darkness, share your deepest thoughts about your physical and emotional connection. What makes you feel most alive with them?',
+                        spice: 'Deep'
+                    },
+                    {
+                        icon: '💞',
+                        title: 'Body Worship',
+                        description: 'Take turns telling your partner exactly what you love about their body while gently touching each part. Make them feel absolutely adored.',
+                        spice: 'Loving'
+                    },
+                    {
+                        icon: '🔮',
+                        title: 'Future Fantasies',
+                        description: 'Discuss your shared fantasies and desires for your intimate future. What do you want to explore together? What brings you closer?',
+                        spice: 'Visionary'
+                    },
+                    {
+                        icon: '✨',
+                        title: 'Gratitude Ritual',
+                        description: 'Express gratitude for specific intimate moments you\'ve shared. Recall times when you felt most connected, most desired, most satisfied.',
+                        spice: 'Reflective'
+                    },
+                    {
+                        icon: '🌺',
+                        title: 'Sacred Space Creation',
+                        description: 'Together, create a special space in your home dedicated to intimacy. Fill it with meaningful objects, photos, and items that represent your passion.',
+                        spice: 'Meaningful'
+                    },
+                    {
+                        icon: '💫',
+                        title: 'Energy Exchange',
+                        description: 'Practice energy work - placing hands on each other\'s hearts, feeling the warmth and connection. Visualize love and desire flowing between you.',
+                        spice: 'Spiritual'
+                    }
+                ]
+            }
+        };
+
+        function openCategory(categoryKey) {
+            const category = categories[categoryKey];
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const ideasList = document.getElementById('ideasList');
+
+            modalTitle.textContent = category.title + ' ' + category.icon;
+            
+            ideasList.innerHTML = '';
+            category.ideas.forEach(idea => {
+                const card = document.createElement('div');
+                card.className = 'idea-card';
+                card.innerHTML = `
+                    <div class="idea-icon">${idea.icon}</div>
+                    <div class="idea-title">${idea.title}</div>
+                    <div class="idea-description">${idea.description}</div>
+                    <div class="spice-level">🌶️ ${idea.spice}</div>
+                `;
+                ideasList.appendChild(card);
+            });
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        // Close modal on outside click
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

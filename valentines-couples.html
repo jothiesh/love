@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin the Heart 💋 Valentine's Couples Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --burgundy: #6b1e3c;
+            --rose-gold: #e8b4b8;
+            --champagne: #f7e7ce;
+            --deep-red: #9d2235;
+            --black: #1a1a1d;
+            --cream: #fef9f3;
+            --gold: #d4af37;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: linear-gradient(135deg, #1a1a1d 0%, #2d1b2e 50%, #1a1a1d 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            color: var(--cream);
+        }
+
+        /* Ambient lighting effect */
+        .ambient-light {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            pointer-events: none;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        .light1 {
+            width: 500px;
+            height: 500px;
+            background: var(--deep-red);
+            top: -100px;
+            left: -100px;
+        }
+
+        .light2 {
+            width: 400px;
+            height: 400px;
+            background: var(--rose-gold);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -4s;
+        }
+
+        .light3 {
+            width: 350px;
+            height: 350px;
+            background: var(--burgundy);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -2s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.15; }
+            50% { transform: scale(1.1); opacity: 0.25; }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--rose-gold);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.3;
+            animation: float-particle 15s infinite;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .game-container {
+            position: relative;
+            z-index: 10;
+            width: 90vw;
+            max-width: 1000px;
+            min-height: 90vh;
+            background: rgba(26, 26, 29, 0.85);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(232, 180, 184, 0.3);
+            border-radius: 30px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                inset 0 0 60px rgba(157, 34, 53, 0.1);
+            padding: 50px;
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 56px;
+            font-style: italic;
+            background: linear-gradient(135deg, var(--rose-gold) 0%, var(--champagne) 50%, var(--rose-gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 22px;
+            color: var(--rose-gold);
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            margin-top: 40px;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(157, 34, 53, 0.8), rgba(107, 30, 60, 0.9));
+            border: 8px solid var(--gold);
+            box-shadow: 
+                0 0 40px rgba(212, 175, 55, 0.4),
+                inset 0 0 40px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+
+        .wheel-center {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--burgundy) 0%, var(--deep-red) 100%);
+            border: 4px solid var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 0 30px rgba(157, 34, 53, 0.6);
+            z-index: 10;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid var(--gold);
+            filter: drop-shadow(0 4px 10px rgba(212, 175, 55, 0.6));
+            z-index: 20;
+        }
+
+        .spin-button {
+            background: linear-gradient(135deg, var(--deep-red) 0%, var(--burgundy) 100%);
+            border: 3px solid var(--gold);
+            padding: 25px 60px;
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--champagne);
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(157, 34, 53, 0.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .spin-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .spin-button:hover::before {
+            left: 100%;
+        }
+
+        .spin-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(157, 34, 53, 0.7);
+            border-color: var(--champagne);
+        }
+
+        .spin-button:active {
+            transform: translateY(0);
+        }
+
+        .spin-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .challenge-display {
+            background: linear-gradient(135deg, rgba(107, 30, 60, 0.4) 0%, rgba(157, 34, 53, 0.4) 100%);
+            border: 2px solid var(--rose-gold);
+            border-radius: 20px;
+            padding: 40px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(232, 180, 184, 0.1) 0%, transparent 70%);
+            animation: shimmer 6s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(5%, 5%); }
+        }
+
+        .challenge-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .challenge-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-style: italic;
+            color: var(--champagne);
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .challenge-category {
+            font-size: 18px;
+            color: var(--rose-gold);
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+
+        .intro-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 26, 29, 0.98);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            z-index: 100;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .intro-screen.hidden {
+            display: none;
+        }
+
+        .intro-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 64px;
+            font-style: italic;
+            color: var(--champagne);
+            margin-bottom: 20px;
+        }
+
+        .intro-description {
+            font-size: 24px;
+            color: var(--rose-gold);
+            max-width: 600px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .intro-warning {
+            background: rgba(157, 34, 53, 0.2);
+            border: 2px solid var(--rose-gold);
+            padding: 20px 40px;
+            border-radius: 15px;
+            font-size: 18px;
+            color: var(--champagne);
+            max-width: 500px;
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, var(--deep-red) 0%, var(--burgundy) 100%);
+            border: 3px solid var(--gold);
+            padding: 25px 70px;
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--champagne);
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 30px rgba(157, 34, 53, 0.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 20px;
+        }
+
+        .start-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(157, 34, 53, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 30px 20px;
+            }
+
+            .title {
+                font-size: 36px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+            }
+
+            .wheel-container {
+                width: 280px;
+                height: 280px;
+            }
+
+            .wheel-center {
+                width: 100px;
+                height: 100px;
+                font-size: 50px;
+            }
+
+            .challenge-text {
+                font-size: 24px;
+            }
+
+            .spin-button, .start-button {
+                padding: 20px 40px;
+                font-size: 20px;
+            }
+
+            .intro-title {
+                font-size: 42px;
+            }
+
+            .intro-description {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-light light1"></div>
+    <div class="ambient-light light2"></div>
+    <div class="ambient-light light3"></div>
+
+    <div id="particlesContainer"></div>
+
+    <div class="game-container">
+        <div class="intro-screen" id="introScreen">
+            <div class="intro-title">💋 Spin the Heart 💋</div>
+            <div class="intro-description">
+                An intimate game for couples to explore romance, passion, and connection this Valentine's Day.
+                Take turns spinning the wheel and complete romantic challenges together.
+            </div>
+            <div class="intro-warning">
+                🔞 This game is designed for couples in a romantic relationship. 
+                Play in a private, comfortable setting where you both feel safe and excited.
+            </div>
+            <button class="start-button" id="startButton">Begin the Romance</button>
+        </div>
+
+        <div class="header">
+            <h1 class="title">Spin the Heart</h1>
+            <p class="subtitle">A Romantic Game for Two</p>
+        </div>
+
+        <div class="game-area">
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <div class="wheel" id="wheel">
+                    <div class="wheel-center">💖</div>
+                </div>
+            </div>
+
+            <button class="spin-button" id="spinButton">Spin the Wheel</button>
+
+            <div class="challenge-display" id="challengeDisplay">
+                <div class="challenge-icon">✨</div>
+                <div class="challenge-text">Press "Spin the Wheel" to begin your romantic adventure...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDelay = Math.random() * 10 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            document.getElementById('particlesContainer').appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 25000);
+        }
+
+        setInterval(createParticle, 1000);
+        for (let i = 0; i < 20; i++) {
+            setTimeout(createParticle, i * 200);
+        }
+
+        // Challenges database
+        const challenges = {
+            tender: [
+                { icon: '💝', text: 'Hold hands and gaze into each other\'s eyes for 30 seconds without speaking', category: 'Tender Moment' },
+                { icon: '🌹', text: 'Give your partner a gentle forehead kiss and whisper something you love about them', category: 'Tender Moment' },
+                { icon: '💕', text: 'Slow dance together for one song, staying close and connected', category: 'Tender Moment' },
+                { icon: '✨', text: 'Take turns describing your favorite memory together in detail', category: 'Tender Moment' },
+                { icon: '🎵', text: 'Share the song that reminds you most of your partner and explain why', category: 'Tender Moment' }
+            ],
+            playful: [
+                { icon: '😘', text: 'Play a game of "kiss roulette" - spin a bottle and kiss wherever it points', category: 'Playful & Fun' },
+                { icon: '🎭', text: 'Act out how you first met, but make it dramatically romantic and over-the-top', category: 'Playful & Fun' },
+                { icon: '🎪', text: 'Give each other silly compliments for 2 minutes - the more creative, the better!', category: 'Playful & Fun' },
+                { icon: '🎨', text: 'Draw your partner with your eyes closed, then share and laugh together', category: 'Playful & Fun' },
+                { icon: '🎲', text: 'Play rock-paper-scissors - loser has to tell an embarrassing romantic story', category: 'Playful & Fun' }
+            ],
+            sensual: [
+                { icon: '🌙', text: 'Give your partner a 3-minute shoulder and neck massage with your full attention', category: 'Sensual Touch' },
+                { icon: '💋', text: 'Kiss your partner\'s hand slowly and deliberately, making eye contact', category: 'Sensual Touch' },
+                { icon: '🕯️', text: 'Trace your partner\'s face gently with your fingertips while they close their eyes', category: 'Sensual Touch' },
+                { icon: '🌺', text: 'Take turns describing what attracts you most about your partner physically', category: 'Sensual Touch' },
+                { icon: '💫', text: 'Sit close and take turns feeding each other a treat or dessert', category: 'Sensual Touch' }
+            ],
+            intimate: [
+                { icon: '🔥', text: 'Share your favorite fantasy about your partner (keep it romantic or spicy)', category: 'Deep Connection' },
+                { icon: '💓', text: 'Tell your partner about a moment when they made you feel most desired', category: 'Deep Connection' },
+                { icon: '🌟', text: 'Whisper in your partner\'s ear something you\'ve been wanting to do together', category: 'Deep Connection' },
+                { icon: '💗', text: 'Describe in detail what you find most irresistible about your partner', category: 'Deep Connection' },
+                { icon: '🎁', text: 'Share one secret desire or wish you have for your relationship', category: 'Deep Connection' }
+            ],
+            romantic: [
+                { icon: '🌹', text: 'Write "I love you" on your partner\'s skin with your finger - they guess where', category: 'Romantic Gesture' },
+                { icon: '💌', text: 'Share three things that made you fall in love with your partner', category: 'Romantic Gesture' },
+                { icon: '⭐', text: 'Tell your partner about a moment this year when they took your breath away', category: 'Romantic Gesture' },
+                { icon: '🦋', text: 'Plan out loud your perfect romantic day together - be specific and creative', category: 'Romantic Gesture' },
+                { icon: '💝', text: 'Look at photos together and share your favorite memory from each one', category: 'Romantic Gesture' }
+            ]
+        };
+
+        // Game state
+        let spinning = false;
+        let currentRotation = 0;
+
+        // Get all challenges in a flat array
+        const allChallenges = [
+            ...challenges.tender,
+            ...challenges.playful,
+            ...challenges.sensual,
+            ...challenges.intimate,
+            ...challenges.romantic
+        ];
+
+        // Intro screen
+        document.getElementById('startButton').addEventListener('click', function() {
+            document.getElementById('introScreen').classList.add('hidden');
+        });
+
+        // Spin wheel
+        document.getElementById('spinButton').addEventListener('click', function() {
+            if (spinning) return;
+
+            spinning = true;
+            this.disabled = true;
+
+            // Random rotation (multiple full spins + random landing)
+            const spins = 5 + Math.floor(Math.random() * 3); // 5-7 full rotations
+            const extraDegrees = Math.floor(Math.random() * 360);
+            const totalRotation = currentRotation + (spins * 360) + extraDegrees;
+
+            const wheel = document.getElementById('wheel');
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+            currentRotation = totalRotation;
+
+            // Show result after spin
+            setTimeout(() => {
+                const randomChallenge = allChallenges[Math.floor(Math.random() * allChallenges.length)];
+                showChallenge(randomChallenge);
+                spinning = false;
+                this.disabled = false;
+            }, 4000);
+        });
+
+        function showChallenge(challenge) {
+            const display = document.getElementById('challengeDisplay');
+            display.style.opacity = '0';
+            display.style.transform = 'scale(0.9)';
+
+            setTimeout(() => {
+                display.innerHTML = `
+                    <div class="challenge-icon">${challenge.icon}</div>
+                    <div class="challenge-text">${challenge.text}</div>
+                    <div class="challenge-category">${challenge.category}</div>
+                `;
+                display.style.transition = 'all 0.5s ease';
+                display.style.opacity = '1';
+                display.style.transform = 'scale(1)';
+            }, 300);
+        }
+    </script>
+</body>
+</html>
